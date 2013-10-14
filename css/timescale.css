@@ -1,0 +1,35 @@
+.timeScale {
+  font-family: Helvetica, sans-serif;
+  font-weight: 100;
+  font-size: 0.8em;
+  color:#333;
+  cursor: pointer;
+}
+rect {
+  stroke: #fff;
+  stroke-width:1px;
+}
+.abbr {
+  display:none;
+}
+#l0 {
+  color:#fff;
+}
+line {
+  stroke:#777;
+}
+.level1 {
+  font-size: 1.4em;
+}
+.level2 {
+  font-size: 1.2em;
+}
+.level3 {
+  font-size: 1em;
+}
+.level4 {
+  font-size: 0.90em;
+}
+.level5 {
+  font-size: 0.85em;
+}

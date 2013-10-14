@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" xmlns= "http://www.w3.org/1999/xhtml">
+  <head>
+    <title>PaleoDB Navigator</title>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Language" content="en" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+    <meta name="author" content="John J Czaplewski"/>
+
+    <link href="css/bootstrapRC2.min.css" rel="stylesheet"/>
+    <link href="css/typeahead.css" rel="stylesheet"/>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.css" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+    <link href="css/timescale.css" rel="stylesheet"/>
+    <style>
+    /*navMap styles */
+    body {
+      font-family: 'Open-sans', sans-serif;
+    }
+    #map {
+      height:400px;
+      width:100%;
+    }
+    #mapControls {
+      position: absolute;
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .countries {
+      stroke: #000;
+      fill: #FEFBFB;
+      stroke-width: 0.5;
+    }
+    .bins {
+      fill: #EFEE69;
+      stroke: none;
+      opacity:0.7;
+    }
+    .bins:hover {
+      stroke:#222;
+      stroke-width:1px;
+    }
+    .svgbins {
+      fill: #EFEE69;
+      stroke: none;
+      opacity:0.7;
+    }
+    .svgbins:hover {
+      stroke:#222;
+      stroke-width:1px;
+    }
+    .clusters {
+      fill: #72BBDF;
+      stroke: none;
+      opacity:0.7;
+    }
+    .clusters:hover {
+      stroke:#222;
+      stroke-width:1px;
+    }
+    .zoom-in {
+      height:30px;
+      width:30px;
+      font-size:20px;
+      vertical-align: middle;
+      text-align: center;
+      cursor: pointer;
+    }
+    .zoom-in:hover {
+      background-color:#ccc;
+    }
+    .zoom-out {
+      height:30px;
+      width:30px;
+      margin-top:10px;
+      font-size:20px;
+      vertical-align: middle;
+      text-align: center;
+      cursor: pointer;
+    }
+    .zoom-out:hover {
+      background-color:#ccc;
+    }
+    #infoContainer {
+      position: relative;
+    }
+    .info {
+      background-color: white;
+      padding:10px;
+      display:none;
+      border-top: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      font-size:0.9em;
+      width:16em;
+      bottom:0;
+      position: absolute;
+    }
+    .time {
+      height:30px;
+      width:30px;
+      /*margin-top:15px;*/
+      cursor: pointer;
+      text-align: center;
+      border-radius: 3px;
+    }
+    .timeToggler.leaflet-control {
+      left:50px;
+      margin-top:130px;
+      position: absolute;
+      width:170px;
+      padding:10px;
+      vertical-align: middle;
+      display:none;
+    }
+    .rotate {
+      height:30px;
+      width:30px;
+      margin-top:15px;
+      cursor: pointer;
+      background-repeat: no-repeat;
+      background-size: cover;
+      margin:0;
+      margin-top: 7px;
+      background-image: url('../img/pangea.png');
+      border-radius: 3px;
+    }
+    .reconstructToggler.leaflet-control {
+      left:50px;
+      margin-top:130px;
+      position: absolute;
+      width:170px;
+      padding:10px;
+      vertical-align: middle;
+      display:none;
+    }
+    .userFilter {
+      height:30px;
+      width:30px;
+      margin-top:15px;
+      cursor: pointer;
+      text-align: center;
+      border-radius: 3px;
+    }
+    .save {
+      height:30px;
+      width:30px;
+      margin-top:15px;
+      cursor: pointer;
+      text-align: center;
+      border-radius: 3px;
+    }
+    .save > a {
+      color:#000;
+    }
+    .save > a:hover {
+      color:#000;
+    }
+    .userToggler.leaflet-control {
+      left:50px;
+      margin-top:163px;
+      position: absolute;
+      width:16em;
+      padding:10px;
+      vertical-align: middle;
+      font-size: 0.8em;
+      display:none;
+    }
+    .taxaToggler.leaflet-control {
+      border-right:none;
+      border-bottom:1px solid #ccc;
+      border-left:1px solid #ccc;
+      cursor: pointer;
+      padding-top:0;
+    }
+    .taxa {
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      margin:0;
+      position: relative;
+      height:25px;
+      width:25px;
+    }
+    .taxa:hover {
+      background-color:#ccc;
+    }
+    .filters {
+      position: absolute;
+      left:40%;
+      z-index: 1;
+      padding: 10px;
+      background-color: rgba(255,255,255,0.95);
+      border-right:1px solid #ccc;
+      border-left: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      display: none;
+    }
+    .filters > p {
+      display: inline;
+    }
+    .filter {
+      display: none;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      padding: 5px;
+      background-color: #fff;
+      color: #777;
+    }
+    .filter > button {
+      float:left;
+      margin-right:5px;
+    }
+    .info.leaflet-control {
+      margin-left: 0;
+    }
+    .info.leaflet-control {
+      margin-bottom: 0;
+    }
+    .customControl {
+      background-color: rgba(255,255,255,0.95);
+      padding:10px;
+      font-weight: bold;
+      border-right:1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      
+      line-height: 1;
+      padding-top: 10px;
+    }
+    .collection {
+      fill: #EFEE69;
+      stroke: none;
+      opacity:0.7;
+    }
+    .collection:hover {
+      stroke:#222;
+      stroke-width:1px;
+    }
+    #window {
+      background-color:rgba(255,255,255,0.95);
+      height:384px;
+      width:25%;
+      z-index: 10;
+      float:right;
+      position: absolute;
+      top:0;
+      right:0;
+      overflow-y:scroll;
+      padding:1.5em;
+      box-shadow: -1px -6px 12px #777;
+      -moz-box-shadow: -1px -6px 12px #777;
+      -webkit-box-shadow: -1px -6px 12px #777;
+      display:none;
+    }
+    #windowCollapse {
+      position: absolute;
+      background-color:rgba(255,255,255,0.95);
+      z-index: 11;
+      float:right;
+      top:10px;
+      right:24.9%;
+      box-shadow: -4px 0px 8px -2px #777;
+      -moz-box-shadow: -4px 0px 8px -2px #777;
+      -webkit-box-shadow: -4px 0px 8px -2px #777;
+      color:#777;
+      padding:5px 5px 5px 9px;
+      border-radius: 2px 0 0 2px;
+      -moz-border-radius: 2px 0 0 2px;
+      -webkit-border-radius: 2px 0 0 2px;
+      cursor: pointer;
+      display: none;
+    }
+    #windowCollapse:hover {
+      color:#000;
+    }
+    td {
+      font-size: 12px;
+    }
+    #stats {
+      width:100%;
+      display: table;
+    }
+    .statContainer {
+      text-align: center;
+      display:table-cell;
+      width:14.2857%;
+      padding-bottom: 10px;
+      border-left:2px dotted white;
+      background-color:#bbb;
+      color:#fff;
+    }
+    .statContainer:hover {
+      background-color:#5BBBD5;
+    }
+    #clusterTable {
+      cursor: pointer;
+    }
+    .firstRow {
+      border-top: 0;
+    }
+    /*Reconstruct map */
+    .stroke {
+      fill: none;
+      stroke: #000;
+      stroke-width: 3px;
+    }
+    .fill {
+      fill: #000;
+    }
+    #reconstructMap {
+      width:100%;
+      display: none;
+    }
+    #reconstructMapInfo {
+      position: absolute;
+      width: 14em;
+      border-right: 1px solid #aaa;
+      border-bottom: 1px solid #aaa;
+      padding: 25px;
+      background-color:#fff;
+    }
+    #gplatesLogo {
+      height:45px;
+      float:left;
+      margin-right:10px;
+    }
+    #gplatesText {
+      font-size: 1.2em;
+      margin-top:11px;
+    }
+    #reconstructMapStats {
+      margin-top:2em;
+    }
+    #reconstructMapReference {
+      font-size: 0.6em;
+      padding-top:1em;
+      padding-bottom: 1em;
+    }
+    .plates {
+      fill: #fff;
+      stroke:#777;
+      stroke-width:.75px;
+      opacity:1;
+    }
+    #interval {
+      text-align: center;
+    }
+    #age {
+      text-align: center;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div class="row">
+    	<div class="col-lg-12" id="graphics">
+        <div class="filters">
+          <p>Filters:</p>
+          <div id="selectedInterval" class="filter"></div>
+          <div id="personFilter" class="filter"></div>
+          <div id="taxon" class="filter"></div>
+        </div>
+        <div id="mapControls">
+          <div class="customControl buttons leaflet-control">
+            <div class="zoom-in mapCtrl">+</div>
+            <div class="zoom-out mapCtrl">&#8211;</div>
+            <!--<div class="layers"></div>-->
+            <div class="time mapCtrl"><i class="icon-time icon-2x"></i></div>
+            <div class="rotate mapCtrl"></div>
+            <div class="userFilter mapCtrl"><i class="icon-user icon-2x"></i></div>
+            <div class="save mapCtrl"><a data-toggle="modal" href="#saveBox"><i class="icon-save icon-2x"></i></a></div>
+          </div>
+
+          <div class="customControl timeToggler leaflet-control">
+            <form action="">
+              <input id="viewByTimeBox" type="checkbox" value="1"/>Filter by time
+            </form>
+          </div>
+          <div class="customControl reconstructToggler leaflet-control">
+            <form action="">
+              <input id="reconstructBox" type="checkbox" value="1"/>Rotate view by interval
+            </form>
+          </div>
+          <div class="customControl userToggler leaflet-control">
+           <!-- <form onSubmit="return navMap.filterByPerson()">-->
+            <form>
+              <input type="text" id="personInput" placeholder="Enter a name" size="22"/>
+            </form>
+          </div>
+          <div id="infoContainer">
+            <div class="info leaflet-control"></div>
+          </div>
+        </div>
+
+        <div id="mapContainer">
+          <div id="svgMap"></div>
+          <div id="map"></div>
+          <div id="reconstructMap">
+            <div id='reconstructMapInfo'>
+              <a href='http://gplates.org' target='_blank'>
+                <img id='gplatesLogo' src='img/gplates_icon.jpg'>
+              </a>
+              <p id="gplatesText">via GPlates</p>
+              <div id="reconstructMapStats">
+                <h3 id="interval"></h3>
+                <h5 id='age'></h5>
+              </div>
+              <div id="reconstructMapReference"></div>
+              <a id='mapSwitch' href='#'><i class=icon-circle-arrow-left icon-2x></i> Back to main map</a><br>
+            </div>
+          </div>
+        </div>
+        <div id="windowCollapse"><i class="icon-double-angle-right"></i></div>
+        <div id="window" class="col-3 col-offset-9">
+          <table class="table-hover table-condensed" id="clusterTable"></table>
+        </div>
+      </div> <!-- End col-12 -->
+      <div id="time"></div>
+    </div> <!-- End row -->
+
+    <div class="modal fade" id="saveBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 class="modal-title">Download Current View</h3>
+            <p class="text-muted" id="downloadCount"></p>
+          </div>
+          <div class="modal-body">
+            <h4>Filters:</h4>
+            <ul id="filterList"></ul>
+            <br>
+            <div class="row">
+              <div class="col-sm-6">
+                <h4>Additional information:</h4>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="loc">Location
+                  </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="ref">Reference
+                  </label>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="t">Time
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <h4>Format:</h4>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="format" id="tsv" checked>
+                    Tab-separated (TSV)
+                  </label>
+                </div>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="format" id="csv">
+                    Comma-separated (CSV)
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-success" onclick="return navMap.downloadView()">Download Data</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="collectionBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="collectionName"></h4>
+          </div>
+          <div class="modal-body">
+            <table class="table">
+              <tr>
+                <td style="border-top:0;"><strong>ID</strong></td>
+                <td id="collectionID" style="border-top:0;"></td>
+              </tr>
+              <tr>
+                <td><strong>Occurrences</strong></td>
+                <td id="collectionOccurrences"></td>
+              </tr>
+              <tr>
+                <td><strong>Formation</strong></td>
+                <td id="collectionFormation"></td>
+              </tr>
+              <tr>
+                <td><strong>Interval</strong></td>
+                <td id="collectionInterval"></td>
+              </tr>
+              <tr>
+                <td><strong>Location</strong> (latitude, longitude)</td>
+                <td id="collectionLocation"></td>
+              </tr>
+              <tr>
+                <td><strong>Reference</strong></td>
+                <td id="collectionReference"></td>
+              </tr>
+            </table>
+
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/typeahead.min.js"></script>
+    <script src="js/timescale.js"></script>
+    <script src="js/navMap.js"></script>
+    <script src="js/reconstruct.js"></script>
+  </body>
+</html>
