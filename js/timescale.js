@@ -7,11 +7,24 @@ d3.selection.prototype.moveToFront = function() {
   });
 };
 
+d3.selection.prototype.dblTap = function(callback) {
+  var last = 0;
+  return this.each(function() {
+    d3.select(this).on("touchstart", function(e) {
+        if ((d3.event.timeStamp - last) < 2000) {
+          return callback(e);
+        }
+        last = d3.event.timeStamp;
+    });
+  });
+}
+
+
 var timeScale = {
   "init": function(div) {
 
     var w = 960,
-        h = 180,
+        h = 130,
         x = d3.scale.linear().range([0, w - 5]),
         y = d3.scale.linear().range([0, h]),
         newX = 0.01;
@@ -47,7 +60,8 @@ var timeScale = {
         .append("g");
 
     var scale = time.append("g")
-      .attr("transform", "translate(0,175)");
+      .attr("id", "tickBar")
+      .attr("transform", "translate(0,125)");
 
     // Load the time scale data
    // d3.json("http://x/data1.1/intervals/list.json?order=older&max_ma=4000", function(error, result) {
@@ -69,8 +83,12 @@ var timeScale = {
           .sort(function(d) { d3.ascending(d); })
           .value(function(d) { return d.total; });
 
+      var last = 0;
+      
+      var rectGroup = time.append("g")
+        .attr("id", "rectGroup");
       // Create the rectangles
-      time.selectAll("rect")
+      rectGroup.selectAll("rect")
           .data(partition.nodes(data))
         .enter().append("svg:rect")
           .attr("x", function(d) { return x(d.x); })
@@ -88,6 +106,10 @@ var timeScale = {
           .on("dblclick", function(d) {
             if (d3.event.defaultPrevented) return;
             timeScale.goTo(d);
+          })
+          .dblTap(function(d) {
+            console.log("working?");
+            setTimeout(timeScale.goTo(d), 500);
           });
 
       var scaleBar = scale.selectAll("rect")
@@ -134,13 +156,16 @@ var timeScale = {
         .style("fill", "#777")
         .text("0");
 
+      var textGroup = time.append("g")
+        .attr("id", "textGroup");
+
       // Add the full labels
-      time.selectAll("fullName")
+      textGroup.selectAll("fullName")
           .data(partition.nodes(data))
         .enter().append("svg:text")
           .text(function(d) { return d.nam; })
           .attr("x", 1)
-          .attr("y", function(d) { return y(d.y) + 18;})
+          .attr("y", function(d) { return y(d.y) + 15;})
           .attr("width", function() { return this.getComputedTextLength(); })
           .attr("height", function(d) { return y(d.dy); })
           .attr("class", function(d) { return "fullName level" + d.lvl; })
@@ -154,14 +179,18 @@ var timeScale = {
           .on("dblclick", function(d) {
             if (d3.event.defaultPrevented) return;
             timeScale.goTo(d);
+          })
+          .dblTap(function(d) {
+            console.log("working?");
+            setTimeout(timeScale.goTo(d), 500);
           });
 
       // Add the abbreviations
-      time.selectAll("abbrevs")
+      textGroup.selectAll("abbrevs")
           .data(partition.nodes(data))
         .enter().append("svg:text")
           .attr("x", 1)
-          .attr("y", function(d) { return y(d.y) + 18; })
+          .attr("y", function(d) { return y(d.y) + 15; })
           .attr("width", 30)
           .attr("height", function(d) { return y(d.dy); })
           .text(function(d) { return d.abr || d.nam.charAt(0); })
@@ -175,7 +204,12 @@ var timeScale = {
           .on("dblclick", function(d) {
             if (d3.event.defaultPrevented) return;
             timeScale.goTo(d);
+          })
+          .dblTap(function(d) {
+            console.log("working?");
+            setTimeout(timeScale.goTo(d), 500);
           });
+
 
       // Position the labels for the first time
       timeScale.goTo(interval_hash[0]);
@@ -189,10 +223,11 @@ var timeScale = {
     }); // End PaleoDB json callback
 
     //attach window resize listener to the window
-    d3.select(window).on("resize", timeScale.sizeChange);
+    //d3.select(window).on("resize", timeScale.resize);
+    // Moved to navMap.js
 
     // Size time scale to window
-    timeScale.sizeChange();
+    timeScale.resize();
 
   }, // End time.init() 
 
@@ -244,6 +279,24 @@ var timeScale = {
     }
 
     return rectX + (rectWidth - labelWidth) / 2;
+  },
+
+  "labelY": function(d) {
+    var rectHeight = parseFloat(d3.select("#t" + d.oid).attr("height")), 
+        rectY = parseFloat(d3.select("#t" + d.oid).attr("y")),
+        labelHeight = d3.select("#l" + d.oid).node().getBBox().height,
+        scale = parseInt(d3.select(".timeScale").style("width"))/961;
+
+    return (rectY * 0.8) + ((rectHeight - labelHeight) / 2) + 8;
+  },
+
+  "labelAbbrY": function(d) {
+    var rectHeight = parseFloat(d3.select("#t" + d.oid).attr("height")), 
+        rectY = parseFloat(d3.select("#t" + d.oid).attr("y")),
+        labelHeight = d3.select("#l" + d.oid).node().getBBox().height,
+        scale = parseInt(d3.select(".timeScale").style("width"))/961;
+
+    return (rectY * 0.8) + (rectHeight - labelHeight) / 2;
   },
 
   "mapFilter": function(d) {
@@ -347,6 +400,7 @@ var timeScale = {
       .duration(10)
       .each(function(){ ++n; })
       .attr("x", function(d) { return timeScale.labelX(d); })
+      //.attr("y", function(d) { return timeScale.labelY(d); })
       .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
       .each("end", function() { if (!--n) { timeScale.labelLevels(d); }});
 
@@ -355,6 +409,7 @@ var timeScale = {
       .duration(300)
       .each(function(){ ++n; })
       .attr("x", function(d) { return timeScale.labelAbbrX(d); })
+      //.attr("y", function(d) { return timeScale.labelAbbrY(d); })
       .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
       .each("end", function() { 
         if (!--n) {
@@ -391,7 +446,7 @@ var timeScale = {
     d3.selectAll("rect").style("stroke", "#fff");
   },
 
-  "sizeChange": function() {
+  "resize": function() {
     d3.select(".timeScale g")
       .attr("transform", function() {
         return "scale(" + parseInt(d3.select(".timeScale").style("width"))/961 + ")";

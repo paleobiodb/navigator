@@ -26,8 +26,8 @@ var navMap = {
     stamenLabels = new L.TileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: attrib});
 
     map.on("moveend", function() {
-      d3.select("#window").style("display", "none");
-      d3.select("#windowCollapse").style("display", "none");
+     // d3.select("#window").style("display", "none");
+     // d3.select("#windowCollapse").style("display", "none");
       d3.select(".info").style("display", "none");
 
       var zoom = map.getZoom();
@@ -35,7 +35,8 @@ var navMap = {
         mapHeight = d3.select("#map").style("height");
         d3.select("#map").style("height", 0);
         d3.select("#svgMap").style("display", "block");
-        d3.selectAll("path").attr("d", path);
+        navMap.resizeSvgMap();
+       // d3.selectAll("path").attr("d", path);
       }
       navMap.refresh();
     });
@@ -56,7 +57,7 @@ var navMap = {
 
       d3.select("#svgMap").style("display", "none");
       d3.select("#map").style("height", function() {
-        return window.innerHeight * 0.60 + "px";
+        return window.innerHeight * 0.70 + "px";
       });
       map.invalidateSize();
 
@@ -83,6 +84,8 @@ var navMap = {
       .on("zoom",function() {
         if (d3.event.sourceEvent.wheelDelta > 0) {
           changeMaps(d3.mouse(this));
+        } else if (d3.event.sourceEvent.type == "touchmove") {
+          changeMaps([d3.event.sourceEvent.pageX, d3.event.sourceEvent.pageY]);
         }
       });
 
@@ -116,7 +119,9 @@ var navMap = {
       if (parseInt(d3.select("#map").style("height")) < 1) {
         d3.event.stopPropagation();
         d3.select("#svgMap").style("display", "none");
-        d3.select("#map").style("height", mapHeight);
+        d3.select("#map").style("height", function() {
+          return d3.select("#svgMap").select("svg").style("height");
+        });
         map.invalidateSize();
         map.setView([7,0], 3, {animate:false});
       } else {
@@ -133,10 +138,31 @@ var navMap = {
         var checked = document.getElementById("viewByTimeBox").checked;
         if (checked == true) {
           document.getElementById("viewByTimeBox").checked = false;
-          d3.select(".time").style("background-color", "");
+          d3.select(".time")
+            .style("box-shadow", "")
+            .style("color", "#000");
+
+          d3.select(".info")
+            .html("")
+            .style("display", "none");
+
+          if (document.getElementById("reconstructBox").checked) {
+            document.getElementById("reconstructBox").checked = false;
+            d3.select(".rotate")
+              .style("box-shadow", "")
+              .style("color", "#000");
+          }
+
         } else {
           document.getElementById("viewByTimeBox").checked = true;
-          d3.select(".time").style("background-color", "#ccc");
+          d3.select(".time")
+            .style("box-shadow", "inset 3px 0 0 #ff992c")
+            .style("color", "#ff992c");
+
+          d3.select(".info")
+            .html("Click a time interval to filter map")
+            .style("display", "block");
+
           filters.selectedInterval = '';
         }
       });
@@ -147,14 +173,44 @@ var navMap = {
             timeChecked = document.getElementById("viewByTimeBox").checked;
         if (rotateChecked == true) {
           document.getElementById("reconstructBox").checked = false;
-          d3.select(".rotate").style("background-color", "");
+          d3.select(".rotate")
+            .style("box-shadow", "")
+            .style("color", "#000");
+
+          d3.select(".info")
+            .html("")
+            .style("display", "none");
+
+          var rotateMapDisplay = d3.select("#reconstructMap").style("display");
+          if (rotateMapDisplay == "block") {
+            d3.select("#map").style("display", "block");
+            d3.select("#reconstructMap").style("display","none");
+            timeScale.unhighlight();
+            d3.select("#mapControlCover").style("display", "none");
+
+            d3.selectAll(".ctrlButton")
+              .style("color", "#000");
+
+            if(parseInt(d3.select("#map").style("height")) < 1) {
+              d3.select("#svgMap").style("display", "block");
+            }
+          }
+
         } else {
           if (timeChecked == false) {
             document.getElementById("viewByTimeBox").checked = true;
-            d3.select(".time").style("background-color", "#ccc");
+            d3.select(".time")
+              .style("box-shadow", "inset 3px 0 0 #ff992c")
+              .style("color", "#ff992c");
           }
           document.getElementById("reconstructBox").checked = true;
-          d3.select(".rotate").style("background-color", "#ccc");
+          d3.select(".rotate")
+            .style("box-shadow", "inset 3px 0 0 #ff992c")
+            .style("color", "#ff992c");
+
+          d3.select(".info")
+            .html("Click a time interval to reconstruct collections and plates")
+            .style("display", "block");
         }
       });
 
@@ -163,22 +219,37 @@ var navMap = {
         var visible = d3.select(".userToggler").style("display");
         if (visible == "block") {
           d3.select(".userToggler").style("display", "none");
+          d3.select(".userFilter")
+              .style("box-shadow", "")
+              .style("color", "");
         } else {
           d3.select(".userToggler").style("display", "block");
+          d3.select(".userFilter")
+              .style("box-shadow", "inset 3px 0 0 #ff992c")
+              .style("color", "#ff992c");
         }
       });
 
-    d3.select("#windowCollapse")
+    d3.select(".filt")
+      .on("click", function() {
+        var visible = d3.select(".filters").style("display");
+        if (visible == "block") {
+          d3.select(".filters").style("display", "none");
+        } else {
+          d3.select(".filters").style("display", "block");
+        }
+      })
+
+    /*d3.select("#windowCollapse")
       .on("click", function() {
         d3.select("#window").style("display", "none");
         d3.select("#windowCollapse").style("display", "none");
-      });
+      });*/
 
     var typeahead = $("#personInput").typeahead({
       name: 'contribs',
       prefetch: {
         url: 'http://testpaleodb.geology.wisc.edu/data1.1/people/list.json?name=%',
-        //url: 'contribs.json',
         filter: function(data) {
           return data.records;
         }
@@ -192,9 +263,17 @@ var navMap = {
     });
 
     //attach window resize listener to the window
-    d3.select(window).on("resize", navMap.resize);
+    d3.select(window).on("resize", function() {
+      navMap.resize();
+      reconstructMap.resize();
+      timeScale.resize();
+    });
+
+    reconstructMap.resize();
+    timeScale.resize();
 
     navMap.refresh("reset");
+    navMap.resizeSvgMap();
     setTimeout(navMap.resize, 100);
     setTimeout(navMap.resize, 100);
   },
@@ -219,6 +298,7 @@ var navMap = {
     }
   },
   "refresh": function(reset) {
+    navMap.showLoading();
     var filtered = navMap.checkFilters();
     // Check which map is displayed - if hammer, skip the rest
     if (parseInt(d3.select("#map").style("height")) < 1) {
@@ -267,7 +347,6 @@ var navMap = {
     prevsw = sw;
     prevne = ne;
     prevzoom = zoom;
-
     // Make sure bad requests aren't made
     sw.lng = (sw.lng < -180) ? -180 : sw.lng;
     sw.lat = (sw.lat < -90) ? -90 : sw.lat;
@@ -347,10 +426,12 @@ var navMap = {
     } else {
       points.attr("r", function(d) { return scale(d.nco)*navMap.multiplier(zoom); });
     }
+    
+    if (d3.select("#reconstructMap").style("display") == "none") {
+      navMap.hideLoading();
+    }
   },
   "refreshHammer": function(data) {
-    d3.selectAll(".bins").remove();
-
     var scale = d3.scale.linear()
       .domain([1, 4240])
       .range([4, 15]);
@@ -369,9 +450,41 @@ var navMap = {
     var hammer = d3.select("#svgMap").select("svg").select("g"),
         zoom = 2;
 
-    hammer.selectAll(".circle")
+    var bins = hammer.selectAll(".bins")
       .data(data.records)
-      .enter().append("circle")
+      .attr("class", "bins")
+      .style("fill", function(d) { return (interval_hash[d.cxi]) ? interval_hash[d.cxi].col : "#000"; })
+      .attr("id", function(d) { return "p" + d.cxi; })
+      .attr("r", function(d) { return scale(d.nco)*navMap.multiplier(zoom); })
+      .attr("cx", function(d) {
+        var coords = projection([d.lng, d.lat]);
+        return coords[0];
+      })
+      .attr("cy", function(d) {
+        var coords = projection([d.lng, d.lat]);
+        return coords[1];
+      })
+      .on("mouseover", function(d) {
+        d3.select(".info")
+          .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+          .style("display", "block");
+        timeScale.highlight(this);
+      })
+      .on("click", function(d) {
+        d3.select(".info")
+          .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+          .style("display", "block");
+        timeScale.highlight(this);
+        navMap.openBinModal(d);
+      })
+      .on("mouseout", function(d) {
+        d3.select(".info")
+          .html("")
+          .style("display", "none");
+        timeScale.unhighlight()
+      });
+
+    bins.enter().append("circle")
       .attr("class", "bins")
       .style("fill", function(d) { return (interval_hash[d.cxi]) ? interval_hash[d.cxi].col : "#000"; })
       .attr("id", function(d) { return "p" + d.cxi; })
@@ -403,13 +516,16 @@ var navMap = {
         timeScale.unhighlight()
       });
 
+    bins.exit().remove();
+    if (!reconstructing) {
+      navMap.hideLoading();
+    }
   },
   "drawBins": function(data, level, zoom) {
     var g = d3.select("#binHolder");
     // Add the bins to the map
-    var points = g.selectAll(".circle")
+    var points = g.selectAll(".bins")
       .data(data.records)
-      .enter().append("circle")
       .attr("class", "bins")
       .style("fill", function(d) { return (interval_hash[d.cxi]) ? interval_hash[d.cxi].col : "#000"; })
       .attr("id", function(d) { return "p" + d.cxi; })
@@ -424,6 +540,7 @@ var navMap = {
           .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
           .style("display", "block");
         timeScale.highlight(this);
+        navMap.openBinModal(d);
       })
       .on("mouseout", function(d) {
         d3.select(".info")
@@ -439,13 +556,43 @@ var navMap = {
         }
       });
 
+    points.enter().append("circle")
+      .attr("class", "bins")
+      .style("fill", function(d) { return (interval_hash[d.cxi]) ? interval_hash[d.cxi].col : "#000"; })
+      .attr("id", function(d) { return "p" + d.cxi; })
+      .on("mouseover", function(d) {
+        d3.select(".info")
+          .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+          .style("display", "block");
+        timeScale.highlight(this);
+      })
+      .on("click", function(d) {
+        d3.select(".info")
+          .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+          .style("display", "block");
+        timeScale.highlight(this);
+        navMap.openBinModal(d);
+      })
+      .on("mouseout", function(d) {
+        d3.select(".info")
+          .html("")
+          .style("display", "none");
+        timeScale.unhighlight()
+      })
+      .on("dblclick", function(d) {
+        if (level == 1) {
+          map.setView(d.LatLng, 6);
+        } else if (level == 2) {
+          map.setView(d.LatLng, 8);
+        }
+      });
+
+    points.exit().remove();
+
     // Update the SVG positioning
     navMap.redrawPoints(points);
   },
   "drawCollections": function(source, level, zoom) {
-    d3.selectAll(".bins").remove();
-    d3.selectAll(".clusters").remove();
-
     var g = d3.select("#binHolder");
 
     // Make an AJAX request to PaleoDB
@@ -523,7 +670,6 @@ var navMap = {
 
       var clusters = g.selectAll(".clusters")
         .data(clusters)
-        .enter().append("circle")
         .attr("class", "clusters")
         .attr("id", function(d) { return "p" + d.members[0].cxi; })
         .style("fill", function(d) { return interval_hash[d.cxi].col; })
@@ -540,7 +686,8 @@ var navMap = {
           timeScale.unhighlight();
         })
         .on("click", function(d) {
-          d3.select("#clusterTable")
+          navMap.openStackedCollectionModal(d);
+          /*d3.select("#clusterTable")
             .html("");
 
           d3.select("#window")
@@ -574,12 +721,68 @@ var navMap = {
                 .style("display", "block");
               navMap.openCollectionModal(e);
               timeScale.highlight(e);
-            });
+            });*/
         });
+      
+      clusters.enter().append("circle")
+        .attr("class", "clusters")
+        .attr("id", function(d) { return "p" + d.members[0].cxi; })
+        .style("fill", function(d) { return interval_hash[d.cxi].col; })
+        .on("mouseover", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.members.length + " collections</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+        })
+        .on("mouseout", function(d) {
+         /* d3.select(".info")
+            .html("")
+            .style("display", "none");*/
+          timeScale.unhighlight();
+        })
+        .on("click", function(d) {
+          navMap.openStackedCollectionModal(d);
+         /* d3.select("#clusterTable")
+            .html("");
+
+          d3.select("#window")
+            .style("display", "block");
+
+          d3.select("#windowCollapse")
+            .style("display", "block");
+
+          d3.select(".info")
+            .html(d.members.length + " collections<br>" + interval_hash[d.cxi].nam + "<br>" + d.noc + " occurrences")
+            .style("display", "block");
+
+          d3.select("#clusterTable")
+            .append("tbody")
+            .selectAll("tr")
+            .data(d.members)
+           .enter().append("tr")
+            .html(function(e) { return "<td>" + e.nam + "</td>"})
+            .on("mouseover", function(e) {
+              d3.select(".info")
+                .html("<strong>" + e.nam + "</strong><br>" + e.noc + " occurrences")
+                .style("display", "block");
+              timeScale.highlight(e);
+            })
+            .on("mouseout", function(e) {
+              timeScale.unhighlight();
+            })
+            .on("click", function(e) {
+              d3.select(".info")
+                .html("<strong>" + e.nam + "</strong><br>" + e.noc + " occurrences")
+                .style("display", "block");
+              navMap.openCollectionModal(e);
+              timeScale.highlight(e);
+            });*/
+        });
+      
+      clusters.exit().remove();
 
       var points = g.selectAll(".circle")
         .data(data.records)
-        .enter().append("circle")
         .attr("id", function(d) { return "p" + d.cxi })
         .attr("class", "bins")
         .style("fill", function(d) { return (interval_hash[d.cxi]) ? interval_hash[d.cxi].col : "#000"; })
@@ -603,10 +806,37 @@ var navMap = {
           timeScale.unhighlight();
         });
 
+      points.enter().append("circle")
+        .attr("id", function(d) { return "p" + d.cxi })
+        .attr("class", "bins")
+        .style("fill", function(d) { return (interval_hash[d.cxi]) ? interval_hash[d.cxi].col : "#000"; })
+        .on("mouseover", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+        })
+        .on("click", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+          navMap.openCollectionModal(d);
+        })
+        .on("mouseout", function(d) {
+          /*d3.select(".info")
+            .html("")
+            .style("display", "none");*/
+          timeScale.unhighlight();
+        });
+
+      points.exit().remove();
+
       navMap.redrawPoints(points, clusters);
     });
   },
   "openCollectionModal": function(d) {
+   // var id = (d.properties.oid) ? d.properties.oid :  d.oid;
     d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + d.oid + "&show=ref", function(err, data) {
       var collection = data.records[0];
       d3.select("#collectionName").html(collection.nam);
@@ -620,6 +850,49 @@ var navMap = {
 
       $("#collectionBox").modal();
     });
+  },
+  "openBinModal": function(d) {
+    var id = (d.properties) ? d.properties.oid : d.oid;
+    var url = "http://testpaleodb.geology.wisc.edu/data1.1/colls/list.json?bin_id=" +id;
+    url = navMap.parseURL(url);
+    url += "&show=ref,loc,time"
+    d3.json(url, function(err, data) {
+      data.records.forEach(function(d) {
+        d.interval = interval_hash[d.cxi].nam;
+        d.fmm = (d.fmm) ? d.fmm : "Unknown";
+      });
+
+      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval</strong></td><td>{{interval}}</td></tr><tr><td><strong>Location</strong> (latitude, longitude)</td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
+
+      var output = Mustache.render(template, data);
+      d3.select("#binID").html("Bin " + id);
+      d3.select("#accordion").html(output);
+
+      $("#collectionModal").modal();
+    });
+  },
+  "openStackedCollectionModal": function(data) {
+    data.members.forEach(function(d) {
+      d.interval = interval_hash[d.cxi].nam;
+      d.fmm = (d.fmm) ? d.fmm : "Unknown";
+    });
+
+    var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval</strong></td><td>{{interval}}</td></tr><tr><td><strong>Location</strong> (latitude, longitude)</td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
+
+    var output = Mustache.render(template, data);
+
+    d3.select("#binID").html("Collections at [" + data.lat + ", " + data.lng + "]");
+    d3.select("#accordion").html(output);
+
+    $(".collectionCollapse").on("show.bs.collapse", function(d) {
+      var id = d.target.id;
+      id = id.replace("collapse", "");
+      d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
+        $("#ref" + id).html(data.records[0].ref);
+      });
+    });
+
+    $("#collectionModal").modal();
   },
   "refreshDateline": function(lvl) {
     var bounds = map.getBounds(),
@@ -710,9 +983,15 @@ var navMap = {
       }
     }
     if (count > 0) {
-      d3.select(".filters").style("display", "block");
+     // d3.select(".filters").style("display", "block");
+      d3.select(".filt")
+        .style("box-shadow", "inset 3px 0 0 #ff992c")
+        .style("color", "#ff992c");
     } else {
-      d3.select(".filters").style("display", "none");
+      //d3.select(".filters").style("display", "none");
+      d3.select(".filt")
+        .style("box-shadow", "")
+        .style("color", "");
     }
     return url;
   },
@@ -726,10 +1005,18 @@ var navMap = {
       }
     }
     if (count > 0) {
-      d3.select(".filters").style("display", "block");
+      //d3.select(".filters").style("display", "block");
+      d3.select("#filterTitle").html("Filters");
+      d3.select(".filt")
+        .style("box-shadow", "inset 3px 0 0 #ff992c")
+        .style("color", "#ff992c");
       return true;
     } else {
-      d3.select(".filters").style("display", "none");
+     // d3.select(".filters").style("display", "none");
+      d3.select("#filterTitle").html("No filters selected");
+      d3.select(".filt")
+        .style("box-shadow", "")
+        .style("color", "");
       return false;
     }
   },
@@ -743,7 +1030,7 @@ var navMap = {
   "multiplier": function(zoom) {
     switch(zoom) {
       case 2:
-        return 0.75;
+        return 0.70;
         break; 
       case 3:
         return 1;
@@ -765,28 +1052,16 @@ var navMap = {
         break;
     }
   },
-  "resize": function() {
-    if (parseInt(d3.select("#map").style("height")) > 1) { 
-      d3.select("#map")
-        .style("height", function(d) {
-          return window.innerHeight * 0.60 + "px";
-        });
-      map.invalidateSize();
-    }
-    
-    d3.select("#svgMap").select("svg")
-      .select("g")
-      .attr("transform", "scale(" + window.innerHeight/850 + ")");
-
+  "resizeSvgMap": function() {
     var g = d3.select("#svgMap").select("svg");
 
     d3.select("#svgMap").select("svg")
       .select("g")
       .attr("transform", function() {
         if ((window.innerWidth - g.node().getBBox().width) / 2 > 20) {
-          return "scale(" + window.innerHeight/850 + ")translate(" + (window.innerWidth - g.node().getBBox().width) / 2 + ",0)";
+          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - g.node().getBBox().width) / 2 + ",0)";
         } else {
-          var svgHeight = window.innerHeight * 0.60,
+          var svgHeight = window.innerHeight * 0.70,
               mapHeight = (window.innerWidth/960 ) * 500;
           return "scale(" + window.innerWidth/960 + ")translate(0," + (svgHeight - mapHeight) + ")";
         }
@@ -794,24 +1069,53 @@ var navMap = {
 
     d3.select("#svgMap").select("svg")
       .style("height", function(d) {
-        return window.innerHeight * 0.60 + "px";
+        return window.innerHeight * 0.70 + "px";
+      })
+      .style("width", function(d) {
+        return window.innerWidth + "px";
+      });
+  },
+  "resize": function() {
+    if (parseInt(d3.select("#map").style("height")) > 1) { 
+      d3.select("#map")
+        .style("height", function(d) {
+          return window.innerHeight * 0.70 + "px";
+        });
+      map.invalidateSize();
+    }
+
+    var g = d3.select("#svgMap").select("svg");
+
+    d3.select("#svgMap").select("svg")
+      .select("g")
+      .attr("transform", function() {
+        if ((window.innerWidth - g.node().getBBox().width) / 2 > 20) {
+          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - g.node().getBBox().width) / 2 + ",0)";
+        } else {
+          var svgHeight = window.innerHeight * 0.70,
+              mapHeight = (window.innerWidth/960 ) * 500;
+          return "scale(" + window.innerWidth/960 + ")translate(0," + (svgHeight - mapHeight) + ")";
+        }
+      });
+
+    d3.select("#svgMap").select("svg")
+      .style("height", function(d) {
+        return window.innerHeight * 0.70 + "px";
       })
       .style("width", function(d) {
         return window.innerWidth + "px";
       });
 
-
     d3.select("#infoContainer")
       .style("height", function() {
-        return window.innerHeight * 0.60 + "px";
+        return window.innerHeight * 0.70 + "px";
       });
 
-    d3.select("#window")
+   /* d3.select("#window")
       .style("height", function(d) {
-        return parseInt(d3.select("#mapContainer").style("height")) - 20 + "px";
-      });
+        return parseInt(d3.select("#svgMap").select("svg").style("height")) - 15 + "px";
+      });*/
 
-    timeScale.sizeChange();
   },
   "refreshFilterHandlers": function() {
     d3.selectAll(".removeFilter").on("click", function() {
@@ -827,17 +1131,17 @@ var navMap = {
     switch(type){
       case "selectedInterval":
         d3.select("#selectedInterval")
-          .style("display", "inline-block")
+          .style("display", "block")
           .html(filters.selectedInterval + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
         break;
       case "personFilter":
         d3.select("#personFilter")
-          .style("display", "inline-block")
+          .style("display", "block")
           .html(filters.personFilter.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
         break;
       case "taxon":
         d3.select("#taxon")
-          .style("display", "inline-block")
+          .style("display", "block")
           .html(filters.taxon.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
        // url += '&base_id=' + filters.taxon.oid;
         break;
@@ -861,6 +1165,9 @@ var navMap = {
       filters.personFilter.name = (person.name) ? person.name : person.nam;
       navMap.updateFilterList("personFilter");
       d3.select(".userToggler").style("display", "none");
+      d3.select(".userFilter")
+          .style("box-shadow", "")
+          .style("color", "");
       navMap.refresh("reset");
     }
   },
@@ -905,6 +1212,12 @@ var navMap = {
     url = url.substring(0, url.length - 1);
     console.log(url);
    // window.open(url);
+  },
+  "showLoading": function() {
+    d3.select("#loading").style("display", "block");
+  },
+  "hideLoading": function() {
+    d3.select("#loading").style("display", "none");
   }
 }
 navMap.init();

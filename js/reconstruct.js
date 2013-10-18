@@ -31,17 +31,25 @@ var reconstructMap = {
       .attr("class", "fill")
       .attr("xlink:href", "#sphere");
 
+    reconstructing = false;
+
     //attach window resize listener to the window
-    d3.select(window).on("resize", reconstructMap.resize);
-    reconstructMap.resize();
+    /*d3.select(window).on("resize", reconstructMap.resize);
+    reconstructMap.resize();*/
+    // Moved to navMap.js
 
     d3.select("#mapSwitch")
       .on("click", function() {
         d3.select("#map").style("display", "block");
-        d3.select(".filters").style("display", "block");
-        d3.select("#mapControls").style("display", "block");
+        //d3.select(".filters").style("display", "block");
+        //d3.select("#mapControls").style("display", "block");
         d3.select("#reconstructMap").style("display","none");
         timeScale.unhighlight();
+        d3.select("#mapControlCover").style("display", "none");
+
+        d3.selectAll(".ctrlButton")
+          .style("color", "#000")
+          .style("cursor", "pointer");
 
         if(parseInt(d3.select("#map").style("height")) < 1) {
           d3.select("#svgMap").style("display", "block");
@@ -50,6 +58,8 @@ var reconstructMap = {
   
   },
   "rotate": function(interval) {
+    reconstructing = true;
+    navMap.showLoading();
     if (window.navMap && parseInt(d3.select("#map").style("height")) > 0) {
       reconstructMap.addBBox(interval.mid);
     } 
@@ -59,16 +69,18 @@ var reconstructMap = {
     var scale = d3.scale.linear()
       .domain([1, 4140])
       .range([4, 30]);
-    
-    if (interval.mid < 201) {
-      d3.select("#reconstructMapReference").html("<p>Seton, M., R.D. Müller, S. Zahirovic, C. Gaina, T.H. Torsvik, G. Shephard, A. Talsma, M. Gurnis, M. Turner, S. Maus, M. Chandler. 2012. Global continental and ocean basin reconstructions since 200 Ma. <i>Earth-Science Reviews </i>113:212-270.</p>");
-    } else {
-      d3.select("#reconstructMapReference").html("<p>Wright, N. S. Zahirovic, R.D. Müller, M. Seton. 2013. Towards community-driven paleogeographic reconstructions: intergrating open-access paleogeographic and paleobiology data with plate tectonics. <i>Biogeosciences </i>10:1529-1541.</p>");
-    }
-    
-    d3.select('#interval').text(interval.nam);
-    d3.select('#age').text(interval.mid + " Ma");
 
+    d3.select('#interval').text(interval.nam);
+    d3.select("#rotationInterval").html(interval.nam);
+
+    d3.select('#age').text("(" + interval.mid + " Ma)");
+    d3.select("#rotationYear").html(interval.mid + " Ma");
+
+    if (interval.mid < 201) {
+      d3.select("#rotationReference").html("<p>Seton, M., R.D. Müller, S. Zahirovic, C. Gaina, T.H. Torsvik, G. Shephard, A. Talsma, M. Gurnis, M. Turner, S. Maus, M. Chandler. 2012. Global continental and ocean basin reconstructions since 200 Ma. <i>Earth-Science Reviews </i>113:212-270.</p>");
+    } else {
+      d3.select("#rotationReference").html("<p>Wright, N. S. Zahirovic, R.D. Müller, M. Seton. 2013. Towards community-driven paleogeographic reconstructions: intergrating open-access paleogeographic and paleobiology data with plate tectonics. <i>Biogeosciences </i>10:1529-1541.</p>");
+    }
     var svg = d3.select("#reconstructGroup")
         .append("g")
         .attr("id", "reconstructContent");
@@ -106,10 +118,20 @@ var reconstructMap = {
           // Switch to reconstruct map now
 
           d3.select("#map").style("display", "none");
-          d3.select("#mapControls").style("display", "none");
+          //d3.select("#mapControls").style("display", "none");
           d3.select(".filters").style("display", "none");
+          //d3.select("#window").style("display", "none");
           d3.select("#svgMap").style("display", "none");
+          d3.select("#mapControlCover").style("display", "block");
           d3.select("#reconstructMap").style("display", "block");
+          d3.selectAll(".ctrlButton")
+            .style("color", "#777")
+            .style("cursor", "not-allowed");
+          reconstructMap.resize();
+
+          d3.select(".info")
+            .html('')
+            .style("display", "none");
 
         d3.json("rotatedIntervals/" + filename + ".json", function(err, result) {
           var keys = Object.keys(result.objects),
@@ -149,13 +171,15 @@ var reconstructMap = {
               d3.select(".info")
                 .html("Bin ID: " + d.properties.oid + "<br>Number of collections: " + d.properties.nco + "<br>Number of occurrences: " + d.properties.noc)
                 .style("display", "block");
+              navMap.openBinModal(d);
             })
             .on("mouseout", function(d) {
               d3.select(".info")
                 .html("")
                 .style("display", "none");
             });
-          
+          reconstructing = false;
+          navMap.hideLoading();
         }); // End plate callback
       }); // End rotated points callback
     }); // end nonrotated point callback
@@ -231,16 +255,34 @@ var reconstructMap = {
       });
   },
   "resize": function() {
-    d3.select("#reconstructGroup").attr("transform", "scale(" + window.innerWidth/1200 + ")translate(220,100)");
+    var g = d3.select("#reconstructMap").select("svg");
+
+    d3.select("#reconstructGroup")
+      .attr("transform", function() {
+        if ((window.innerWidth - g.node().getBBox().width) / 2 > 20) {
+          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - g.node().getBBox().width) / 2 + ",0)";
+        } else {
+          var svgHeight = window.innerHeight * 0.7,
+              mapHeight = (window.innerWidth/960 ) * 500;
+          return "scale(" + window.innerWidth/960 + ")translate(0," + (svgHeight - mapHeight) + ")";
+        }
+      });
+
     d3.select("#reconstructMap").select("svg")
       .style("height", function(d) {
-        return window.innerWidth * 0.52 + "px";
+        return window.innerHeight * 0.70 + "px";
       })
       .style("width", function(d) {
         return window.innerWidth + "px";
       });
 
-    timeScale.sizeChange();
+
+    d3.select("#reconstructMapRefContainer")
+      .style("height", function() {
+        return parseInt(d3.select("#reconstructMap").style("height")) - 1 + "px";
+      });
+
+    //timeScale.sizeChange();
   }
 }
 reconstructMap.init();
