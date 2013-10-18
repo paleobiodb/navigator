@@ -727,7 +727,7 @@ var navMap = {
       clusters.enter().append("circle")
         .attr("class", "clusters")
         .attr("id", function(d) { return "p" + d.members[0].cxi; })
-        .style("fill", function(d) { return interval_hash[d.cxi].col; })
+        .style("fill", function(d) { return (interval_hash[d.cxi]) ? interval_hash[d.cxi].col : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
             .html("<strong>" + d.members.length + " collections</strong><br>" + d.noc + " occurrences")
@@ -858,7 +858,7 @@ var navMap = {
     url += "&show=ref,loc,time"
     d3.json(url, function(err, data) {
       data.records.forEach(function(d) {
-        d.interval = interval_hash[d.cxi].nam;
+        d.interval = (interval_hash[d.cxi]) ? interval_hash[d.cxi].nam : "Unknown";
         d.fmm = (d.fmm) ? d.fmm : "Unknown";
       });
 
@@ -873,7 +873,7 @@ var navMap = {
   },
   "openStackedCollectionModal": function(data) {
     data.members.forEach(function(d) {
-      d.interval = interval_hash[d.cxi].nam;
+      d.interval = (interval_hash[d.cxi]) ? interval_hash[d.cxi].nam : "Unknown";
       d.fmm = (d.fmm) ? d.fmm : "Unknown";
     });
 
