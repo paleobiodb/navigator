@@ -48,8 +48,7 @@ var reconstructMap = {
         d3.select("#mapControlCover").style("display", "none");
 
         d3.selectAll(".ctrlButton")
-          .style("color", "#000")
-          .style("cursor", "pointer");
+          .style("color", "#000");
 
         if(parseInt(d3.select("#map").style("height")) < 1) {
           d3.select("#svgMap").style("display", "block");
@@ -125,8 +124,7 @@ var reconstructMap = {
           d3.select("#mapControlCover").style("display", "block");
           d3.select("#reconstructMap").style("display", "block");
           d3.selectAll(".ctrlButton")
-            .style("color", "#777")
-            .style("cursor", "not-allowed");
+            .style("color", "#777");
           reconstructMap.resize();
 
           d3.select(".info")
