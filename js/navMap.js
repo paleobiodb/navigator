@@ -415,7 +415,7 @@ var navMap = {
         navMap.drawBins(data, 2, zoom);
       });
     } else {
-      var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';
+      var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
 
       if (sw.lng < -180 || ne.lng > 180) {
         navMap.refreshDateline(3);
@@ -861,16 +861,18 @@ var navMap = {
   },
   "openCollectionModal": function(d) {
    // var id = (d.properties.oid) ? d.properties.oid :  d.oid;
-    d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + d.oid + "&show=ref", function(err, data) {
-      var collection = data.records[0];
-      d3.select("#collectionName").html(collection.nam);
-      d3.select("#collectionID").html(collection.oid);
-      d3.select("#collectionOccurrences").html(collection.noc);
-      var formation = (collection.fmm) ? collection.fmm : "Unknown";
-      d3.select("#collectionFormation").html(formation);
-      d3.select("#collectionInterval").html(interval_hash[collection.cxi].nam);
-      d3.select("#collectionLocation").html(collection.lat + ", " + collection.lng);
-      d3.select("#collectionReference").html(collection.ref);
+    d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
+
+      data.records.forEach(function(d) {
+        d.fmm = (d.fmm) ? d.fmm : "Unknown";
+      });
+
+      var template = '{{#records}}<table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Time</strong></td><td>{{eag}} Ma - {{lag}} Ma</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{ref}}</td></tr></table>{{/records}}';
+
+      var output = Mustache.render(template, data);
+      $("#collectionName").html(data.records[0].nam);
+
+      $("#collectionModalBody").html(output);
 
       $("#collectionBox").modal();
     });
@@ -886,7 +888,7 @@ var navMap = {
         d.fmm = (d.fmm) ? d.fmm : "Unknown";
       });
 
-      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval</strong></td><td>{{interval}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
+      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>time</strong></td><td>{{eag}} Ma - {{lag}} Ma</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
 
       var output = Mustache.render(template, data);
       d3.select("#binID").html("Bin " + id);
@@ -901,7 +903,7 @@ var navMap = {
       d.fmm = (d.fmm) ? d.fmm : "Unknown";
     });
 
-    var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval</strong></td><td>{{interval}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
+    var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Time</strong></td><td>{{eag}} Ma - {{lag}} Ma</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
 
     var output = Mustache.render(template, data);
 
