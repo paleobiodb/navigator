@@ -122,7 +122,9 @@ var reconstructMap = {
 
           // Switch to reconstruct map now
 
-          d3.select("#map").style("display", "none");
+          if(parseInt(d3.select("#map").style("height")) > 1) {
+            d3.select("#map").style("display", "none");
+          }
           //d3.select("#mapControls").style("display", "none");
           d3.select(".filters").style("display", "none");
           //d3.select("#window").style("display", "none");

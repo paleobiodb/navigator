@@ -183,7 +183,6 @@ var navMap = {
 
           var rotateMapDisplay = d3.select("#reconstructMap").style("display");
           if (rotateMapDisplay == "block") {
-            d3.select("#map").style("display", "block");
             d3.select("#reconstructMap").style("display","none");
             timeScale.unhighlight();
             d3.select("#mapControlCover").style("display", "none");
@@ -193,6 +192,8 @@ var navMap = {
 
             if(parseInt(d3.select("#map").style("height")) < 1) {
               d3.select("#svgMap").style("display", "block");
+            } else {
+              d3.select("#map").style("display", "block");
             }
           }
 
@@ -214,9 +215,12 @@ var navMap = {
 
           var rotateMapDisplay = d3.select("#reconstructMap").style("display");
           if (rotateMapDisplay == "none") {
-            d3.select("#map").style("height", 0);
+            if(parseInt(d3.select("#map").style("height")) > 1) {
+              d3.select("#map").style("display", "none");
+            }
             d3.select("#svgMap").style("display", "none");
             d3.select("#reconstructMap").style("display","block");
+            d3.select(".filters").style("display", "none");
             reconstructMap.resize();
             d3.select("#mapControlCover").style("display", "block");
 
