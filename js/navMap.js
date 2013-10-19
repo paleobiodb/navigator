@@ -211,6 +211,26 @@ var navMap = {
           d3.select(".info")
             .html("Click a time interval to reconstruct collections and plates")
             .style("display", "block");
+
+          var rotateMapDisplay = d3.select("#reconstructMap").style("display");
+          if (rotateMapDisplay == "none") {
+            d3.select("#map").style("height", 0);
+            d3.select("#svgMap").style("display", "none");
+            d3.select("#reconstructMap").style("display","block");
+            reconstructMap.resize();
+            d3.select("#mapControlCover").style("display", "block");
+
+            d3.selectAll(".ctrlButton")
+              .style("color", "#777");
+
+            if (filters.exist.selectedInterval) {
+              reconstructMap.rotate(filters.selectedInterval);
+            } else {
+              if (currentReconstruction.length < 1) {
+                alert("Please click a time interval below to build a reconstruction map");
+              }
+            }
+          }
         }
       });
 
@@ -305,7 +325,7 @@ var navMap = {
       var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999';
       if (filtered) {
         if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
-          url = "collections/" + filters.selectedInterval.split(' ').join('_') + ".json";
+          url = "collections/" + filters.selectedInterval.nam.split(' ').join('_') + ".json";
         } else {
           url += "&level=2";
           url = navMap.parseURL(url);
@@ -969,7 +989,7 @@ var navMap = {
         if (filters.exist[key] == true) {
           switch(key) {
             case "selectedInterval":
-              url += '&interval=' + filters.selectedInterval;
+              url += '&interval=' + filters.selectedInterval.nam;
               break;
             case "personFilter":
               url += '&person_no=' + filters.personFilter.id;
@@ -1058,8 +1078,20 @@ var navMap = {
     d3.select("#svgMap").select("svg")
       .select("g")
       .attr("transform", function() {
-        if ((window.innerWidth - g.node().getBBox().width) / 2 > 20) {
-          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - g.node().getBBox().width) / 2 + ",0)";
+        /* Firefox hack via https://github.com/wout/svg.js/commit/ce1eb91fac1edc923b317caa83a3a4ab10e7c020 */
+        var box;
+        try {
+          box = g.node().getBBox()
+        } catch(err) {
+          box = {
+            x: g.node().clientLeft,
+            y: g.node().clientTop,
+            width: g.node().clientWidth,
+            height: g.node().clientHeight
+          }
+        }
+        if ((window.innerWidth - box.width) / 2 > 20) {
+          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - box.width) / 2 + ",0)";
         } else {
           var svgHeight = window.innerHeight * 0.70,
               mapHeight = (window.innerWidth/960 ) * 500;
@@ -1089,8 +1121,20 @@ var navMap = {
     d3.select("#svgMap").select("svg")
       .select("g")
       .attr("transform", function() {
-        if ((window.innerWidth - g.node().getBBox().width) / 2 > 20) {
-          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - g.node().getBBox().width) / 2 + ",0)";
+        /* Firefox hack via https://github.com/wout/svg.js/commit/ce1eb91fac1edc923b317caa83a3a4ab10e7c020 */
+        var box;
+        try {
+          box = g.node().getBBox()
+        } catch(err) {
+          box = {
+            x: g.node().clientLeft,
+            y: g.node().clientTop,
+            width: g.node().clientWidth,
+            height: g.node().clientHeight
+          }
+        }
+        if ((window.innerWidth - box.width) / 2 > 20) {
+          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - box.width) / 2 + ",0)";
         } else {
           var svgHeight = window.innerHeight * 0.70,
               mapHeight = (window.innerWidth/960 ) * 500;
@@ -1132,7 +1176,7 @@ var navMap = {
       case "selectedInterval":
         d3.select("#selectedInterval")
           .style("display", "block")
-          .html(filters.selectedInterval + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
+          .html(filters.selectedInterval.nam + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
         break;
       case "personFilter":
         d3.select("#personFilter")
@@ -1229,7 +1273,7 @@ $("#saveBox").on('show.bs.modal', function() {
       if (filters.exist[key] == true) {
         switch(key) {
           case "selectedInterval":
-            $("#filterList").append("<li>Interval - " + filters.selectedInterval + "</li>");
+            $("#filterList").append("<li>Interval - " + filters.selectedInterval.nam + "</li>");
             break;
           case "personFilter":
             $("#filterList").append("<li>Contributor - " + filters.personFilter.name + "</li>");

@@ -64,8 +64,8 @@ var timeScale = {
       .attr("transform", "translate(0,125)");
 
     // Load the time scale data
-   // d3.json("http://x/data1.1/intervals/list.json?order=older&max_ma=4000", function(error, result) {
-    d3.json("js/intervals.json", function(error, result) {
+    d3.json("http://testpaleodb.geology.wisc.edu/data1.1/intervals/list.json?order=older&max_ma=4000", function(error, result) {
+   // d3.json("js/intervals.json", function(error, result) {
       var data = { oid: 0, col: "#000000", nam: "Geologic Time", children: [] };
           interval_hash = { 0: data };
       for(var i=0; i < result.records.length; i++) {
@@ -305,7 +305,7 @@ var timeScale = {
         reconstructCheck = document.getElementById('reconstructBox').checked;
 
     if (timeFilterCheck) {
-      filters.selectedInterval = d.nam;
+      filters.selectedInterval = d;
       filters.exist.selectedInterval = true;
       navMap.updateFilterList("selectedInterval");
       if (reconstructCheck) {

@@ -31,7 +31,8 @@ var reconstructMap = {
       .attr("class", "fill")
       .attr("xlink:href", "#sphere");
 
-    reconstructing = false;
+    reconstructing = false,
+    currentReconstruction = '';
 
     //attach window resize listener to the window
     /*d3.select(window).on("resize", reconstructMap.resize);
@@ -57,7 +58,12 @@ var reconstructMap = {
   
   },
   "rotate": function(interval) {
+    if (interval.nam == currentReconstruction) {
+      return;
+    }
     reconstructing = true;
+    currentReconstruction = interval.nam;
+
     navMap.showLoading();
     if (window.navMap && parseInt(d3.select("#map").style("height")) > 0) {
       reconstructMap.addBBox(interval.mid);
@@ -257,8 +263,20 @@ var reconstructMap = {
 
     d3.select("#reconstructGroup")
       .attr("transform", function() {
-        if ((window.innerWidth - g.node().getBBox().width) / 2 > 20) {
-          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - g.node().getBBox().width) / 2 + ",0)";
+        /* Firefox hack via https://github.com/wout/svg.js/commit/ce1eb91fac1edc923b317caa83a3a4ab10e7c020 */
+        var box;
+        try {
+          box = g.node().getBBox()
+        } catch(err) {
+          box = {
+            x: g.node().clientLeft,
+            y: g.node().clientTop,
+            width: g.node().clientWidth,
+            height: g.node().clientHeight
+          }
+        }
+        if ((window.innerWidth - box.width) / 2 > 20) {
+          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - box.width) / 2 + ",0)";
         } else {
           var svgHeight = window.innerHeight * 0.7,
               mapHeight = (window.innerWidth/960 ) * 500;
