@@ -78,6 +78,7 @@ var timeScale = {
         interval_hash[r.oid] = r;
         interval_hash[r.pid].children.push(r);
       }
+
         // Create a new d3 partition layout
       var partition = d3.layout.partition()
           .sort(function(d) { d3.ascending(d); })
@@ -99,10 +100,6 @@ var timeScale = {
           .attr("id", function(d) { return "t" + d.oid; })
           .style("opacity", 0.83)
           .call(drag)
-          .on("click", function(d) {
-            if (d3.event.defaultPrevented) return;
-            timeScale.mapFilter(d);
-          })
           .on("dblclick", function(d) {
             if (d3.event.defaultPrevented) return;
             timeScale.goTo(d);
@@ -110,6 +107,10 @@ var timeScale = {
           .dblTap(function(d) {
             console.log("working?");
             setTimeout(timeScale.goTo(d), 500);
+          })
+          .on("click", function(d) {
+            if (d3.event.defaultPrevented) return;
+            timeScale.mapFilter(d);
           });
 
       var scaleBar = scale.selectAll("rect")
@@ -172,10 +173,6 @@ var timeScale = {
           .attr("id", function(d) { return "l" + d.oid; })
           .attr("x", function(d) { return timeScale.labelX(d); })
           .call(drag)
-          .on("click", function(d) {
-            if (d3.event.defaultPrevented) return;
-            timeScale.mapFilter(d);
-          })
           .on("dblclick", function(d) {
             if (d3.event.defaultPrevented) return;
             timeScale.goTo(d);
@@ -183,6 +180,10 @@ var timeScale = {
           .dblTap(function(d) {
             console.log("working?");
             setTimeout(timeScale.goTo(d), 500);
+          })
+          .on("click", function(d) {
+            if (d3.event.defaultPrevented) return;
+            timeScale.mapFilter(d);
           });
 
       // Add the abbreviations
@@ -197,10 +198,6 @@ var timeScale = {
           .attr("class", function(d) { return "abbr level" + d.lvl; })
           .attr("id", function(d) { return "a" + d.oid; })
           .attr("x", function(d) { return timeScale.labelAbbrX(d); })
-          .on("click", function(d) {
-            if (d3.event.defaultPrevented) return;
-            timeScale.mapFilter(d);
-          })
           .on("dblclick", function(d) {
             if (d3.event.defaultPrevented) return;
             timeScale.goTo(d);
@@ -208,6 +205,10 @@ var timeScale = {
           .dblTap(function(d) {
             console.log("working?");
             setTimeout(timeScale.goTo(d), 500);
+          })
+          .on("click", function(d) {
+            if (d3.event.defaultPrevented) return;
+            timeScale.mapFilter(d);
           });
 
 
@@ -449,15 +450,15 @@ var timeScale = {
   "resize": function() {
     d3.select(".timeScale g")
       .attr("transform", function() {
-        return "scale(" + parseInt(d3.select(".timeScale").style("width"))/961 + ")";
+        return "scale(" + parseInt(d3.select("#graphics").style("width"))/961 + ")";
       });
 
     d3.select(".timeScale svg")
       .style("width", function() {
-        return d3.select(".timeScale").style("width");
+        return d3.select("#graphics").style("width");
        })
       .style("height", function() {
-        return parseInt(d3.select(".timeScale").style("width")) * 0.25 + "px";
+        return parseInt(d3.select("#graphics").style("width")) * 0.25 + "px";
       });
   }
 }

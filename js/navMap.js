@@ -7,9 +7,6 @@ var map, stamen, stamenLabels, g, exlude,
 
 var navMap = {
   "init": function() {
-
-    timeScale.init("time");
-
     // Init the leaflet map
     map = new L.Map('map', {
       center: new L.LatLng(7, 0),
@@ -112,6 +109,14 @@ var navMap = {
         .datum(topojson.feature(data, data.objects.countries))
         .attr("class", "countries")
         .attr("d", path);
+
+      reconstructMap.resize();
+      timeScale.resize();
+
+      navMap.refresh("reset");
+      navMap.resizeSvgMap();
+      setTimeout(navMap.resize, 100);
+      setTimeout(navMap.resize, 100);
     });
    
     // Attach handlers for zoom-in and zoom-out buttons
@@ -173,13 +178,21 @@ var navMap = {
             timeChecked = document.getElementById("viewByTimeBox").checked;
         if (rotateChecked == true) {
           document.getElementById("reconstructBox").checked = false;
+          document.getElementById("viewByTimeBox").checked = false;
+
           d3.select(".rotate")
+            .style("box-shadow", "")
+            .style("color", "#000");
+
+          d3.select(".time")
             .style("box-shadow", "")
             .style("color", "#000");
 
           d3.select(".info")
             .html("")
             .style("display", "none");
+
+          navMap.checkFilters();
 
           var rotateMapDisplay = d3.select("#reconstructMap").style("display");
           if (rotateMapDisplay == "block") {
@@ -204,6 +217,9 @@ var navMap = {
               .style("box-shadow", "inset 3px 0 0 #ff992c")
               .style("color", "#ff992c");
           }
+          navMap.untoggleTaxa();
+          navMap.untoggleUser();
+
           document.getElementById("reconstructBox").checked = true;
           d3.select(".rotate")
             .style("box-shadow", "inset 3px 0 0 #ff992c")
@@ -237,16 +253,30 @@ var navMap = {
           }
         }
       });
+    
+    d3.select(".taxa")
+      .on("click", function() {
+        var visible = d3.select(".taxaToggler").style("display");
+        if (visible == "block") {
+          navMap.untoggleTaxa();
+        } else {
+          navMap.untoggleUser();
+
+          d3.select(".taxaToggler").style("display", "block");
+          d3.select(".taxa")
+              .style("box-shadow", "inset 3px 0 0 #ff992c")
+              .style("color", "#ff992c");
+        }
+      });
 
     d3.select(".userFilter")
       .on("click", function() {
         var visible = d3.select(".userToggler").style("display");
         if (visible == "block") {
-          d3.select(".userToggler").style("display", "none");
-          d3.select(".userFilter")
-              .style("box-shadow", "")
-              .style("color", "");
+          navMap.untoggleUser();
         } else {
+          navMap.untoggleTaxa();
+
           d3.select(".userToggler").style("display", "block");
           d3.select(".userFilter")
               .style("box-shadow", "inset 3px 0 0 #ff992c")
@@ -254,7 +284,7 @@ var navMap = {
         }
       });
 
-    d3.select(".filt")
+    /*d3.select(".filt")
       .on("click", function() {
         var visible = d3.select(".filters").style("display");
         if (visible == "block") {
@@ -262,7 +292,7 @@ var navMap = {
         } else {
           d3.select(".filters").style("display", "block");
         }
-      })
+      })*/
 
     /*d3.select("#windowCollapse")
       .on("click", function() {
@@ -293,13 +323,6 @@ var navMap = {
       timeScale.resize();
     });
 
-    reconstructMap.resize();
-    timeScale.resize();
-
-    navMap.refresh("reset");
-    navMap.resizeSvgMap();
-    setTimeout(navMap.resize, 100);
-    setTimeout(navMap.resize, 100);
   },
   "selectBaseMap": function(zoom) {
     if (zoom < 5) {
@@ -860,20 +883,18 @@ var navMap = {
     });
   },
   "openCollectionModal": function(d) {
-   // var id = (d.properties.oid) ? d.properties.oid :  d.oid;
-    d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
+    d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + d.oid + "&show=ref", function(err, data) {
 
       data.records.forEach(function(d) {
+        d.interval = (interval_hash[d.cxi]) ? interval_hash[d.cxi].nam : "Unknown";
         d.fmm = (d.fmm) ? d.fmm : "Unknown";
       });
 
-      var template = '{{#records}}<table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Time</strong></td><td>{{eag}} Ma - {{lag}} Ma</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{ref}}</td></tr></table>{{/records}}';
+      var template = '{{#records}}<table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval</strong></td><td>{{interval}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table>{{/records}}';
 
       var output = Mustache.render(template, data);
       $("#collectionName").html(data.records[0].nam);
-
       $("#collectionModalBody").html(output);
-
       $("#collectionBox").modal();
     });
   },
@@ -888,7 +909,7 @@ var navMap = {
         d.fmm = (d.fmm) ? d.fmm : "Unknown";
       });
 
-      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>time</strong></td><td>{{eag}} Ma - {{lag}} Ma</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
+      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval</strong></td><td>{{interval}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
 
       var output = Mustache.render(template, data);
       d3.select("#binID").html("Bin " + id);
@@ -903,7 +924,7 @@ var navMap = {
       d.fmm = (d.fmm) ? d.fmm : "Unknown";
     });
 
-    var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Time</strong></td><td>{{eag}} Ma - {{lag}} Ma</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
+    var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval</strong></td><td>{{interval}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
 
     var output = Mustache.render(template, data);
 
@@ -1009,15 +1030,15 @@ var navMap = {
       }
     }
     if (count > 0) {
-     // d3.select(".filters").style("display", "block");
-      d3.select(".filt")
+      d3.select(".filters").style("display", "block");
+      /*d3.select(".filt")
         .style("box-shadow", "inset 3px 0 0 #ff992c")
-        .style("color", "#ff992c");
+        .style("color", "#ff992c");*/
     } else {
-      //d3.select(".filters").style("display", "none");
-      d3.select(".filt")
+      d3.select(".filters").style("display", "none");
+      /*d3.select(".filt")
         .style("box-shadow", "")
-        .style("color", "");
+        .style("color", "");*/
     }
     return url;
   },
@@ -1031,18 +1052,18 @@ var navMap = {
       }
     }
     if (count > 0) {
-      //d3.select(".filters").style("display", "block");
+      d3.select(".filters").style("display", "block");
       d3.select("#filterTitle").html("Filters");
-      d3.select(".filt")
+      /*d3.select(".filt")
         .style("box-shadow", "inset 3px 0 0 #ff992c")
-        .style("color", "#ff992c");
+        .style("color", "#ff992c");*/
       return true;
     } else {
-     // d3.select(".filters").style("display", "none");
+      d3.select(".filters").style("display", "none");
       d3.select("#filterTitle").html("No filters selected");
-      d3.select(".filt")
+      /*d3.select(".filt")
         .style("box-shadow", "")
-        .style("color", "");
+        .style("color", "");*/
       return false;
     }
   },
@@ -1079,6 +1100,8 @@ var navMap = {
     }
   },
   "resizeSvgMap": function() {
+    var width = parseInt(d3.select("#graphics").style("width"));
+
     var g = d3.select("#svgMap").select("svg");
 
     d3.select("#svgMap").select("svg")
@@ -1096,12 +1119,13 @@ var navMap = {
             height: g.node().clientHeight
           }
         }
-        if ((window.innerWidth - box.width) / 2 > 20) {
-          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - box.width) / 2 + ",0)";
+        
+        if ((width - box.width) / 2 > 20) {
+          return "scale(" + window.innerHeight/700 + ")translate(" + (width - box.width) / 2 + ",0)";
         } else {
           var svgHeight = window.innerHeight * 0.70,
-              mapHeight = (window.innerWidth/960 ) * 500;
-          return "scale(" + window.innerWidth/960 + ")translate(0," + (svgHeight - mapHeight) + ")";
+              mapHeight = (width/960 ) * 500;
+          return "scale(" + width/960 + ")translate(0," + (svgHeight - mapHeight) + ")";
         }
       });
 
@@ -1110,7 +1134,7 @@ var navMap = {
         return window.innerHeight * 0.70 + "px";
       })
       .style("width", function(d) {
-        return window.innerWidth + "px";
+        return width - 15 + "px";
       });
   },
   "resize": function() {
@@ -1122,39 +1146,7 @@ var navMap = {
       map.invalidateSize();
     }
 
-    var g = d3.select("#svgMap").select("svg");
-
-    d3.select("#svgMap").select("svg")
-      .select("g")
-      .attr("transform", function() {
-        /* Firefox hack via https://github.com/wout/svg.js/commit/ce1eb91fac1edc923b317caa83a3a4ab10e7c020 */
-        var box;
-        try {
-          box = g.node().getBBox()
-        } catch(err) {
-          box = {
-            x: g.node().clientLeft,
-            y: g.node().clientTop,
-            width: g.node().clientWidth,
-            height: g.node().clientHeight
-          }
-        }
-        if ((window.innerWidth - box.width) / 2 > 20) {
-          return "scale(" + window.innerHeight/700 + ")translate(" + (window.innerWidth - box.width) / 2 + ",0)";
-        } else {
-          var svgHeight = window.innerHeight * 0.70,
-              mapHeight = (window.innerWidth/960 ) * 500;
-          return "scale(" + window.innerWidth/960 + ")translate(0," + (svgHeight - mapHeight) + ")";
-        }
-      });
-
-    d3.select("#svgMap").select("svg")
-      .style("height", function(d) {
-        return window.innerHeight * 0.70 + "px";
-      })
-      .style("width", function(d) {
-        return window.innerWidth + "px";
-      });
+    navMap.resizeSvgMap();
 
     d3.select("#infoContainer")
       .style("height", function() {
@@ -1198,15 +1190,24 @@ var navMap = {
     }
     navMap.refreshFilterHandlers();
   },
-  "filterByTaxon": function(taxon) {
-    if (taxon) {
-      filters.exist.taxon = true;
-      filters.taxon.id = taxon.oid;
-      filters.taxon.name = taxon.nam;
-      navMap.updateFilterList("taxon");
-      d3.select(".userToggler").style("display", "none");
-      navMap.refresh("reset");
-    }
+  "filterByTaxon": function() {
+    var name = $("#taxaInput").val();
+    d3.json('http://testpaleodb.geology.wisc.edu/data1.1/taxa/list.json?name=' + name, function(err, data) {
+      if (err) {
+        alert("Error retrieving from list.json - ", err);
+      } else {
+        if ( data.records.length > 0 ) {
+          filters.exist.taxon = true;
+          filters.taxon.id = data.records[0].oid;
+          filters.taxon.name = data.records[0].nam;
+          navMap.updateFilterList("taxon");
+          navMap.untoggleTaxa();
+          navMap.refresh("reset");
+        } else {
+            alert("No taxa with this name found");
+        }
+      }
+    });
   },
   "filterByPerson": function(person) {
     if (person) {
@@ -1268,8 +1269,38 @@ var navMap = {
   },
   "hideLoading": function() {
     d3.select("#loading").style("display", "none");
+  },
+  "untoggleTaxa": function() {
+    d3.select(".taxaToggler").style("display", "none");
+    d3.select(".taxa")
+        .style("box-shadow", "")
+        .style("color", "");
+  },
+  "untoggleUser": function() {
+    d3.select(".userToggler").style("display", "none");
+    d3.select(".userFilter")
+        .style("box-shadow", "")
+        .style("color", "");
+  },
+  "openTaxaBrowser": function() {
+    d3.select("#graphics").attr("class", "col-sm-9");
+    d3.select("#taxaBrowser").style("display", "block");
+    d3.select("#taxaBrowserToggle").html('<i class="icon-double-angle-left" style="margin-right:5px;"></i>Collapse taxa browser');
+    navMap.resize();
+    reconstructMap.resize();
+    timeScale.resize();
+  },
+  "closeTaxaBrowser": function() {
+    d3.select("#graphics").attr("class", "col-sm-12");
+    d3.select("#taxaBrowser").style("display", "none");
+    d3.select("#taxaBrowserToggle").html('Expand taxa browser<i class="icon-double-angle-right" style="margin-left:5px;"></i>');
+    navMap.resize();
+    reconstructMap.resize();
+    timeScale.resize();
   }
 }
+
+timeScale.init("time");
 navMap.init();
 
 $("#saveBox").on('show.bs.modal', function() {
@@ -1320,4 +1351,18 @@ $("#saveBox").on('hide.bs.modal', function() {
   $('#loc').prop('checked', false);
   $('#ref').prop('checked', false);
   $('#t').prop('checked', false);
+});
+
+$("#taxaForm").submit(function() {
+  navMap.filterByTaxon();
+  return false;
+});
+
+$("#taxaBrowserToggle").on("click", function() {
+  var display = d3.select("#taxaBrowser").style("display");
+  if (display == "block") {
+    navMap.closeTaxaBrowser();
+  } else {
+    navMap.openTaxaBrowser();
+  }
 });

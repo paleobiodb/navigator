@@ -19,6 +19,20 @@
     body {
       font-family: 'Open-sans', sans-serif;
     }
+    .row {
+      margin-left: 0;
+      margin-right: 0;
+    }
+    #wrap {
+      min-height: 100%;
+      height: auto !important;
+      height: 100%;
+      margin: 0 auto -5em;
+      padding: 0 0 5em;
+    }
+    #graphicRow {
+      width:100%;
+    }
     #mapContainer {
       display: inline;
       position: relative;
@@ -151,7 +165,7 @@
     }
     .userToggler.leaflet-control {
       left:45px;
-      margin-top:192px;
+      margin-top:235px;
       position: absolute;
       width:16em;
       padding:10px;
@@ -160,23 +174,14 @@
       display:none;
     }
     .taxaToggler.leaflet-control {
-      border-right:none;
-      border-bottom:1px solid #ccc;
-      border-left:1px solid #ccc;
-      cursor: pointer;
-      padding-top:0;
-    }
-    .taxa {
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: cover;
-      margin:0;
-      position: relative;
-      height:25px;
-      width:25px;
-    }
-    .taxa:hover {
-      background-color:#ccc;
+      left:45px;
+      margin-top:187px;
+      position: absolute;
+      width:18em;
+      padding:10px;
+      vertical-align: middle;
+      font-size: 0.8em;
+      display:none;
     }
     .filters {
       position: absolute;
@@ -184,10 +189,10 @@
       padding: 10px;
       background-color: rgba(255,255,255,0.95);
       border: 1px solid #ccc;
-      margin-top:231px;
-      left:60px;
       text-align: center;
       display: none;
+      right:15px;
+      bottom:16px;
     }
     .filters > p {
       display: inline;
@@ -436,87 +441,102 @@
     .accordion-toggle:hover {
       text-decoration: none;
     }
+    #taxaBrowser {
+      display: none;
+    }
     </style>
   </head>
 
   <body>
-    <div class="row">
-    	<div class="col-lg-12" id="graphics">
-        <img src="img/loading.gif" id="loading"/>
-        <div class="filters">
-          <p><strong id="filterTitle">Filters</strong></p>
-          <div id="selectedInterval" class="filter"></div>
-          <div id="personFilter" class="filter"></div>
-          <div id="taxon" class="filter"></div>
-        </div>
-        <div id="mapControlCover">
-          <div id="controlCover1"></div>
-          <div id="controlCover2"></div>
-        </div>
-        <div id="mapControls">
-          <div class="customControl buttons leaflet-control">
-            <div class="zoom-in mapCtrl"><i class="icon-plus ctrlButton"></i></div>
-            <div class="zoom-out mapCtrl"><i class="icon-minus ctrlButton"></i></div>
-            <!--<div class="layers"></div>-->
-            <div class="rotate mapCtrl"><div id="rotateIcon"></div></div>
-            <div class="time mapCtrl"><i class="icon-time icon-2x ctrlButton"></i></div>
-            <div class="userFilter mapCtrl"><i class="icon-user icon-2x ctrlButton"></i></div>
-            <div class="filt mapCtrl"><i class="icon-filter icon-2x ctrlButton"></i></a></div>
-            <div class="save mapCtrl"><a data-toggle="modal" href="#saveBox"><i class="icon-save icon-2x ctrlButton"></i></a></div>
-            
+    <div id="wrap">
+      <div class="row" id="graphicRow">
+        <div class="col-sm-3" id="taxaBrowser"></div>
+
+      	<div class="col-sm-12" id="graphics">
+          <img src="img/loading.gif" id="loading"/>
+          <div class="filters">
+            <p><strong id="filterTitle">Filters</strong></p>
+            <div id="selectedInterval" class="filter"></div>
+            <div id="personFilter" class="filter"></div>
+            <div id="taxon" class="filter"></div>
+          </div>
+          <div id="mapControlCover">
+            <div id="controlCover1"></div>
+            <div id="controlCover2"></div>
+          </div>
+          <div id="mapControls">
+            <div class="customControl buttons leaflet-control">
+              <div class="zoom-in mapCtrl"><i class="icon-plus ctrlButton"></i></div>
+              <div class="zoom-out mapCtrl"><i class="icon-minus ctrlButton"></i></div>
+              <!--<div class="layers"></div>-->
+              <div class="rotate mapCtrl"><div id="rotateIcon"></div></div>
+              <div class="time mapCtrl"><i class="icon-time icon-2x ctrlButton"></i></div>
+              <div class="taxa mapCtrl"><i class="icon-bug icon-2x ctrlButton"></i></div>
+              <div class="userFilter mapCtrl"><i class="icon-user icon-2x ctrlButton"></i></div>
+              <!--<div class="filt mapCtrl"><i class="icon-filter icon-2x ctrlButton"></i></a></div>-->
+              <div class="save mapCtrl"><a data-toggle="modal" href="#saveBox"><i class="icon-save icon-2x ctrlButton"></i></a></div>
+              
+            </div>
+
+            <div class="customControl timeToggler leaflet-control">
+              <form action="">
+                <input id="viewByTimeBox" type="checkbox" value="1"/>Filter by time
+              </form>
+            </div>
+            <div class="customControl reconstructToggler leaflet-control">
+              <form action="">
+                <input id="reconstructBox" type="checkbox" value="1"/>Rotate view by interval
+              </form>
+            </div>
+            <div class="customControl taxaToggler leaflet-control">
+              <form id="taxaForm">
+                <input type="text" id="taxaInput" placeholder="Enter a taxon" size="16"/>
+                <button class="btn btn-primary btn-sm" type="submit">Filter</button>
+              </form>
+              <a href="#" id="taxaBrowserToggle" style="color:#777;">Expand taxa browser<i class="icon-double-angle-right" style="margin-left:5px;"></i></a>
+            </div>
+            <div class="customControl userToggler leaflet-control">
+             <!-- <form onSubmit="return navMap.filterByPerson()">-->
+              <form>
+                <input type="text" id="personInput" placeholder="Enter an authorizer" size="22"/>
+              </form>
+            </div>
+            <div id="infoContainer">
+              <div class="info leaflet-control"></div>
+            </div>
           </div>
 
-          <div class="customControl timeToggler leaflet-control">
-            <form action="">
-              <input id="viewByTimeBox" type="checkbox" value="1"/>Filter by time
-            </form>
-          </div>
-          <div class="customControl reconstructToggler leaflet-control">
-            <form action="">
-              <input id="reconstructBox" type="checkbox" value="1"/>Rotate view by interval
-            </form>
-          </div>
-          <div class="customControl userToggler leaflet-control">
-           <!-- <form onSubmit="return navMap.filterByPerson()">-->
-            <form>
-              <input type="text" id="personInput" placeholder="Enter a name" size="22"/>
-            </form>
-          </div>
-          <div id="infoContainer">
-            <div class="info leaflet-control"></div>
-          </div>
-        </div>
-
-        <div id="mapContainer">
-          <div id="svgMap"></div>
-          <div id="map"></div>
-          <div id="reconstructMap">
-           <!-- <div id='reconstructMapInfo'></div>-->
-            <div id="reconstructMapRefContainerContainer">
-              <div id="reconstructMapRefContainer">
-                <div id="reconstructMapReference">
-                  <a data-toggle="modal" href='#gPlatesBox'>
-                    <img id='gplatesLogo' src='img/gplates_icon.jpg'>
-                  </a>
-                  <!--<p id="gplatesText">via GPlates</p>-->
-                  <div id="reconstructMapStats">
-                    <h5 id="interval"></h5>
-                    <p id='age'></p>
+          <div id="mapContainer">
+            <div id="svgMap"></div>
+            <div id="map"></div>
+            <div id="reconstructMap">
+             <!-- <div id='reconstructMapInfo'></div>-->
+              <div id="reconstructMapRefContainerContainer">
+                <div id="reconstructMapRefContainer">
+                  <div id="reconstructMapReference">
+                    <a data-toggle="modal" href='#gPlatesBox'>
+                      <img id='gplatesLogo' src='img/gplates_icon.jpg'>
+                    </a>
+                    <!--<p id="gplatesText">via GPlates</p>-->
+                    <div id="reconstructMapStats">
+                      <h5 id="interval"></h5>
+                      <p id='age'></p>
+                    </div>
+                    <!--<br>
+                    <a id='mapSwitch' href='#'><i class=icon-circle-arrow-left icon-2x></i> Back to main map</a>-->
                   </div>
-                  <!--<br>
-                  <a id='mapSwitch' href='#'><i class=icon-circle-arrow-left icon-2x></i> Back to main map</a>-->
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <!--<div id="windowCollapse"><i class="icon-double-angle-right"></i></div>
-        <div id="window" class="col-3 col-offset-9">
-          <table class="table-hover table-condensed" id="clusterTable"></table>
-        </div>-->
-      </div> <!-- End col-12 -->
-      <div id="time"></div>
-    </div> <!-- End row -->
+          <!--<div id="windowCollapse"><i class="icon-double-angle-right"></i></div>
+          <div id="window" class="col-3 col-offset-9">
+            <table class="table-hover table-condensed" id="clusterTable"></table>
+          </div>-->
+          <div id="time"></div>
+        </div> <!-- End col-12 -->
+      </div> <!-- End row -->
+    </div>
 
     <div class="modal fade" id="saveBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -581,35 +601,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title" id="collectionName"></h4>
           </div>
-          <div class="modal-body" id="collectionModalBody">
-            <table class="table">
-              <tr>
-                <td style="border-top:0;"><strong>Collection number</strong></td>
-                <td id="collectionID" style="border-top:0;"></td>
-              </tr>
-              <tr>
-                <td><strong>Occurrences</strong></td>
-                <td id="collectionOccurrences"></td>
-              </tr>
-              <tr>
-                <td><strong>Formation</strong></td>
-                <td id="collectionFormation"></td>
-              </tr>
-              <tr>
-                <td><strong>Interval</strong></td>
-                <td id="collectionInterval"></td>
-              </tr>
-              <tr>
-                <td><strong>Location</strong><br><small>(latitude, longitude)</small></td>
-                <td id="collectionLocation"></td>
-              </tr>
-              <tr>
-                <td><strong>Reference</strong></td>
-                <td id="collectionReference"></td>
-              </tr>
-            </table>
-
-          </div>
+          <div class="modal-body" id="collectionModalBody"></div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
@@ -672,5 +664,8 @@
     <script src="js/timescale.js"></script>
     <script src="js/reconstruct.js"></script>
     <script src="js/navMap.js"></script>
+    <script type="text/javascript">
+    timeScale.init();
+    </script>
   </body>
 </html>
