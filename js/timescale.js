@@ -105,7 +105,6 @@ var timeScale = {
             timeScale.goTo(d);
           })
           .dblTap(function(d) {
-            console.log("working?");
             setTimeout(timeScale.goTo(d), 500);
           })
           .on("click", function(d) {
@@ -178,7 +177,6 @@ var timeScale = {
             timeScale.goTo(d);
           })
           .dblTap(function(d) {
-            console.log("working?");
             setTimeout(timeScale.goTo(d), 500);
           })
           .on("click", function(d) {
@@ -203,7 +201,6 @@ var timeScale = {
             timeScale.goTo(d);
           })
           .dblTap(function(d) {
-            console.log("working?");
             setTimeout(timeScale.goTo(d), 500);
           })
           .on("click", function(d) {

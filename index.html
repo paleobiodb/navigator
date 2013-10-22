@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.css" />
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
     <link href="css/timescale.css" rel="stylesheet"/>
+    <link href="css/taxaBrowser.css" rel="stylesheet" />
     <style>
     /*navMap styles */
     body {
@@ -444,13 +445,47 @@
     #taxaBrowser {
       display: none;
     }
+    .taxonTitle {
+      color:#000;
+    }
     </style>
+    
   </head>
 
   <body>
     <div id="wrap">
       <div class="row" id="graphicRow">
-        <div class="col-sm-3" id="taxaBrowser"></div>
+
+        <div class="col-sm-3" id="taxaBrowser">
+          <div class="browser">
+            <form id="taxaSearch">
+              <input type="text" class="form-control" id="taxonInput" placeholder="Enter a taxonomic name:"/>
+            </form>
+
+            <div name="focal_taxon_box">
+              <table class="table table-hover">
+                <tbody id="focalTaxonParents"></tbody>
+              </table>
+            </div>
+
+            <div class="focalTaxon" name="focal_taxon_box">
+              <table class="table table-hover">
+                <tr class="active">
+                  <td>
+                    <a class="taxonTitle"></a><br>
+                    <p class="taxonAttr"></p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="taxonChildren">
+              <table class="table table-hover table-condensed">
+                <tbody id="focal_taxon_children"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
       	<div class="col-sm-12" id="graphics">
           <img src="img/loading.gif" id="loading"/>
@@ -590,9 +625,9 @@
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-success" onclick="return navMap.downloadView()">Download Data</button>
           </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        </div>
+      </div>
+    </div><!-- end download modal -->
 
     <div class="modal fade" id="collectionBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -602,9 +637,9 @@
             <h4 class="modal-title" id="collectionName"></h4>
           </div>
           <div class="modal-body" id="collectionModalBody"></div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        </div>
+      </div>
+    </div><!-- end collectionBox modal -->
 
      <div class="modal fade" id="gPlatesBox" tabindex="-1" role="dialog" aria-labelledby="GPlatesInfo" aria-hidden="true">
       <div class="modal-dialog">
@@ -632,9 +667,9 @@
             </table>
 
           </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        </div>
+      </div>
+    </div><!-- end gPlatesBox modal -->
 
 
     <div class="modal fade" id="collectionModal" tabindex="-1" role="dialog" aria-labelledby="BinInfo" aria-hidden="true">
@@ -648,9 +683,24 @@
             <h4>Collections</h4>
             <div class="panel-group" id="accordion"></div>
           </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+        </div>
+      </div>
+    </div><!-- end collectionModal -->
+
+    <div class="modal fade" id="subtaxaModal" tabindex="-1" role="dialog" aria-labelledby="Subtaxa" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" id="subtaxaModalHeader">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-hover table-condensed">
+              <tbody id="subtaxaModalTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- end subtaxaModal -->
     
 
     <script src="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.js"></script>
@@ -663,9 +713,7 @@
     <script src="js/mustache.js"></script>
     <script src="js/timescale.js"></script>
     <script src="js/reconstruct.js"></script>
+    <script src="js/taxaBrowser.js"></script>
     <script src="js/navMap.js"></script>
-    <script type="text/javascript">
-    timeScale.init();
-    </script>
   </body>
 </html>

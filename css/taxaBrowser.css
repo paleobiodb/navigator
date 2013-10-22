@@ -1,0 +1,56 @@
+#taxonInput {
+  margin-bottom: 10px;
+}
+a:hover {
+  cursor: pointer;
+}
+.browser {
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 6px;
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
+}
+.focalTaxon {
+  text-align: center;
+  margin: 0 auto;
+  padding: 3px;
+}
+.taxonTitle {
+  display: inline;
+  font-weight: bold;
+  margin: 0 auto;
+  margin-right:10px;
+  font-size: 17px;
+}
+.taxonAttr {
+  display: inline;
+  font-style: italic;
+  margin: 0 auto;
+  margin-right:10px;
+  font-size: 15px;
+}
+.taxonParents {
+  text-align: center;
+}
+.immediateParent {
+  font-weight: bold;
+  border: 1px solid #ccc;
+}
+.extinct {  
+  font-style: italic;
+}
+.laAttr {
+  text-align: left;
+  margin-left: 10px;
+  margin-bottom: 0px;
+}
+#subtaxaModalHeader {
+  padding: 15px 15px 30px 15px;
+}
+.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
+  border-top: none;
+}
+td {
+  font-size: 12px;
+}
