@@ -58,11 +58,11 @@ var reconstructMap = {
   
   },
   "rotate": function(interval) {
-    if (interval.nam == currentReconstruction) {
+    if (interval.nam == currentReconstruction.nam) {
       return;
     }
     reconstructing = true;
-    currentReconstruction = interval.nam;
+    currentReconstruction = interval;
 
     navMap.showLoading();
     if (window.navMap && parseInt(d3.select("#map").style("height")) > 0) {

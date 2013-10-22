@@ -29,6 +29,7 @@ var timeScale = {
         y = d3.scale.linear().range([0, h]),
         newX = 0.01;
 
+
     var drag = d3.behavior.drag()
       .origin(function() { 
         var t = d3.select(".timeScale g");
@@ -298,6 +299,7 @@ var timeScale = {
   },
 
   "mapFilter": function(d) {
+    timeScale.highlight(d.nam);
     // if box is checked...
     var timeFilterCheck = document.getElementById('viewByTimeBox').checked,
         reconstructCheck = document.getElementById('reconstructBox').checked;
@@ -321,7 +323,6 @@ var timeScale = {
       }
     }
   },
-
   "goTo": function(d) {
     if (typeof d == "string") {
       var d = d3.selectAll('rect').filter(function(e) {
@@ -334,6 +335,7 @@ var timeScale = {
       var d = d;
     }
 
+    currentInterval = d;
     // Adjust the bottom scale
     var depth = (d.depth != 'undefined') ? parseInt(d.depth) + 1 : 1;
     d3.selectAll(".scale").style("display", "none");
@@ -447,7 +449,8 @@ var timeScale = {
   "resize": function() {
     d3.select(".timeScale g")
       .attr("transform", function() {
-        return "scale(" + parseInt(d3.select("#graphics").style("width"))/961 + ")";
+        var width = parseInt(d3.select("#graphics").style("width")) - 23;
+        return "scale(" + width/961 + ")";
       });
 
     d3.select(".timeScale svg")

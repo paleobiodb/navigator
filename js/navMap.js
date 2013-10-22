@@ -178,6 +178,7 @@ var navMap = {
           document.getElementById("viewByTimeBox").checked = false;
 
           d3.select(".rotate")
+            .style("box-shadow", "")
             .style("color", "#000");
 
           d3.select(".time")
@@ -208,12 +209,11 @@ var navMap = {
         } else {
           if (timeChecked == false) {
             document.getElementById("viewByTimeBox").checked = true;
-            d3.select(".time")
-              .style("box-shadow", "inset 3px 0 0 #ff992c")
-              .style("color", "#ff992c");
+
           }
           navMap.untoggleTaxa();
           navMap.untoggleUser();
+          navMap.closeTaxaBrowser();
 
           document.getElementById("reconstructBox").checked = true;
           d3.select(".rotate")
@@ -284,22 +284,6 @@ var navMap = {
         }
       });
 
-    /*d3.select(".filt")
-      .on("click", function() {
-        var visible = d3.select(".filters").style("display");
-        if (visible == "block") {
-          d3.select(".filters").style("display", "none");
-        } else {
-          d3.select(".filters").style("display", "block");
-        }
-      })*/
-
-    /*d3.select("#windowCollapse")
-      .on("click", function() {
-        d3.select("#window").style("display", "none");
-        d3.select("#windowCollapse").style("display", "none");
-      });*/
-
     var typeahead = $("#personInput").typeahead({
       name: 'contribs',
       prefetch: {
@@ -318,11 +302,25 @@ var navMap = {
 
     //attach window resize listener to the window
     d3.select(window).on("resize", function() {
+      timeScale.resize();
       navMap.resize();
       reconstructMap.resize();
-      timeScale.resize();
     });
 
+  },
+  "goTo": function(coords, zoom) {
+    // coords is [lat, lng] 
+    if (zoom < 3) {
+      return;
+    } else {
+      d3.select("#svgMap").style("display", "none");
+      d3.select("#map").style("height", function() {
+        return window.innerHeight * 0.70 + "px";
+      });
+      map.invalidateSize();
+
+      map.setView(coords, zoom, {animate:false});
+    }
   },
   "selectBaseMap": function(zoom) {
     if (zoom < 5) {
@@ -1065,16 +1063,10 @@ var navMap = {
     if (count > 0) {
       d3.select(".filters").style("display", "block");
       d3.select("#filterTitle").html("Filters");
-      /*d3.select(".filt")
-        .style("box-shadow", "inset 3px 0 0 #ff992c")
-        .style("color", "#ff992c");*/
       return true;
     } else {
       d3.select(".filters").style("display", "none");
       d3.select("#filterTitle").html("No filters selected");
-      /*d3.select(".filt")
-        .style("box-shadow", "")
-        .style("color", "");*/
       return false;
     }
   },
@@ -1135,8 +1127,8 @@ var navMap = {
           return "scale(" + window.innerHeight/700 + ")translate(" + (width - box.width) / 2 + ",0)";
         } else {
           var svgHeight = window.innerHeight * 0.70,
-              mapHeight = (width/960 ) * 500;
-          return "scale(" + width/960 + ")translate(0," + (svgHeight - mapHeight) + ")";
+              mapHeight = (width/970 ) * 500;
+          return "scale(" + width/970 + ")translate(0," + (svgHeight - mapHeight)/2 + ")";
         }
       });
 
@@ -1186,6 +1178,7 @@ var navMap = {
       switch(type) {
         case "selectedInterval":
           d3.select(".time").style("box-shadow", "");
+          timeScale.unhighlight();
           break;
         case "personFilter":
           d3.select(".userFilter").style("box-shadow", "");
@@ -1197,6 +1190,7 @@ var navMap = {
       navMap.refresh("reset");
     });
   },
+
   "updateFilterList": function(type) {
     switch(type){
       case "selectedInterval":
@@ -1220,6 +1214,19 @@ var navMap = {
     }
     navMap.refreshFilterHandlers();
   },
+
+  "filterByTime": function(time) {
+    // accepts a named time interval
+    var d = d3.selectAll('rect').filter(function(e) {
+      return e.nam === time;
+    });
+    d = d[0][0].__data__;
+    filters.selectedInterval = d;
+    filters.exist.selectedInterval = true;
+    navMap.updateFilterList("selectedInterval");
+    navMap.refresh("reset");
+  },
+
   "filterByTaxon": function(name) {
     if (!name) {
       var name = $("#taxaInput").val();
@@ -1245,6 +1252,7 @@ var navMap = {
       }
     });
   },
+
   "filterByPerson": function(person) {
     if (person) {
       filters.exist.personFilter = true;
@@ -1257,6 +1265,43 @@ var navMap = {
       navMap.refresh("reset");
     }
   },
+
+  "rotate":function(interval) {
+    // interval is an object {nam: "interval", mid: 2342}
+    document.getElementById("viewByTimeBox").checked = true;
+
+    navMap.untoggleTaxa();
+    navMap.closeTaxaBrowser();
+    navMap.untoggleUser();
+
+    document.getElementById("reconstructBox").checked = true;
+    d3.select(".rotate")
+      .style("box-shadow", "inset 3px 0 0 #ff992c")
+      .style("color", "#ff992c");
+
+    d3.select(".info")
+      .html("Click a time interval to reconstruct collections and plates")
+      .style("display", "block");
+
+    var rotateMapDisplay = d3.select("#reconstructMap").style("display");
+    if (rotateMapDisplay == "none") {
+      if(parseInt(d3.select("#map").style("height")) > 1) {
+        d3.select("#map").style("display", "none");
+      }
+      d3.select("#svgMap").style("display", "none");
+      d3.select("#reconstructMap").style("display","block");
+      d3.select(".filters").style("display", "none");
+      reconstructMap.resize();
+      d3.select("#mapControlCover").style("display", "block");
+
+      d3.selectAll(".ctrlButton")
+        .style("color", "#777");
+
+      reconstructMap.rotate(interval);
+
+    }
+  },
+
   "downloadView": function() {
     var bounds = map.getBounds(),
         sw = bounds._southWest,
@@ -1298,22 +1343,68 @@ var navMap = {
     url = url.substring(0, url.length - 1);
     window.open(url);
   },
+
+  "restoreState": function(state) {
+    var location = window.location,
+        state = location.hash.substr(2);
+    // If there is a preserved state hash
+    if (state.length > 1) {
+      d3.json("http://testpaleodb.geology.wisc.edu/data1.1/...?key=" + state, function(error, result) {
+        var params = result.records[0];
+
+        if (params.timeScale != "Phanerozoic") {
+          timeScale.goTo(params.timeScale);
+        }
+        if (params.taxonFilter.id > 0) {
+          navMap.filterByTaxon(params.taxonFilter.nam);
+        }
+        if (params.timeFilter.length > 0) {
+          navMap.filterByTime(params.timeFilter);
+        }
+        if (params.authFilter.id > 0) {
+          navMap.filterByPerson(params.authFilter);
+        }
+        if (params.zoom > 2) {
+          navMap.goTo(params.center, params.zoom);
+        }
+        if (reconstruct == "block") {
+          navMap.rotate(params.currentReconstruction);
+        }
+      });
+    } else {
+      return;
+    }
+  },
+
+  "getUrl": function() {
+    //placeholder for generating a unique a unique hash
+    var center = map.getCenter(),
+        zoom = map.getZoom(),
+        reconstruct = d3.select("#reconstructMap").style("display");
+
+    var params = {"timeScale": currentInterval.nam, "taxonFilter": filters.taxon, "timeFilter": filters.selectedInterval, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": currentReconstruction};
+    
+    return params;
+  },
+
   "showLoading": function() {
     d3.select("#loading").style("display", "block");
   },
+
   "hideLoading": function() {
     d3.select("#loading").style("display", "none");
   },
+
   "untoggleTaxa": function() {
     d3.select(".taxaToggler").style("display", "none");
-    d3.select(".taxa")
-        .style("color", "");
+    d3.select(".taxa").style("color", "");
   },
+
   "untoggleUser": function() {
     d3.select(".userToggler").style("display", "none");
-    d3.select(".userFilter")
-        .style("color", "");
+    d3.select(".userFilter").style("color", "");
   },
+
   "openTaxaBrowser": function() {
     d3.select("#graphics").attr("class", "col-sm-9");
     d3.select("#taxaBrowser").style("display", "block");
@@ -1323,6 +1414,7 @@ var navMap = {
     reconstructMap.resize();
     navMap.resize();
   },
+
   "closeTaxaBrowser": function() {
     d3.select("#graphics").attr("class", "col-sm-12");
     d3.select("#taxaBrowser").style("display", "none");
