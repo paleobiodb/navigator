@@ -1,0 +1,495 @@
+body {
+  font-family: 'Open-sans', sans-serif;
+}
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+.container {
+  width: 100%;
+  max-width: 2500px;
+  padding: 20px 0;
+}
+nav {
+  font-family: 'Raleway', sans-serif;
+}
+.navbar {
+  margin-bottom: 0;
+  width:100%;
+  position: absolute;
+  top:0;
+  left:0;
+  font-family: 'Raleway', sans-serif;
+  /*padding:0.1em;*/
+}
+.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {
+  background-color: rgba(71,76,80,0.93);
+}
+.navbar-default {
+  background-color: rgba(71,76,80,0.93);
+  z-index: 9;
+  border-color: rgba(0,0,0,0);
+}
+.navbar-default .navbar-brand {
+  color: rgb(245,245,245);
+  font-size: 1.2em;
+}
+.navbar-brand {
+  padding:0.4em;
+  line-height: 35px;
+}
+.brand-small {
+  font-size: 0.6em;
+}
+.navbar-text {
+  font-size:0.9em;
+}
+.navbar-default .navbar-nav>li>a {
+  color: rgb(245,245,245);
+}
+.navbar-default .navbar-nav>.dropdown>a .caret {
+  border-top-color: rgb(245,245,245);
+  border-bottom-color: rgb(245,245,245);
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+  color: rgb(245,245,245);
+}
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
+  color: rgb(245,245,245);
+}
+#aboutModal > .modal-dialog > .modal-content > .modal-header > .modal-title {
+  font-family: 'Raleway', sans-serif;
+  color: #000;
+  letter-spacing: 0.05em;
+  font-size: 1.5em;
+}
+#helpModal > .modal-dialog > .modal-content > .modal-header > .modal-title {
+  font-family: 'Raleway', sans-serif;
+  color: #000;
+  letter-spacing: 0.05em;
+  font-size: 1.5em;
+}
+.navbar-default .navbar-link {
+color: rgb(245,245,245);
+}
+#graphics {
+  padding-left:0;
+  padding-right:0;
+}
+#graphicRow {
+  width:100%;
+  margin-top: 2.5em;
+}
+#mapContainer {
+  display: inline;
+  position: relative;
+}
+#map {
+  height:400px;
+  width:100%;
+}
+#mapControlCover {
+  position: absolute;
+  z-index: 2000;
+  width:49px;
+  display: none;
+}
+#controlCover1 {
+  height:99px;
+  background-color:rgba(0,0,0,0.4);
+}
+#controlCover2 {
+  position: absolute;
+  width:49px;
+  height:49px;
+  top: 277px;
+  background-color:rgba(0,0,0,0.4);
+}
+#mapControls {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+.countries {
+  stroke: #000;
+  fill: #FEFBFB;
+  stroke-width: 0.5;
+}
+.bins {
+  fill: #EFEE69;
+  stroke: #aaa;
+  stroke-width:0.02em;
+  opacity:0.7;
+}
+.bins:hover {
+  stroke:#222;
+  stroke-width:1px;
+}
+.svgbins {
+  fill: #EFEE69;
+  stroke: none;
+  opacity:0.7;
+}
+.svgbins:hover {
+  stroke:#222;
+  stroke-width:1px;
+}
+.clusters {
+  fill: #72BBDF;
+  stroke: none;
+  opacity:0.7;
+}
+.clusters:hover {
+  stroke:#222;
+  stroke-width:1px;
+}
+#infoContainer {
+  position: relative;
+}
+.info {
+  background-color: white;
+  padding:10px;
+  display:none;
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  font-size:0.8em;
+  width:16em;
+  bottom:0;
+  position: absolute;
+  z-index: 1;
+}
+.time {
+  height:30px;
+  width:30px;
+  cursor: pointer;
+}
+.timeToggler.leaflet-control {
+  left:50px;
+  margin-top:130px;
+  position: absolute;
+  width:170px;
+  padding:10px;
+  vertical-align: middle;
+  display:none;
+}
+.rotate {
+  height:30px;
+  width:30px;
+  margin-top:15px;
+  cursor: pointer;
+  margin:0;
+  margin-top: 7px;
+}
+#rotateIcon {
+  height:30px;
+  width:30px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('../img/pangea.png');
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.reconstructToggler.leaflet-control {
+  left:50px;
+  margin-top:130px;
+  position: absolute;
+  width:170px;
+  padding:10px;
+  vertical-align: middle;
+  display:none;
+}
+.save > a {
+  color:#000;
+}
+.save > a:hover {
+  color:#000;
+  text-decoration: none;
+}
+.userToggler.leaflet-control {
+  left:49px;
+  margin-top:230px;
+  position: absolute;
+  width:16em;
+  padding:10px;
+  vertical-align: middle;
+  font-size: 0.8em;
+  display:none;
+}
+.taxaToggler.leaflet-control {
+  left:49px;
+  margin-top:182px;
+  position: absolute;
+  width:18em;
+  padding:10px;
+  vertical-align: middle;
+  font-size: 0.8em;
+  display:none;
+}
+#taxaForm {
+  padding-bottom: 5px;
+}
+.taxaRank {
+  color:#aaa;
+  font-size: 80%;
+  float:right;
+  letter-spacing: 0.05em;
+}
+.filters {
+  position: absolute;
+  z-index: 2;
+  padding: 10px;
+  background-color: rgba(255,255,255,0.95);
+  border: 1px solid #ccc;
+  text-align: center;
+  display: none;
+  right:0;
+  bottom:16px;
+}
+.filters > p {
+  display: inline;
+}
+.filter {
+  display: none;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 5px;
+  background-color: #fff;
+  color: #777;
+  margin-top:3px;
+}
+.filter > button {
+  float:left;
+  margin-right:5px;
+}
+.info.leaflet-control {
+  margin-left: 0;
+}
+.info.leaflet-control {
+  margin-bottom: 0;
+}
+.customControl {
+  background-color: rgba(255,255,255,0.97);
+  font-weight: bold;
+  border-right:1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  line-height: 1;
+  padding:2px;
+}
+.mapCtrl {
+  height:45px;
+  width:45px;
+  display: block;
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+}
+.mapCtrl:hover {
+  /*background-color:#ccc;
+  box-shadow: inset 3px 0 0 #ff992c;*/
+}
+.mapCtrl > i {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 25px;
+}
+.mapCtrl > a > i {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 25px;
+}
+.mapCtrl > .icon-minus {
+  height:16px;
+}
+.mapCtrl > .icon-plus {
+  height:16px;
+}
+.zoom-in:active {
+  color:rgb(255, 153, 44);
+}
+.zoom-out:active {
+  color:rgb(255, 153, 44);
+}
+.save > a > i:active {
+  color:rgb(255, 153, 44);
+}
+.collection {
+  fill: #EFEE69;
+  stroke: #777;
+  stroke-width:0.03em;
+  opacity:0.7;
+}
+.collection:hover {
+  stroke:#222;
+  stroke-width:1px;
+}
+td {
+  font-size: 0.8em;
+  color:#555;
+}
+td:first-child {
+  width:150px;
+}
+#stats {
+  width:100%;
+  display: table;
+}
+.statContainer {
+  text-align: center;
+  display:table-cell;
+  width:14.2857%;
+  padding-bottom: 10px;
+  border-left:2px dotted white;
+  background-color:#bbb;
+  color:#fff;
+}
+.statContainer:hover {
+  background-color:#5BBBD5;
+}
+#clusterTable {
+  cursor: pointer;
+}
+.firstRow {
+  border-top: 0;
+}
+/*Reconstruct map */
+.stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+}
+.fill {
+  fill: #000;
+}
+#reconstructMap {
+  width:100%;
+  display: none;
+}
+/* #reconstructMapInfo {
+  position: absolute;
+  width: 18em;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  padding: 15px;
+  background-color:rgba(255,255,255,0.9);
+}*/
+#gplatesLogo {
+  height:35px;
+  float:left;
+  margin-right:10px;
+  display: inline;
+}
+#gplatesText {
+  font-size: 1em;
+  margin-top:11px;
+  display: inline;
+}
+#reconstructMapStats {
+  display: inline;
+}
+#reconstructMapRefContainerContainer {
+  position: absolute;
+  right:0;
+}
+#reconstructMapRefContainer {
+   position: relative;
+}
+#reconstructMapReference {
+  background-color: rgba(255,255,255,0.9);
+  padding:6px 0 0 10px;
+  border-bottom: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  font-size:0.8em;
+  width:21em;
+  right:1.2em;
+  position: absolute;
+}
+.plates {
+  fill: #fff;
+  stroke:#777;
+  stroke-width:.75px;
+  opacity:1;
+}
+#interval {
+  text-align: center;
+  display: inline;
+}
+#age {
+  text-align: center;
+  display: inline;
+  font-size: 0.8em;
+}
+
+#loading {
+  height:42px;
+  position: absolute;
+  top:1em;
+  right:2em;
+  z-index: 100;
+  display: none;
+}
+.panel-default {
+  border:none;
+}
+.panel {
+  border: none;
+  box-shadow: none;
+  -webkit-box-shadow:none;
+  -moz-box-shadow:none;
+}
+.panel-default>.panel-heading {
+  background-color: #f7f7f7;
+}
+.panel-group .panel {
+  border-radius: 2px;
+  border-bottom: 1px solid #eee;
+}
+.panel-heading {
+  padding:7px 15px;
+}
+.panel-title {
+  font-size: 0.95em;
+  font-weight: 200;
+  color:#555;
+}
+.panel-title:hover {
+  color:#111;
+}
+.accordion-toggle:hover {
+  text-decoration: none;
+}
+
+#taxaBrowser {
+  display: none;
+}
+.taxonTitle {
+  color:#000;
+}
+.examples {
+  text-align: center;
+}
+.examples > button> img {
+  height:78px;
+}
+.examples > button > p {
+  margin-top: 15px;
+  font-weight: 100;
+}
+.btn-lg {
+  padding:25px;
+}
+rect:active {
+  stroke:#000;
+}

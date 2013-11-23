@@ -4,7 +4,7 @@
 }
 
 .tt-dropdown-menu {
-  min-width: 158px;
+  min-width: 184px;
   margin-top: 2px;
   margin-left:-2px;
   padding: 5px 0;
@@ -48,4 +48,8 @@
 
 .tt-suggestion p {
   margin: 0;
+}
+
+.tt-hint {
+  display: none;
 }
