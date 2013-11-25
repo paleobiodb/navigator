@@ -3,7 +3,8 @@ var reconstructMap = (function() {
          currentReconstruction is used to record the most recent reconstruction */
   var reconstructing = false,
       currentReconstruction = {"nam":"", "taxon": "", "person": ""},
-      rotatedPoints;
+      rotatedPoints,
+      baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   var height = 500,
       width = 960;
@@ -103,16 +104,16 @@ var reconstructMap = (function() {
            // var geojsonPlates = topojson.feature(topoPlates, topoPlates.objects[filename]);
 
             // Add the rotated plates to the map
-            svg.selectAll(".plateLines")
+          /*  svg.selectAll(".plateLines")
               .data(topojson.feature(topoPlates, topoPlates.objects[filename]).features)
             .enter().append("path")
               .attr("class", "plates")
-              .attr("d", path);
-
-           /* svg.insert("path")
-              .datum(geojsonPlates)
-              .attr("class", "plates")
               .attr("d", path);*/
+
+            svg.insert("path")
+              .datum(topojson.feature(topoPlates, topoPlates.objects[filename]))
+              .attr("class", "plates")
+              .attr("d", path);
 
             timeScale.highlight(interval.nam);
 
@@ -144,7 +145,7 @@ var reconstructMap = (function() {
             /* If there is a taxon or contributor filter applied to the map, ask the API
                for all the level2 bins with those filters applied. */
             if (navMap.filters.exist.taxon || navMap.filters.exist.personFilter) {
-              var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=99999';
+              var url = baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=99999';
 
               url = navMap.parseURL(url); 
 

@@ -22,7 +22,8 @@ var timeScale = (function() {
   var data = { oid: 0, col: "#000000", nam: "Geologic Time", children: [] },
       interval_hash = { 0: data },
       currentInterval,
-      dragStart, transformStart;
+      dragStart, transformStart,
+      baseUrl = "http://testpaleodb.geology.wisc.edu";
 
 
   /* Distinguish between clicks and doubleclicks via 
@@ -110,7 +111,7 @@ var timeScale = (function() {
         .attr("transform", "translate(0,125)");
 
       // Load the time scale data
-      d3.json("http://testpaleodb.geology.wisc.edu/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
+      d3.json(baseUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
      // d3.json("js/intervals.json", function(error, result) {
 
         for(var i=0; i < result.records.length; i++) {
@@ -120,7 +121,6 @@ var timeScale = (function() {
           r.abr = r.abr || r.nam.charAt(0);
           r.mid = parseInt((r.eag + r.lag) / 2),
           r.total = r.eag - r.lag;
-          r.lvl = r.sca[0][1];
           interval_hash[r.oid] = r;
           interval_hash[r.pid].children.push(r);
         }
@@ -163,7 +163,7 @@ var timeScale = (function() {
 
         var hash = scaleBar.enter().append("g")
           .attr("class", function(d) {
-            return "tickGroup s" + ((typeof(d.sca) === "undefined") ? 0 : d.sca[0][1]);
+            return "tickGroup s" + ((typeof(d.lvl) === "undefined") ? 0 : d.lvl);
           })
           .attr("transform", function(d) { return "translate(" + x(d.x) + ", 0)"});
 
@@ -217,7 +217,7 @@ var timeScale = (function() {
             .attr("y", function(d) { return y(d.y) + 15;})
             .attr("width", function() { return this.getComputedTextLength(); })
             .attr("height", function(d) { return y(d.dy); })
-            .attr("class", function(d) { return "fullName level" + ((typeof(d.sca) === "undefined") ? 0 : d.sca[0][1]); })
+            .attr("class", function(d) { return "fullName level" + ((typeof(d.lvl) === "undefined") ? 0 : d.lvl); })
             .attr("id", function(d) { return "l" + d.oid; })
             .attr("x", function(d) { return timeScale.labelX(d); })
             .call(drag)
@@ -243,7 +243,7 @@ var timeScale = (function() {
             .attr("width", 30)
             .attr("height", function(d) { return y(d.dy); })
             .text(function(d) { return d.abr || d.nam.charAt(0); })
-            .attr("class", function(d) { return "abbr level" + ((typeof(d.sca) === "undefined") ? 0 : d.sca[0][1]); })
+            .attr("class", function(d) { return "abbr level" + ((typeof(d.lvl) === "undefined") ? 0 : d.lvl); })
             .attr("id", function(d) { return "a" + d.oid; })
             .attr("x", function(d) { return timeScale.labelAbbrX(d); })
             .call(ccAbbr)
@@ -364,8 +364,7 @@ var timeScale = (function() {
       //var timeFilterCheck = document.getElementById('viewByTimeBox').checked,
       var reconstructCheck = document.getElementById('reconstructBox').checked;
 
-      console.log(d);
-      
+      // If the interval clicked on is already the selected filter, ignore
       if (d.oid === navMap.filters.selectedInterval.oid) {
         return;
       }
@@ -384,8 +383,8 @@ var timeScale = (function() {
         var requestYear = parseInt((d.eag + d.lag) / 2);
         if (d.depth < 3) {
           return alert("Please select a period or finer interval");
-        } else if (requestYear > 600) {
-          return alert("Please select an interval younger than 250 MA");
+        } else if (requestYear > 550) {
+          return alert("Please select an interval younger than 600 MA");
         } else {
           navMap.refresh("reset");
           reconstructMap.rotate(d);

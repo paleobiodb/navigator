@@ -8,7 +8,8 @@ var navMap = (function() {
     prevsw = {"lng": 0, "lat": 0},
     prevne = {"lng": 0, "lat": 0},
     prevzoom = 3,
-    currentRequest;
+    currentRequest,
+    baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxon": {"id": "", "name": ""}, "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false}};
 
@@ -212,7 +213,7 @@ var navMap = (function() {
           }
         }
 
-        var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time';
+        var url = baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time';
 
         if (filtered) {
           if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
@@ -326,7 +327,7 @@ var navMap = (function() {
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
 
       if (zoom < 4 && filtered == false) {
-        var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
+        var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           navMap.drawBins(data, 1, zoom);
@@ -340,7 +341,7 @@ var navMap = (function() {
 
         // If filtered only by a time interval...
         if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
-          var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=2';
+          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=2';
           url = navMap.parseURL(url);
 
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -359,7 +360,7 @@ var navMap = (function() {
           }
         // If not filtered only by a time interval, refresh normally
         } else {
-          var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
+          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
 
           currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
             navMap.drawBins(data, 2, zoom);
@@ -371,7 +372,7 @@ var navMap = (function() {
        } */
 
       } else {
-        var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
+        var url = baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
 
         /*if (bounds._southWest.lng < -180 || bounds._northEast.lng > 180) {
           navMap.refreshDateline(3);
@@ -492,7 +493,20 @@ var navMap = (function() {
 
       points
         .attr("id", function(d) { return "p" + d.cxi; })
-        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; });
+        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
+        .on("mouseover", function(d) {
+          d3.select(".info")
+            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+            .style("display", "block");
+          timeScale.highlight(this);
+        })
+        .on("click", function(d) {
+          d3.select(".info")
+            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+            .style("display", "block");
+          timeScale.highlight(this);
+          navMap.openBinModal(d);
+        });
 
       points.enter().append("circle")
         .attr("class", "bins")
@@ -604,7 +618,23 @@ var navMap = (function() {
         .data(clusters);
 
       clusters
-        .style("fill", function(d) { return timeScale.interval_hash[d.cxi].col; });
+        .style("fill", function(d) { return timeScale.interval_hash[d.cxi].col; })
+        .on("mouseover", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+        })
+        .on("click", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+          navMap.openCollectionModal(d);
+        })
+        .on("mouseout", function(d) {
+          timeScale.unhighlight();
+        });
       
       clusters.enter().append("circle")
         .attr("class", "clusters")
@@ -629,7 +659,23 @@ var navMap = (function() {
         .data(data.records);
 
       existingPoints = points
-        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; });
+        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
+        .on("mouseover", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+        })
+        .on("click", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+          navMap.openCollectionModal(d);
+        })
+        .on("mouseout", function(d) {
+          timeScale.unhighlight();
+        });
 
       points.enter().append("circle")
         .attr("id", function(d) { return "p" + d.cxi })
@@ -659,14 +705,18 @@ var navMap = (function() {
     },
 
     "openCollectionModal": function(d) {
-      d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
+      d3.json(baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
 
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.fmm = (d.fmm) ? d.fmm : "Unknown";
+          d.grp = (d.grp) ? d.grp : "Unknown";
+          d.mbb = (d.mbb) ? d.mbb : "Unknown";
+          d.lit = (d.lit) ? d.lit : "Unknown";
+          d.env = (d.env) ? d.env : "Unknown";
         });
 
-        var template = '{{#records}}<table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table>{{/records}}';
+        var template = '{{#records}}<table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Group</strong></td><td>{{grp}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Member</strong></td><td>{{mbb}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr><tr><td><strong>Environment</strong></td><td>{{env}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table>{{/records}}';
 
         var output = Mustache.render(template, data);
         $("#collectionName").html(data.records[0].nam);
@@ -677,7 +727,7 @@ var navMap = (function() {
 
     "openBinModal": function(d) {
       var id = (d.properties) ? d.properties.oid : d.oid,
-          url = "http://testpaleodb.geology.wisc.edu/data1.1/colls/list.json?clust_id=" +id;
+          url = baseUrl + "/data1.1/colls/list.json?clust_id=" +id;
 
       url = navMap.parseURL(url);
       url += "&show=ref,loc,time";
@@ -686,9 +736,13 @@ var navMap = (function() {
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.fmm = (d.fmm) ? d.fmm : "Unknown";
+          d.grp = (d.grp) ? d.grp : "Unknown";
+          d.mbb = (d.mbb) ? d.mbb : "Unknown";
+          d.lit = (d.lit) ? d.lit : "Unknown";
+          d.env = (d.env) ? d.env : "Unknown";
         });
 
-      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
+      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Group</strong></td><td>{{grp}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Member</strong></td><td>{{mbb}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr><tr><td><strong>Environment</strong></td><td>{{env}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
 
         var output = Mustache.render(template, data);
         d3.select("#binID").html("Bin " + id);
@@ -702,9 +756,13 @@ var navMap = (function() {
       data.members.forEach(function(d) {
         d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
         d.fmm = (d.fmm) ? d.fmm : "Unknown";
+        d.grp = (d.grp) ? d.grp : "Unknown";
+        d.mbb = (d.mbb) ? d.mbb : "Unknown";
+        d.lit = (d.lit) ? d.lit : "Unknown";
+        d.env = (d.env) ? d.env : "Unknown";
       });
 
-      var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
+      var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Group</strong></td><td>{{grp}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Member</strong></td><td>{{mbb}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr><tr><td><strong>Environment</strong></td><td>{{env}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
 
       var output = Mustache.render(template, data);
 
@@ -714,7 +772,7 @@ var navMap = (function() {
       $(".collectionCollapse").on("show.bs.collapse", function(d) {
         var id = d.target.id;
         id = id.replace("collapse", "");
-        d3.json("http://testpaleodb.geology.wisc.edu/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
+        d3.json(baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
           $("#ref" + id).html(data.records[0].ref);
         });
       });
@@ -746,7 +804,7 @@ var navMap = (function() {
       }
       switch(lvl) {
         case 1: 
-          var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
+          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
           url = navMap.parseURL(url);
           d3.json(url, function(error, response) {
             response.records.forEach(function(d) {
@@ -760,7 +818,7 @@ var navMap = (function() {
           });
           break;
         case 2:
-          var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
+          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
           url = navMap.parseURL(url);
           d3.json(url, function(error, response) {
             response.records.forEach(function(d) {
@@ -774,7 +832,7 @@ var navMap = (function() {
           });
           break;
         case 3:
-          var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
+          var url = baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
            url = navMap.parseURL(url);
            d3.json(url, function(error, response) {
             response.records.forEach(function(d) {
@@ -1083,7 +1141,7 @@ var navMap = (function() {
         ne.lat = 90;
       }
 
-      var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/list.';
+      var url = baseUrl + '/data1.1/colls/list.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
@@ -1152,7 +1210,7 @@ var navMap = (function() {
 
       // If there is a preserved state hash
       if (state.length > 1) {
-        d3.json("http://testpaleodb.geology.wisc.edu/data1.1/...?key=" + state, function(error, result) {
+        d3.json(baseUrl + "/data1.1/...?key=" + state, function(error, result) {
           var params = result.records[0];
 
           if (params.zoom > 2) {
