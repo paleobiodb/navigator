@@ -14,7 +14,7 @@ var paleo_nav = {
     zoomInButton.on("tap", function(event) {
       event.preventDefault();
       if (parseInt(d3.select("#map").style("height")) < 1) {
-        console.log('here');
+
         d3.select("#svgMap").style("display", "none");
         d3.select("#map").style("height", function() {
           return ((window.innerHeight * 0.70) - 70) + "px";

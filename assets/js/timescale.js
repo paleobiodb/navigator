@@ -364,6 +364,12 @@ var timeScale = (function() {
       //var timeFilterCheck = document.getElementById('viewByTimeBox').checked,
       var reconstructCheck = document.getElementById('reconstructBox').checked;
 
+      console.log(d);
+      
+      if (d.oid === navMap.filters.selectedInterval.oid) {
+        return;
+      }
+
       timeScale.highlight(d.nam);
       // Update the map filter info
       navMap.filters.selectedInterval.nam = d.nam;
