@@ -13,13 +13,6 @@ results
 
 npm-debug.log
 node_modules
-build/js/collections
-build/js/plates
-build/js/rotatedIntervals
-build/js/tempjson
-build/js/script.min.js
-build/css
-assets/php
 
 .DS_Store
 .AppleDouble

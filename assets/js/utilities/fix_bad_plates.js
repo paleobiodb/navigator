@@ -28,6 +28,7 @@ function checkPlates() {
   });
 }
 
+/*
 function getIndex(data, term, property) {
   for(var i=0, len=data.length; i<len; i++) {
     if (data[i][property] === term) return i;
@@ -35,14 +36,28 @@ function getIndex(data, term, property) {
   return -1;
 }
 
-var i = 0;
+var i = 0;*/
+
+/*Middle Pleistocene -- 0
+Coniacian -- 88
+Tithonian -- 148
+Jurassic -- 173 (ignore)
+Rhaetian -- 204
+Ladinian -- 239
+Sandbian -- 445
+Floian -- 473 {"name":"Floian", "mid":473},
+Early Ordovician -- 477 {"name":"Early Ordovician", "mid":477},
+Paibian -- 495 {"name":"Paibian", "mid":495},
+Guzhangian -- 498 (remove) {"name":"Guzhangian", "mid":498},
+Cambrian -- 513 (ignore)*/
 
 // Problematic intervals
-var intervals = [{"name":"Selandian", "mid": 60}, {"name":"Maastrichtian", "mid": 69},{"name":"Albian", "mid": 106}, {"name":"Early Cretaceous", "mid": 122},{"name":"Middle Triassic", "mid":242},{"name":"Olenekian", "mid": 249},{"name":"Early Triassic", "mid":249}, {"name":"Artinskian", "mid":284}, {"name":"Sakmarian", "mid":292}, {"name":"Gzhelian", "mid":301}, {"name":"Mississippian", "mid":341}, {"name":"Visean", "mid":338}, {"name":"Tournaisian", "mid":352}, {"name":"Early Devonian", "mid":406}, {"name":"Pragian", "mid":409}, {"name":"Floian", "mid":473}, {"name":"Early Ordovician", "mid":477}, {"name": "Jiangshanian", "mid":491}, {"name":"Paibian", "mid":495}, {"name":"Furongian", "mid": 491}, {"name":"Guzhangian", "mid":498}, {"name":"Stage 2", "mid":525}];
+var intervals = [{"name": "Middle Pleistocene", "mid":0}, {"name":"Selandian", "mid": 60}, {"name":"Maastrichtian", "mid": 69}, {"name":"Coniacian", "mid": 88},{"name":"Albian", "mid": 106}, {"name":"Early Cretaceous", "mid": 122}, {"name": "Tithonian", "mid": 148}, {"name":"Rhaetian", "mid":204}, {"name":"Ladinian", "mid":239}, {"name":"Middle Triassic", "mid":242},{"name":"Olenekian", "mid": 249},{"name":"Early Triassic", "mid":249}, {"name":"Artinskian", "mid":284}, {"name":"Sakmarian", "mid":292}, {"name":"Gzhelian", "mid":301}, {"name":"Mississippian", "mid":341}, {"name":"Visean", "mid":338}, {"name":"Tournaisian", "mid":352}, {"name":"Early Devonian", "mid":406}, {"name":"Pragian", "mid":409}, {"name": "Sandbian", "mid": 445}, {"name":"Floian", "mid":473},  {"name": "Jiangshanian", "mid":491},  {"name":"Furongian", "mid": 491}, {"name":"Stage 2", "mid":525}];
 
 function getJSON(interval) {
   if (interval) {
-    var url = 'http://gplates.gps.caltech.edu:8080/reconstruct_polygons/?&time=' + intervals[i].mid + '&data_type=coastlines';
+    console.log(interval);
+    var url = 'http://gplates.gps.caltech.edu:8080/reconstruct_polygons/?&time=' + interval.mid + '&data_type=coastlines';
 
     // Make the GET request
     http.get(url, function(res) {
@@ -53,9 +68,14 @@ function getJSON(interval) {
 
         res.on('end', function() {
             var plateResponse= JSON.parse(body),
-                filename = intervals[i].name.split(' ').join('_');
+                filename = interval.name.split(' ').join('_');
 
+            console.log("Got GPlates response for ", interval.name);
             saveFile(plateResponse, filename);
+        });
+
+        res.on('error', function() {
+          console.log("Could not complete GPLates request");
         });
     });
   } else {
@@ -63,7 +83,7 @@ function getJSON(interval) {
   }
 }
 
-function removeSmall(data, filename) {
+/*function removeSmall(data, filename) {
   var toRemove = [];
 
   for(var z=0; z<data.features.length; z++) {
@@ -80,7 +100,7 @@ function removeSmall(data, filename) {
     var index = getIndex(plateResponse.features.properties, toRemove[j], "FEATURE_ID");
     plateResponse.features.splice(index, 1);
   }
-}
+}*/
 
 function saveFile(data, filename) {
   // Save result to a temp file
@@ -95,7 +115,7 @@ function saveFile(data, filename) {
             } else {
               // Delete the original GeoJSON
               fs.unlink('../../../build/js/tempjson/' + filename + '.json');
-              console.log("Year " , intervals[i].name, " was converted to TopoJSON");
+              console.log("Year " , filename, " was converted to TopoJSON");
               
               getJSON(intervals.shift());
             }
