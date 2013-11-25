@@ -200,21 +200,9 @@ var navMap = (function() {
       }
 
       var filtered = navMap.checkFilters();
+
       // Check which map is displayed - if hammer, skip the rest
       if (parseInt(d3.select("#map").style("height")) < 1) {
-
-        var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time';
-        if (filtered) {
-          if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
-            url = "build/js/collections/" + filters.selectedInterval.nam.split(' ').join('_') + ".json";
-          } else {
-            url += "&level=2";
-            url = navMap.parseURL(url);
-          }
-        } else {
-          url += "&level=1";
-          url = navMap.parseURL(url);
-        }
 
         // Abort any pending requests
         if(typeof(currentRequest) != 'undefined') {
@@ -224,29 +212,41 @@ var navMap = (function() {
           }
         }
 
-        // If filtered only by a time interval...
-        if (url.substr(0,5) == "build") {
-          if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
-            // .. and if the level2 data for the selected interval hasn't been loaded...
-            if (typeof(timeScale.interval_hash[filters.selectedInterval.oid].data) === "undefined") {
-              // ...load it...
-              currentRequest = d3.json(url, function(error, data) {
-                // ...and hold on to it
-                timeScale.interval_hash[filters.selectedInterval.oid].data = data;
-                navMap.refreshHammer(data);
-              });
-            // If the level2 data for the selected interval has already been loaded, use that
-            } else {
-              navMap.refreshHammer(timeScale.interval_hash[filters.selectedInterval.oid].data);
+        var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time';
+
+        if (filtered) {
+          if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
+            url += "&level=2";
+            url = navMap.parseURL(url);
+
+            if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
+              // .. and if the level2 data for the selected interval hasn't been loaded...
+              if (typeof(timeScale.interval_hash[filters.selectedInterval.oid].data) === "undefined") {
+                // ...load it...
+                currentRequest = d3.json(url, function(error, data) {
+                  // ...and hold on to it
+                  timeScale.interval_hash[filters.selectedInterval.oid].data = data;
+                  return navMap.refreshHammer(data);
+                });
+              // If the level2 data for the selected interval has already been loaded, use that
+              } else {
+                return navMap.refreshHammer(timeScale.interval_hash[filters.selectedInterval.oid].data);
+              }
             }
+
+          } else {
+            url += "&level=2";
+            url = navMap.parseURL(url);
           }
-        // If not filtered only by a time interval, refresh normally
         } else {
-          currentRequest = d3.json(url, function(error, data) { 
-            navMap.refreshHammer(data);
-          });
+          url += "&level=1";
+          url = navMap.parseURL(url);
         }
 
+        currentRequest = d3.json(url, function(error, data) { 
+          navMap.refreshHammer(data);
+        });
+        
         return;
       }
 
@@ -338,14 +338,11 @@ var navMap = (function() {
         });
       } else if (zoom > 3 && zoom < 7 || zoom < 4 && filtered == true) {
 
-        var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
-
-        if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
-          url = "build/js/collections/" + filters.selectedInterval.nam.split(' ').join('_') + ".json";
-        }
-
         // If filtered only by a time interval...
-        if (url.substr(0,5) == "build") {
+        if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
+          var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=2';
+          url = navMap.parseURL(url);
+
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
             // .. and if the level2 data for the selected interval hasn't been loaded...
             if (typeof(timeScale.interval_hash[filters.selectedInterval.oid].data) === "undefined") {
@@ -353,17 +350,17 @@ var navMap = (function() {
               currentRequest = d3.json(url, function(error, data) {
                 // ...and hold on to it
                 timeScale.interval_hash[filters.selectedInterval.oid].data = data;
-
-                navMap.drawBins(data, 2, zoom);
+                return navMap.drawBins(data, 2, zoom);
               });
-
             // If the level2 data for the selected interval has already been loaded, use that
             } else {
-              navMap.drawBins(timeScale.interval_hash[filters.selectedInterval.oid].data, 2, zoom);
+              return navMap.drawBins(timeScale.interval_hash[filters.selectedInterval.oid].data, 2, zoom);
             }
           }
         // If not filtered only by a time interval, refresh normally
         } else {
+          var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
+
           currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
             navMap.drawBins(data, 2, zoom);
           });
