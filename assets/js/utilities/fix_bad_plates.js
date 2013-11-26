@@ -38,7 +38,7 @@ function getIndex(data, term, property) {
 
 var i = 0;*/
 
-/*Middle Pleistocene -- 0
+/*Middle Pleistocene -- 0 {"name": "Middle Pleistocene", "mid":0}
 Coniacian -- 88
 Tithonian -- 148
 Jurassic -- 173 (ignore)
@@ -52,11 +52,10 @@ Guzhangian -- 498 (remove) {"name":"Guzhangian", "mid":498},
 Cambrian -- 513 (ignore)*/
 
 // Problematic intervals
-var intervals = [{"name": "Middle Pleistocene", "mid":0}, {"name":"Selandian", "mid": 60}, {"name":"Maastrichtian", "mid": 69}, {"name":"Coniacian", "mid": 88},{"name":"Albian", "mid": 106}, {"name":"Early Cretaceous", "mid": 122}, {"name": "Tithonian", "mid": 148}, {"name":"Rhaetian", "mid":204}, {"name":"Ladinian", "mid":239}, {"name":"Middle Triassic", "mid":242},{"name":"Olenekian", "mid": 249},{"name":"Early Triassic", "mid":249}, {"name":"Artinskian", "mid":284}, {"name":"Sakmarian", "mid":292}, {"name":"Gzhelian", "mid":301}, {"name":"Mississippian", "mid":341}, {"name":"Visean", "mid":338}, {"name":"Tournaisian", "mid":352}, {"name":"Early Devonian", "mid":406}, {"name":"Pragian", "mid":409}, {"name": "Sandbian", "mid": 445}, {"name":"Floian", "mid":473},  {"name": "Jiangshanian", "mid":491},  {"name":"Furongian", "mid": 491}, {"name":"Stage 2", "mid":525}];
+var intervals = [{"name": "Middle Pleistocene", "mid":0}, {"name":"Selandian", "mid": 60}, {"name":"Maastrichtian", "mid": 69}, {"name":"Coniacian", "mid": 88},{"name":"Albian", "mid": 106}, {"name":"Early Cretaceous", "mid": 122}, {"name": "Tithonian", "mid": 148}, {"name":"Rhaetian", "mid":204}, {"name":"Ladinian", "mid":239}, {"name":"Middle Triassic", "mid":242},{"name":"Olenekian", "mid": 249},{"name":"Early Triassic", "mid":249}, {"name":"Artinskian", "mid":284}, {"name":"Sakmarian", "mid":292}, {"name":"Gzhelian", "mid":301}, {"name":"Mississippian", "mid":341}, {"name":"Visean", "mid":338}, {"name":"Tournaisian", "mid":352}, {"name":"Early Devonian", "mid":406}, {"name":"Pragian", "mid":409}, {"name": "Sandbian", "mid": 445}, {"name":"Early Ordovician", "mid":477}, {"name": "Jiangshanian", "mid":491},  {"name":"Furongian", "mid": 491}, {"name":"Stage 2", "mid":525}];
 
 function getJSON(interval) {
   if (interval) {
-    console.log(interval);
     var url = 'http://gplates.gps.caltech.edu:8080/reconstruct_polygons/?&time=' + interval.mid + '&data_type=coastlines';
 
     // Make the GET request
@@ -72,10 +71,6 @@ function getJSON(interval) {
 
             console.log("Got GPlates response for ", interval.name);
             saveFile(plateResponse, filename);
-        });
-
-        res.on('error', function() {
-          console.log("Could not complete GPLates request");
         });
     });
   } else {
@@ -109,12 +104,12 @@ function saveFile(data, filename) {
           console.log(err);
       } else {
           // Convert to Topojson, simplifying and prerving the attributes NAME and PLATE_ID
-          exec('topojson -o ../../../build/js/plates/' + filename +'.json -p NAME,PLATE_ID --no-stitch-poles -- ../../../build/js/tempjson/' + filename + '.json', function(err, result) {
+          exec('topojson -o ../../../build/js/plates/' + filename +'.json -p NAME,PLATE_ID -- ../../../build/js/tempjson/' + filename + '.json', function(err, result) {
             if (err) {
               console.log(err);
             } else {
               // Delete the original GeoJSON
-              fs.unlink('../../../build/js/tempjson/' + filename + '.json');
+             // fs.unlink('../../../build/js/tempjson/' + filename + '.json');
               console.log("Year " , filename, " was converted to TopoJSON");
               
               getJSON(intervals.shift());

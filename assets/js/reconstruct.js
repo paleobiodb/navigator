@@ -104,16 +104,16 @@ var reconstructMap = (function() {
            // var geojsonPlates = topojson.feature(topoPlates, topoPlates.objects[filename]);
 
             // Add the rotated plates to the map
-          /*  svg.selectAll(".plateLines")
+            svg.selectAll(".plateLines")
               .data(topojson.feature(topoPlates, topoPlates.objects[filename]).features)
             .enter().append("path")
               .attr("class", "plates")
-              .attr("d", path);*/
-
-            svg.insert("path")
-              .datum(topojson.feature(topoPlates, topoPlates.objects[filename]))
-              .attr("class", "plates")
               .attr("d", path);
+
+           /* svg.insert("path")
+              .datum(geojsonPlates)
+              .attr("class", "plates")
+              .attr("d", path);*/
 
             timeScale.highlight(interval.nam);
 
