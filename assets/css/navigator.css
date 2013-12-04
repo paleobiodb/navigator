@@ -493,3 +493,18 @@ td:first-child {
 rect:active {
   stroke:#000;
 }
+@media(max-width: 978px) {
+  .examples>button> img {
+    height: 60px;
+  }
+}
+@media(max-width: 840px) {
+  .examples>button> img {
+    height: 50px;
+  }
+}
+@media(max-width: 700px) {
+  .examples>button> img {
+    height: 32px;
+  }
+}

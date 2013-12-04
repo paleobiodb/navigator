@@ -8,8 +8,7 @@ var navMap = (function() {
     prevsw = {"lng": 0, "lat": 0},
     prevne = {"lng": 0, "lat": 0},
     prevzoom = 3,
-    currentRequest,
-    baseUrl = "http://testpaleodb.geology.wisc.edu";
+    currentRequest;
 
   var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxon": {"id": "", "name": ""}, "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false}};
 
@@ -213,7 +212,7 @@ var navMap = (function() {
           }
         }
 
-        var url = baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time';
+        var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time';
 
         if (filtered) {
           if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
@@ -327,7 +326,7 @@ var navMap = (function() {
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
 
       if (zoom < 4 && filtered == false) {
-        var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
+        var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           navMap.drawBins(data, 1, zoom);
@@ -341,7 +340,7 @@ var navMap = (function() {
 
         // If filtered only by a time interval...
         if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
-          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=2';
+          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=2';
           url = navMap.parseURL(url);
 
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -360,7 +359,7 @@ var navMap = (function() {
           }
         // If not filtered only by a time interval, refresh normally
         } else {
-          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
+          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
 
           currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
             navMap.drawBins(data, 2, zoom);
@@ -372,7 +371,7 @@ var navMap = (function() {
        } */
 
       } else {
-        var url = baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
+        var url = paleo_nav.baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
 
         /*if (bounds._southWest.lng < -180 || bounds._northEast.lng > 180) {
           navMap.refreshDateline(3);
@@ -705,7 +704,7 @@ var navMap = (function() {
     },
 
     "openCollectionModal": function(d) {
-      d3.json(baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
+      d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
 
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
@@ -727,7 +726,7 @@ var navMap = (function() {
 
     "openBinModal": function(d) {
       var id = (d.properties) ? d.properties.oid : d.oid,
-          url = baseUrl + "/data1.1/colls/list.json?clust_id=" +id;
+          url = paleo_nav.baseUrl + "/data1.1/colls/list.json?clust_id=" +id;
 
       url = navMap.parseURL(url);
       url += "&show=ref,loc,time";
@@ -772,7 +771,7 @@ var navMap = (function() {
       $(".collectionCollapse").on("show.bs.collapse", function(d) {
         var id = d.target.id;
         id = id.replace("collapse", "");
-        d3.json(baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
+        d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
           $("#ref" + id).html(data.records[0].ref);
         });
       });
@@ -804,7 +803,7 @@ var navMap = (function() {
       }
       switch(lvl) {
         case 1: 
-          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
+          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
           url = navMap.parseURL(url);
           d3.json(url, function(error, response) {
             response.records.forEach(function(d) {
@@ -818,7 +817,7 @@ var navMap = (function() {
           });
           break;
         case 2:
-          var url = baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
+          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
           url = navMap.parseURL(url);
           d3.json(url, function(error, response) {
             response.records.forEach(function(d) {
@@ -832,7 +831,7 @@ var navMap = (function() {
           });
           break;
         case 3:
-          var url = baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
+          var url = paleo_nav.baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
            url = navMap.parseURL(url);
            d3.json(url, function(error, response) {
             response.records.forEach(function(d) {
@@ -1141,7 +1140,7 @@ var navMap = (function() {
         ne.lat = 90;
       }
 
-      var url = baseUrl + '/data1.1/colls/list.';
+      var url = paleo_nav.baseUrl + '/data1.1/colls/list.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
@@ -1210,7 +1209,7 @@ var navMap = (function() {
 
       // If there is a preserved state hash
       if (state.length > 1) {
-        d3.json(baseUrl + "/data1.1/...?key=" + state, function(error, result) {
+        d3.json(paleo_nav.baseUrl + "/data1.1/...?key=" + state, function(error, result) {
           var params = result.records[0];
 
           if (params.zoom > 2) {
