@@ -708,14 +708,15 @@ var navMap = (function() {
 
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
-          d.fmm = (d.fmm) ? d.fmm : "Unknown";
-          d.grp = (d.grp) ? d.grp : "Unknown";
-          d.mbb = (d.mbb) ? d.mbb : "Unknown";
-          d.lit = (d.lit) ? d.lit : "Unknown";
-          d.env = (d.env) ? d.env : "Unknown";
+          d.strat = (d.fmm || d.grp || d.mbb) ? true : false;
+         // d.fmm = (d.fmm) ? d.fmm : "Unknown";
+         // d.grp = (d.grp) ? d.grp : "Unknown";
+         // d.mbb = (d.mbb) ? d.mbb : "Unknown";
+         // d.lit = (d.lit) ? d.lit : "Unknown";
+         // d.env = (d.env) ? d.env : "Unknown";
         });
 
-        var template = '{{#records}}<table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Group</strong></td><td>{{grp}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Member</strong></td><td>{{mbb}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr><tr><td><strong>Environment</strong></td><td>{{env}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table>{{/records}}';
+        var template = '{{#records}}<table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr>{{#strat}}<tr><td><strong>Stratigraphy</strong></td><td>{{#grp}}{{grp}}{{/grp}}{{#fmm}}{{#grp}} - {{/grp}}{{fmm}}{{#mbb}} - {{/mbb}}{{/fmm}}{{#mbb}}{{mbb}}{{/mbb}}</td></tr>{{/strat}}<tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr>{{#lit}}<tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr>{{/lit}}{{#env}}<tr><td><strong>Environment</strong></td><td>{{env}}</td></tr>{{/env}}<tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr>{{#aut}}<tr><td><strong>Authorizer</strong></td><td>{{aut}}</td></tr>{{/aut}}<tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table>{{/records}}';
 
         var output = Mustache.render(template, data);
         $("#collectionName").html(data.records[0].nam);
@@ -734,14 +735,15 @@ var navMap = (function() {
       d3.json(url, function(err, data) {
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
-          d.fmm = (d.fmm) ? d.fmm : "Unknown";
-          d.grp = (d.grp) ? d.grp : "Unknown";
-          d.mbb = (d.mbb) ? d.mbb : "Unknown";
-          d.lit = (d.lit) ? d.lit : "Unknown";
-          d.env = (d.env) ? d.env : "Unknown";
+          d.strat = (d.fmm || d.grp || d.mbb) ? true : false;
+         // d.fmm = (d.fmm) ? d.fmm : "Unknown";
+         // d.grp = (d.grp) ? d.grp : "Unknown";
+         // d.mbb = (d.mbb) ? d.mbb : "Unknown";
+          //d.lit = (d.lit) ? d.lit : "Unknown";
+          //d.env = (d.env) ? d.env : "Unknown";
         });
 
-      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Group</strong></td><td>{{grp}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Member</strong></td><td>{{mbb}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr><tr><td><strong>Environment</strong></td><td>{{env}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
+      var template = '{{#records}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr>{{#strat}}<tr><td><strong>Stratigraphy</strong></td><td>{{#grp}}{{grp}}{{/grp}}{{#fmm}}{{#grp}} - {{/grp}}{{fmm}}{{#mbb}} - {{/mbb}}{{/fmm}}{{#mbb}}{{mbb}}{{/mbb}}</td></tr>{{/strat}}<tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr>{{#lit}}<tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr>{{/lit}}{{#env}}<tr><td><strong>Environment</strong></td><td>{{env}}</td></tr>{{/env}}<tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr>{{#aut}}<tr><td><strong>Authorizer</strong></td><td>{{aut}}</td></tr>{{/aut}}<tr><td><strong>Reference</strong></td><td>{{{ref}}}</td></tr></table></div></div></div>{{/records}}';
 
         var output = Mustache.render(template, data);
         d3.select("#binID").html("Bin " + id);
@@ -754,14 +756,15 @@ var navMap = (function() {
     "openStackedCollectionModal": function(data) {
       data.members.forEach(function(d) {
         d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
-        d.fmm = (d.fmm) ? d.fmm : "Unknown";
-        d.grp = (d.grp) ? d.grp : "Unknown";
-        d.mbb = (d.mbb) ? d.mbb : "Unknown";
-        d.lit = (d.lit) ? d.lit : "Unknown";
-        d.env = (d.env) ? d.env : "Unknown";
+        d.strat = (d.fmm || d.grp || d.mbb) ? true : false;
+       // d.fmm = (d.fmm) ? d.fmm : "Unknown";
+       // d.grp = (d.grp) ? d.grp : "Unknown";
+       // d.mbb = (d.mbb) ? d.mbb : "Unknown";
+      //  d.lit = (d.lit) ? d.lit : "Unknown";
+       // d.env = (d.env) ? d.env : "Unknown";
       });
 
-      var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr><tr><td><strong>Group</strong></td><td>{{grp}}</td></tr><tr><td><strong>Formation</strong></td><td>{{fmm}}</td></tr><tr><td><strong>Member</strong></td><td>{{mbb}}</td></tr><tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr><tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr><tr><td><strong>Environment</strong></td><td>{{env}}</td></tr><tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr><tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
+      var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr>{{#strat}}<tr><td><strong>Stratigraphy</strong></td><td>{{#grp}}{{grp}}{{/grp}}{{#fmm}}{{#grp}} - {{/grp}}{{fmm}}{{#mbb}} - {{/mbb}}{{/fmm}}{{#mbb}}{{mbb}}{{/mbb}}</td></tr>{{/strat}}<tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr>{{#lit}}<tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr>{{/lit}}{{#env}}<tr><td><strong>Environment</strong></td><td>{{env}}</td></tr>{{/env}}<tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr>{{#aut}}<tr><td><strong>Authorizer</strong></td><td>{{aut}}</td></tr>{{/aut}}<tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
 
       var output = Mustache.render(template, data);
 

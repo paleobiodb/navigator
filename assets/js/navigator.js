@@ -1,4 +1,6 @@
 var paleo_nav = (function() {
+  /* Server to be used for all data service requests;
+     Leave blank if application is on the same server */  
   var baseUrl = "";
 
   return {
@@ -218,7 +220,7 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var url = baseUrl + 'data1.1/colls/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
+        var url = baseUrl + '/data1.1/colls/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);
 
         d3.json(url, function(err, results) {
