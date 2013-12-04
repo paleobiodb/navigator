@@ -22,8 +22,7 @@ var timeScale = (function() {
   var data = { oid: 0, col: "#000000", nam: "Geologic Time", children: [] },
       interval_hash = { 0: data },
       currentInterval,
-      dragStart, transformStart,
-      baseUrl = "http://testpaleodb.geology.wisc.edu";
+      dragStart, transformStart;
 
 
   /* Distinguish between clicks and doubleclicks via 
@@ -111,7 +110,7 @@ var timeScale = (function() {
         .attr("transform", "translate(0,125)");
 
       // Load the time scale data
-      d3.json(baseUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
+      d3.json(paleo_nav.baseUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
      // d3.json("js/intervals.json", function(error, result) {
 
         for(var i=0; i < result.records.length; i++) {

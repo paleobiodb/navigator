@@ -104,7 +104,7 @@ function saveFile(data, filename) {
           console.log(err);
       } else {
           // Convert to Topojson, simplifying and prerving the attributes NAME and PLATE_ID
-          exec('topojson -o ../../../build/js/plates/' + filename +'.json -p NAME,PLATE_ID -- ../../../build/js/tempjson/' + filename + '.json', function(err, result) {
+          exec('topojson -o ../../../build/js/plates/' + filename +'.json -p NAME,PLATE_ID --no-stitch-poles -- ../../../build/js/tempjson/' + filename + '.json', function(err, result) {
             if (err) {
               console.log(err);
             } else {

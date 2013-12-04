@@ -1,6 +1,5 @@
 // Adapted from an Angular.js implementation by Michael McClennen
 var taxaBrowser = (function(){
-  var baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   return {
     "init": function() {
@@ -20,7 +19,7 @@ var taxaBrowser = (function(){
       // If there is a taxon to search for...
       if (name.length > 0) {
         // Ask the API for the taxon oid
-        d3.json(baseUrl + '/data1.1/taxa/list.json?name=' + name, function(err, data) {
+        d3.json(paleo_nav.baseUrl + '/data1.1/taxa/list.json?name=' + name, function(err, data) {
           if (err) {
             alert("Error retrieving from list.json - ", err);
           } else {
@@ -60,7 +59,7 @@ var taxaBrowser = (function(){
 
     "getTaxonDetails": function(taxon) {
       // Ask the API for the details of the selected taxon
-      d3.json(baseUrl + '/data1.1/taxa/single.json?id=' + taxon.oid + '&show=attr,nav,size', function(err, data ) {
+      d3.json(paleo_nav.baseUrl + '/data1.1/taxa/single.json?id=' + taxon.oid + '&show=attr,nav,size', function(err, data ) {
         if (err) {
           // This should never be true, unless something goes horrifically wrong
           alert("Error retrieving from single.json - ", err);
@@ -234,7 +233,7 @@ var taxaBrowser = (function(){
       
       if (rank > 0) {
           // Ask the API for all immediate subtaxa
-          var url = baseUrl + '/data1.1/taxa/list.json?id=' + taxon.oid + lim_str + '&show=sizefirst&rel=all_children&rank=' + rank;
+          var url = paleo_nav.baseUrl + '/data1.1/taxa/list.json?id=' + taxon.oid + lim_str + '&show=sizefirst&rel=all_children&rank=' + rank;
 
           d3.json(url, function(err, data) {
             if (data.records.length > 0) {

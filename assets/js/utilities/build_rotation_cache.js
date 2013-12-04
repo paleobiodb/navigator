@@ -6,7 +6,7 @@ var http = require('http'),
 getIntervals();
 
 function getIntervals() {
-  var url = 'http://testpaleodb.geology.wisc.edu/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000';
+  var url = 'http://paleobiodb.org/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000';
 
   intervals = [];
   http.get(url, function(res) {
@@ -66,7 +66,7 @@ function buildWKT(data) {
 var i = 0;
 
 function getJSON() {
-  var url = 'http://testpaleodb.geology.wisc.edu/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=999999&interval_id=' + intervals[i].oid + '&show=time';
+  var url = 'http://paleobiodb.org/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=999999&interval_id=' + intervals[i].oid + '&show=time';
 
   // Make the GET request
   http.get(url, function(res) {
@@ -90,14 +90,14 @@ function getJSON() {
 
                   var post_data = querystring.stringify({
                     'time': intervals[i].mid,
-                    'points': buildWKT(response.records),
+                    'points': 'GEOMETRYCOLLECTION(' + buildWKT(response.records) + ')',
                     'output': 'topojson'
                   });
 
                   var post_options = {
                     host: 'gplates.gps.caltech.edu',
                     port: '8080',
-                    path: '/recon_points/',
+                    path: '/recon_points_2/',
                     method: 'POST',
                     headers: {
                       'Content-type': 'application/x-www-form-urlencoded',
