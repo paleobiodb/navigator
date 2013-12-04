@@ -1,7 +1,6 @@
 lib-cov
 *.seed
 *.log
-*.csv
 *.dat
 *.out
 *.pid
@@ -13,6 +12,11 @@ results
 
 npm-debug.log
 node_modules
+
+build/js/tempjson
+parse_geojson.py
+parse_topojson.js
+
 
 .DS_Store
 .AppleDouble
