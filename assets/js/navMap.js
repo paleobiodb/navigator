@@ -67,9 +67,6 @@ var navMap = (function() {
 
       map.on("zoomend", function() {
         d3.select(".leaflet-zoom-hide").style("visibility", "hidden");
-      });
-
-      map.on("zoomlevelschange", function() {
         // See if labels should be applied or not
         navMap.selectBaseMap(map.getZoom());
       });
@@ -439,6 +436,7 @@ var navMap = (function() {
         .data(data.records);
 
       bins.enter().append("circle")
+        .attr("id", function(d) { return "p" + d.cxi; })
         .attr("class", "bins")
         .on("mouseout", function() {
           d3.select(".info")
@@ -617,6 +615,7 @@ var navMap = (function() {
         .data(clusters);
 
       clusters
+        .attr("id", function(d) { return "p" + d.members[0].cxi; })
         .style("fill", function(d) { return timeScale.interval_hash[d.cxi].col; })
         .on("mouseover", function(d) {
           d3.select(".info")
@@ -658,6 +657,7 @@ var navMap = (function() {
         .data(data.records);
 
       existingPoints = points
+        .attr("id", function(d) { return "p" + d.cxi })
         .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
