@@ -330,6 +330,11 @@ var paleo_nav = (function() {
         navMap.restoreState(state);
         $("#helpModal").modal('hide');
       });
+
+      if (!localStorage.pbdb) {
+        $("#helpModal").modal("show");
+        localStorage.pbdb = true;
+      }
       
     },
 
