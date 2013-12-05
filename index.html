@@ -150,34 +150,7 @@
         </div> <!-- End col-12 -->
       </div> <!-- End row -->
 
-      <div class="row" style="margin-bottom:15px;">
-        <div class="col-sm-12" style="text-align:center;">
-          <h2 style="font-family:'Raleway';">Get started with an example</h2>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="col-sm-4 examples">
-            <button type="button" class="btn btn-primary btn-lg" id="trilobita">
-              <img src="build/img/trilobita.png" alt="Trilobita"/>
-              <p>Cambrian Trilobites<br> Eastern China</p>
-            </button>
-          </div>
-          <div class="col-sm-4 examples">
-            <button type="button" class="btn btn-primary btn-lg" id="dinosauria">
-              <img src="build/img/dinosauria.png" alt="Dinosauria"/>
-              <p>Jurassic Dinosaurs<br> Western USA</p>
-            </button>
-          </div>
-          <div class="col-sm-4 examples">
-            <button type="button" class="btn btn-primary btn-lg" id="aves">
-              <img src="build/img/aves.png" alt="Aves"/>
-              <p>Cenozoic Birds<br> English Channel</p>
-            </button>
-          </div>
-        </div>
-      </div>
+     
 
     </div>
 
@@ -338,13 +311,77 @@
 
     <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="Help" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Help</h4>
-          </div>
+        <div class="modal-content" id="helpModalContent">
           <div class="modal-body">
-            <p><i>Screenshot of main screen with controls labeled goes here</i></p>
+            <div class="helpModalClose">
+              <i class="icon icon-remove icon-2x"></i>
+            </div>
+            <div class="helpModalTitle">
+              <h2>Welcome to PBDB Navigator Beta!</h2>
+            </div>
+             <div class="row exampleRow" style="margin-bottom:15px;">
+              <div class="col-sm-12" style="text-align:center;">
+                <h3 style="font-family:'Raleway';">Get started with an example</h3>
+              </div>
+            </div>
+
+            <div class="row exampleRow">
+              <div class="col-sm-12">
+                <div class="col-sm-4 examples">
+                  <button type="button" class="btn btn-primary btn-lg" id="trilobita">
+                    <img src="build/img/trilobita.png" alt="Trilobita"/>
+                    <p>Cambrian Trilobites<br> Eastern China</p>
+                  </button>
+                </div>
+                <div class="col-sm-4 examples">
+                  <button type="button" class="btn btn-primary btn-lg" id="dinosauria">
+                    <img src="build/img/dinosauria.png" alt="Dinosauria"/>
+                    <p>Jurassic Dinosaurs<br> Western USA</p>
+                  </button>
+                </div>
+                <div class="col-sm-4 examples">
+                  <button type="button" class="btn btn-primary btn-lg" id="aves">
+                    <img src="build/img/aves.png" alt="Aves"/>
+                    <p>Cenozoic Birds<br> English Channel</p>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row exampleRow goToApp">
+              <div class="col-sm-12 goToApp">
+                <p>or</p>
+                <button class="btn btn-primary" id="goToApp">Go to application</button>
+              </div>
+            </div>
+            <div class="helpModalControls">
+              <div class="helpModalControlLabel">
+                <i class="icon icon-angle-left"></i><p>Zoom in</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="icon icon-angle-left"></i><p>Zoom out</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="icon icon-angle-left"></i><p>Paleo view</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="icon icon-angle-left"></i><p>Time filter</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="icon icon-angle-left"></i><p>Taxon filter</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="icon icon-angle-left"></i><p>Contributor filter</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="icon icon-angle-left"></i><p>Save data</p>
+              </div>
+            </div>
+            <div class="helpModalTimescaleLabel click">
+              <p>Click/tap a time interval to filter the map</p><i class="icon icon-angle-down"></i>
+            </div>
+            <div class="helpModalTimescaleLabel dblclick">
+              <p>Double click/tap a time interval to zoom the time scale</p><i class="icon icon-angle-down"></i>
+            </div>
           </div>
         </div>
       </div>

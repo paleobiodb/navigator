@@ -1020,6 +1020,11 @@ var navMap = (function() {
           return (height + 20) + "px";
         });
 
+      d3.selectAll(".helpModalTimescaleLabel")
+        .style("top", function() {
+          return ((window.innerHeight * 0.70) - 70) + "px";
+        });
+
     },
 
     "refreshFilterHandlers": function() {

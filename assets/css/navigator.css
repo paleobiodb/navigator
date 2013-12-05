@@ -69,6 +69,89 @@ nav {
   letter-spacing: 0.05em;
   font-size: 1.5em;
 }
+#helpModal > .modal-dialog {
+  left:0;
+  width:100%;
+  color:#fff;
+}
+#helpModalContent {
+  background-color:rgba(0,0,0,0);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-box-shadow:none;
+  -moz-box-shadow:none;
+}
+.helpModalTitle {
+  text-align: center;
+  margin-top:-60px;
+}
+.helpModalTitle > h2 {
+  font-family: 'Raleway', sans-serif;
+}
+.helpModalClose {
+  position: absolute;
+  right: 1em;
+  color: #fff;
+  margin-top: -40px;
+  cursor: pointer;
+}
+.helpModalClose:active {
+  color:rgb(255, 153, 44);
+}
+.exampleRow {
+  margin-left: 58px;
+}
+.examples > button {
+  box-shadow: 0 5px 15px rgba(245,245,245,.5);
+  -webkit-box-shadow: 0 5px 15px rgba(245,245,245,.5);
+  -moz-box-shadow: 0 5px 15px rgba(245,245,245,.5);
+}
+.goToApp {
+  text-align: center;
+}
+.exampleRow.goToApp {
+  margin-top: 2em;
+  font-family: 'Raleway', sans-serif;
+}
+.helpModalControls {
+  position: absolute;
+  top: 2em;
+  left: 3em;
+  line-height: 46px;
+}
+.helpModalControlLabel {
+  color: #ddd;
+}
+.helpModalControlLabel > p {
+  display: inline;
+  padding-bottom: 5px;
+  padding-left:5px;
+  font-size: 0.7em;
+}
+.helpModalTimescaleLabel {
+  position: absolute;
+  color:#ddd;
+  text-align: center;
+}
+.helpModalTimescaleLabel.click {
+  left:1em;
+}
+.helpModalTimescaleLabel.dblclick {
+  right:1em;
+}
+.helpModalTimescaleLabel > p{
+  font-size: 0.7em;
+  margin:0;
+}
+@media screen and (min-width: 580px) {
+  #helpModalContent {
+    box-shadow: none;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+  }
+}
+
 .navbar-default .navbar-link {
 color: rgb(245,245,245);
 }
@@ -499,18 +582,27 @@ td:first-child {
 rect:active {
   stroke:#000;
 }
-@media(max-width: 978px) {
+@media(max-width: 988px) {
   .examples>button> img {
     height: 60px;
   }
+  .examples > button {
+    padding:20px;
+  }
 }
-@media(max-width: 840px) {
+@media(max-width: 850px) {
   .examples>button> img {
     height: 50px;
   }
+  .examples > button {
+    padding: 15px;
+  }
 }
-@media(max-width: 700px) {
+@media(max-width: 710px) {
   .examples>button> img {
     height: 32px;
+  }
+  .examples > button {
+    padding: 10px;
   }
 }
