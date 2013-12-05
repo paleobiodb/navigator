@@ -88,6 +88,12 @@ color: rgb(245,245,245);
   height:400px;
   width:100%;
 }
+#svgMap > svg {
+  min-height: 329px;
+}
+#reconstructMap > svg {
+  min-height: 329px;
+}
 #mapControlCover {
   position: absolute;
   z-index: 2000;
