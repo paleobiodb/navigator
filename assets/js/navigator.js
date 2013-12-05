@@ -244,6 +244,14 @@ var paleo_nav = (function() {
         return false;
       });
 
+      $(".helpModalClose").on("click", function() {
+        $("#helpModal").modal('hide');
+      });
+
+      $("#goToApp").on("click", function() {
+        $("#helpModal").modal('hide');
+      });
+
       // Handlers for the example map states
       $("#trilobita").on("click", function(event) {
         event.preventDefault();
@@ -268,6 +276,7 @@ var paleo_nav = (function() {
           "zoom":5
         };
         navMap.restoreState(state);
+        $("#helpModal").modal('hide');
       });
 
       $("#dinosauria").on("click", function(event) {
@@ -293,6 +302,7 @@ var paleo_nav = (function() {
           "zoom":5
         };
         navMap.restoreState(state);
+        $("#helpModal").modal('hide');
       });
 
       $("#aves").on("click", function(event) {
@@ -318,6 +328,7 @@ var paleo_nav = (function() {
           "zoom":7
         };
         navMap.restoreState(state);
+        $("#helpModal").modal('hide');
       });
       
     },
