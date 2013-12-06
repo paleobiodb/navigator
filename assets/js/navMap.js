@@ -462,15 +462,15 @@ var navMap = (function() {
             .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
             .style("display", "block");
           timeScale.highlight(this);
-        });
-       /* .on("click", function(d) {
+        })
+        .on("click", function(d) {
           d3.event.stopPropagation();
-          d3.select(".info")
+          /*d3.select(".info")
             .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
             .style("display", "block");
           timeScale.highlight(this);
-          navMap.openBinModal(d);
-        });*/
+          navMap.openBinModal(d);*/
+        });
       
       bins.exit().remove();
 
@@ -633,7 +633,7 @@ var navMap = (function() {
             .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
             .style("display", "block");
           timeScale.highlight(this);
-          navMap.openCollectionModal(d);
+          navMap.openStackedCollectionModal(d);
         })
         .on("mouseout", function(d) {
           timeScale.unhighlight();
@@ -653,6 +653,10 @@ var navMap = (function() {
           timeScale.unhighlight();
         })
         .on("click", function(d) {
+          d3.select(".info")
+            .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
           navMap.openStackedCollectionModal(d);
         });
       
