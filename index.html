@@ -149,9 +149,6 @@
           <div id="time"></div>
         </div> <!-- End col-12 -->
       </div> <!-- End row -->
-
-     
-
     </div>
 
     <div class="modal fade" id="saveBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -254,20 +251,22 @@
     </div><!-- end gPlatesBox modal -->
 
 
-    <div class="modal fade" id="collectionModal" tabindex="-1" role="dialog" aria-labelledby="BinInfo" aria-hidden="true">
+    <div class="modal fade" id="binModal" tabindex="-1" role="dialog" aria-labelledby="BinInfo" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="binID"></h4>
+            <h4 class="modal-title" id="binNumber"></h4>
           </div>
           <div class="modal-body">
-            <h4>Collections</h4>
-            <div class="panel-group" id="accordion"></div>
+            <h4 id="binModalTitle"></h4>
+            <table class="table table-condensed">
+              <tbody class="binContent"></tbody>
+            </table>
           </div>
         </div>
       </div>
-    </div><!-- end collectionModal -->
+    </div><!-- end binModal -->
 
     <div class="modal fade" id="subtaxaModal" tabindex="-1" role="dialog" aria-labelledby="Subtaxa" aria-hidden="true">
       <div class="modal-dialog">

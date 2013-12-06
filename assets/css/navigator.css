@@ -99,6 +99,10 @@ nav {
 .helpModalClose:active {
   color:rgb(255, 153, 44);
 }
+.binContent > tr > td {
+  font-size: 0.9em;
+  width:35%;
+}
 .exampleRow {
   margin-left: 80px;
 }
