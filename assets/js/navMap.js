@@ -736,7 +736,7 @@ var navMap = (function() {
           //render template saying how many formations there are
           var formationData = {"formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
 
-          d3.text('/build/partials/binModal.html', function(error, template) {
+          d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select("#binNumber").html("Bin " + id);
             d3.select("#binModalTitle").html("");
@@ -755,7 +755,7 @@ var navMap = (function() {
           var formationData = {"formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           // render template with the names of the formations and then number of collections in each
-          d3.text('/build/partials/binModal.html', function(error, template) {
+          d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select("#binNumber").html("Bin " + id);
             d3.select("#binModalTitle").html("Formations");
@@ -780,7 +780,7 @@ var navMap = (function() {
          // d.env = (d.env) ? d.env : "Unknown";
         });
 
-        d3.text("/build/partials/collectionModal.html", function(error, template) {
+        d3.text(window.location.pathname + "build/partials/collectionModal.html", function(error, template) {
           var output = Mustache.render(template, data);
           $("#collectionName").html(data.records[0].nam);
           $("#collectionModalBody").html(output);
@@ -800,7 +800,7 @@ var navMap = (function() {
        // d.env = (d.env) ? d.env : "Unknown";
       });
 
-      d3.text("/build/partials/stackedCollectionModal.html", function(error, template) {
+      d3.text(window.location.pathname + "build/partials/stackedCollectionModal.html", function(error, template) {
         var output = Mustache.render(template, data);
 
         d3.select("#binID").html("Collections at [" + data.lat + ", " + data.lng + "]");
