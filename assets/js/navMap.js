@@ -462,15 +462,15 @@ var navMap = (function() {
             .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
             .style("display", "block");
           timeScale.highlight(this);
-        })
-        .on("click", function(d) {
+        });
+       /* .on("click", function(d) {
           d3.event.stopPropagation();
           d3.select(".info")
             .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
             .style("display", "block");
           timeScale.highlight(this);
           navMap.openBinModal(d);
-        });
+        });*/
       
       bins.exit().remove();
 
@@ -499,11 +499,13 @@ var navMap = (function() {
           timeScale.highlight(this);
         })
         .on("click", function(d) {
-          d3.select(".info")
-            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
-            .style("display", "block");
-          timeScale.highlight(this);
-          navMap.openBinModal(d);
+          if (level === 2) {
+            d3.select(".info")
+              .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+              .style("display", "block");
+            timeScale.highlight(this);
+            navMap.openBinModal(d, d.nco, d.noc, timeScale.interval_hash[d.cxi].nam);
+          }
         });
 
       points.enter().append("circle")
@@ -517,11 +519,13 @@ var navMap = (function() {
           timeScale.highlight(this);
         })
         .on("click", function(d) {
-          d3.select(".info")
-            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
-            .style("display", "block");
-          timeScale.highlight(this);
-          navMap.openBinModal(d);
+          if (level === 2) {
+            d3.select(".info")
+              .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+              .style("display", "block");
+            timeScale.highlight(this);
+            navMap.openBinModal(d, d.nco, d.noc);
+          }
         })
         .on("mouseout", function() {
           d3.select(".info")
@@ -704,6 +708,61 @@ var navMap = (function() {
 
     },
 
+    "openBinModal": function(d, collections, occurrences, interval) {
+      var id = (d.properties) ? d.properties.oid : d.oid,
+          url = paleo_nav.baseUrl + "/data1.1/colls/list.json?clust_id=" + id;
+
+      url = navMap.parseURL(url);
+      url += "&show=ref,loc,time";
+
+      d3.json(url, function(err, data) {
+        var formations = {};
+        data.records.forEach(function(d, i) {
+          if (d.fmm) {
+            if (formations[d.fmm]) {
+              formations[d.fmm].count += 1;
+            } else {
+              formations[d.fmm] = {};
+              formations[d.fmm].count = 1;
+            }
+          }
+        });
+
+        if (Object.keys(formations).length > 15) {
+          //render template saying how many formations there are
+          var formationData = {"formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
+
+          d3.text('/build/partials/binModal.html', function(error, template) {
+            var output = Mustache.render(template, formationData);
+            d3.select("#binNumber").html("Bin " + id);
+            d3.select("#binModalTitle").html("");
+            d3.select(".binContent").html(output);
+
+            $("#binModal").modal();
+          });
+        } else {
+          var everything = [];
+
+          Object.keys(formations).forEach(function(d) {
+            var tempFormation = { "name": d, "count": formations[d].count };
+            everything.push(tempFormation);
+          });
+
+          var formationData = {"formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
+
+          // render template with the names of the formations and then number of collections in each
+          d3.text('/build/partials/binModal.html', function(error, template) {
+            var output = Mustache.render(template, formationData);
+            d3.select("#binNumber").html("Bin " + id);
+            d3.select("#binModalTitle").html("Formations");
+            d3.select(".binContent").html(output);
+
+            $("#binModal").modal();
+          });
+        }
+      });
+    },
+
     "openCollectionModal": function(d) {
       d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
 
@@ -726,35 +785,6 @@ var navMap = (function() {
       });
     },
 
-    "openBinModal": function(d) {
-      var id = (d.properties) ? d.properties.oid : d.oid,
-          url = paleo_nav.baseUrl + "/data1.1/colls/list.json?clust_id=" +id;
-
-      url = navMap.parseURL(url);
-      url += "&show=ref,loc,time";
-
-      d3.json(url, function(err, data) {
-        data.records.forEach(function(d) {
-          d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
-          d.strat = (d.fmm || d.grp || d.mbb) ? true : false;
-         // d.fmm = (d.fmm) ? d.fmm : "Unknown";
-         // d.grp = (d.grp) ? d.grp : "Unknown";
-         // d.mbb = (d.mbb) ? d.mbb : "Unknown";
-          //d.lit = (d.lit) ? d.lit : "Unknown";
-          //d.env = (d.env) ? d.env : "Unknown";
-        });
-
-        d3.text('/build/partials/binModal.html', function(error, template) {
-          var output = Mustache.render(template, data);
-          d3.select("#binID").html("Bin " + id);
-          d3.select("#accordion").html(output);
-
-          $("#collectionModal").modal();
-        });
-        
-      });
-    },
-
     "openStackedCollectionModal": function(data) {
       data.members.forEach(function(d) {
         d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
@@ -766,22 +796,22 @@ var navMap = (function() {
        // d.env = (d.env) ? d.env : "Unknown";
       });
 
-      var template = '{{#members}}<div class="panel panel-default"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{oid}}"><div class="panel-heading"><p class="panel-title">{{nam}}</p></div></a><div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse"><div class="panel-body"><table class="table"><tr><td style="border-top:0;"><strong>Collection number</strong></td><td style="border-top:0;">{{oid}}</td></tr><tr><td><strong>Occurrences</strong></td><td>{{noc}}</td></tr>{{#strat}}<tr><td><strong>Stratigraphy</strong></td><td>{{#grp}}{{grp}}{{/grp}}{{#fmm}}{{#grp}} - {{/grp}}{{fmm}}{{#mbb}} - {{/mbb}}{{/fmm}}{{#mbb}}{{mbb}}{{/mbb}}</td></tr>{{/strat}}<tr><td><strong>Interval(s)</strong></td><td>{{intervals}}</td></tr>{{#lit}}<tr><td><strong>Lithology</strong></td><td>{{lit}}</td></tr>{{/lit}}{{#env}}<tr><td><strong>Environment</strong></td><td>{{env}}</td></tr>{{/env}}<tr><td><strong>Location</strong><br><small>(latitude, longitude)</small></td><td>{{lat}}, {{lng}}</td></tr>{{#aut}}<tr><td><strong>Authorizer</strong></td><td>{{aut}}</td></tr>{{/aut}}<tr><td><strong>Reference</strong></td><td id="ref{{oid}}"></td></tr></table></div></div></div>{{/members}}';
+      d3.text("/build/partials/stackedCollectionModal.html", function(error, template) {
+        var output = Mustache.render(template, data);
 
-      var output = Mustache.render(template, data);
+        d3.select("#binID").html("Collections at [" + data.lat + ", " + data.lng + "]");
+        d3.select("#accordion").html(output);
 
-      d3.select("#binID").html("Collections at [" + data.lat + ", " + data.lng + "]");
-      d3.select("#accordion").html(output);
-
-      $(".collectionCollapse").on("show.bs.collapse", function(d) {
-        var id = d.target.id;
-        id = id.replace("collapse", "");
-        d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
-          $("#ref" + id).html(data.records[0].ref);
+        $(".collectionCollapse").on("show.bs.collapse", function(d) {
+          var id = d.target.id;
+          id = id.replace("collapse", "");
+          d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
+            $("#ref" + id).html(data.records[0].ref);
+          });
         });
-      });
 
-      $("#collectionModal").modal();
+        $("#collectionModal").modal();
+      });
     },
 
   // TODO: remove this function()?
