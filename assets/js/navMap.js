@@ -464,6 +464,7 @@ var navMap = (function() {
           timeScale.highlight(this);
         })
         .on("click", function(d) {
+          d3.event.stopPropagation();
           d3.select(".info")
             .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
             .style("display", "block");
