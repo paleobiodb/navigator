@@ -102,6 +102,14 @@ nav {
 .binContent > tr > td {
   font-size: 0.9em;
   width:35%;
+  vertical-align: top;
+}
+.table tbody>tr>td, .table tbody>tr>th, .table tfoot>tr>td, .table tfoot>tr>th, .table thead>tr>td, .table thead>tr>th {
+  vertical-align: top;
+}
+#formationTable {
+  margin-left: -6px;
+  font-size: 1.2em;
 }
 .exampleRow {
   margin-left: 80px;
@@ -493,8 +501,7 @@ td:first-child {
   display: inline;
 }
 #reconstructMapRefContainerContainer {
-  position: absolute;
-  right:0;
+  float:right;
 }
 #reconstructMapRefContainer {
    position: relative;
@@ -508,6 +515,9 @@ td:first-child {
   width:21em;
   right:1.2em;
   position: absolute;
+  border-radius: 3px;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
 }
 .plates {
   fill: #fff;

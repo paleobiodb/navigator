@@ -54,6 +54,10 @@ var reconstructMap = (function() {
     "rotate": function(interval) {
       // If nothing has changed since the last reconstruct, do nothing
       if (interval.nam == currentReconstruction.nam && navMap.filters.taxon.name == currentReconstruction.taxon && navMap.filters.personFilter.name == currentReconstruction.person) {
+        // Make sure the time interval filter remove button is hidden
+        d3.select("#selectedInterval")
+          .select("button")
+            .style("display", "none");
         return;
       }
 
@@ -357,7 +361,7 @@ var reconstructMap = (function() {
 
       d3.select("#reconstructMapRefContainer")
         .style("height", function() {
-          return parseInt(d3.select("#reconstructMap").style("height")) - 1 + "px";
+          return d3.select("#svgMap").style("height");
         });
 
     },
