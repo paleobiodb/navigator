@@ -532,13 +532,6 @@ var navMap = (function() {
             .html("")
             .style("display", "none");
           timeScale.unhighlight()
-        })
-        .on("dblclick", function(d) {
-          if (level == 1) {
-            map.setView(d.LatLng, 6);
-          } else if (level == 2) {
-            map.setView(d.LatLng, 8);
-          }
         });
 
       points.exit().remove();
@@ -732,14 +725,14 @@ var navMap = (function() {
           }
         });
 
-        if (Object.keys(formations).length > 15) {
+        if (Object.keys(formations).length > 10) {
           //render template saying how many formations there are
           var formationData = {"formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select("#binNumber").html("Bin " + id);
-            d3.select("#binModalTitle").html("");
+            d3.select("#binModalTitle").html("Summary");
             d3.select(".binContent").html(output);
 
             $("#binModal").modal();
@@ -758,7 +751,7 @@ var navMap = (function() {
           d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select("#binNumber").html("Bin " + id);
-            d3.select("#binModalTitle").html("Formations");
+            d3.select("#binModalTitle").html("Summary");
             d3.select(".binContent").html(output);
 
             $("#binModal").modal();
