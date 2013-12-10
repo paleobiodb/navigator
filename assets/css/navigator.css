@@ -611,7 +611,10 @@ br {
   width:50%;
   display: inline;
 }
-
+.subtaxaModalLegend {
+  font-style: italic;
+  font-size: 0.8em;
+}
 @media(max-width: 988px) {
   .examples>button> img {
     height: 60px;

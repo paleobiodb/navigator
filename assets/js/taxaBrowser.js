@@ -210,7 +210,7 @@ var taxaBrowser = (function(){
       .enter().append("tr").append("td")
         .append("a")
           // id = rank is used for getting all children when clicked
-          .attr("id", function(d) { console.log(d); return "t" + d.rank })
+          .attr("id", function(d) { return "t" + d.rank; })
           .attr("class", "children")
           .attr("href", "#")
           .html(function(d) { return d.size + " " + d.section});
@@ -338,6 +338,8 @@ var taxaBrowser = (function(){
     "filter": function(param) {
         var value = $(param).val();
 
+        value = value.charAt(0).toUpperCase() + value.slice(1);
+        
         $('#subtaxa > li:not(:contains(' + value + '))').hide(); 
         $('#subtaxa > li:contains(' + value + ')').show();
       }
