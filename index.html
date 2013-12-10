@@ -175,7 +175,7 @@
             <ul id="filterList"></ul>
             <br>
             <div class="row">
-              <div class="col-sm-6">
+              <!--<div class="col-sm-6">
                 <h4>Additional information:</h4>
                 <div class="checkbox">
                   <label>
@@ -192,7 +192,7 @@
                     <input type="checkbox" id="t">Time
                   </label>
                 </div>
-              </div>
+              </div>-->
               <div class="col-sm-6">
                 <h4>Format:</h4>
                 <div class="radio">
@@ -211,9 +211,8 @@
             </div>
           </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-success" onclick="return navMap.downloadView()">Download</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-success" onclick="return navMap.downloadView()">Download Collections</button>
-            <button type="button" class="btn btn-success" onclick="return navMap.downloadView()">Download Occurrences</button>
           </div>
         </div>
       </div>
@@ -298,12 +297,16 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header" id="subtaxaModalHeader">
+            <input class="form-control" type="text" onkeyup="taxaBrowser.filter(this)" placeholder="Type to filter..." id="taxaFilterInput"/>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           </div>
           <div class="modal-body">
-            <table class="table table-hover table-condensed">
+            <div id="subTaxaModalList">
+              <ol class="list-unstyled" id="subtaxa"></ol>
+            </div>
+            <!--<table class="table table-hover table-condensed">
               <tbody id="subtaxaModalTable"></tbody>
-            </table>
+            </table>-->
           </div>
         </div>
       </div>

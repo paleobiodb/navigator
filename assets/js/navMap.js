@@ -1188,7 +1188,9 @@ var navMap = (function() {
       url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';
       url = navMap.parseURL(url);
 
-      var options = [];
+      url += "&show=ref,loc,time";
+
+     /* var options = [];
       if ($("#loc:checked").length > 0) {
         options.push("loc");
       }
@@ -1203,7 +1205,7 @@ var navMap = (function() {
         options.forEach(function(d) {
           url += d + ",";
         });
-      }
+      }*/
       url = url.substring(0, url.length - 1);
       window.open(url);
     },
