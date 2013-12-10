@@ -46,7 +46,7 @@ a:hover {
   margin-bottom: 0px;
 }
 #subtaxaModalHeader {
-  padding: 15px 15px 30px 15px;
+  /*padding: 15px 15px 30px 15px;*/
 }
 .table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
   border-top: none;
@@ -56,4 +56,7 @@ td {
 }
 #taxaSearch {
   margin-top:5px;
+}
+.childTaxa {
+  color:#777;
 }

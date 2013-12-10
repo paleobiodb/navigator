@@ -210,7 +210,7 @@ var taxaBrowser = (function(){
       .enter().append("tr").append("td")
         .append("a")
           // id = rank is used for getting all children when clicked
-          .attr("id", function(d) { return "t" + d.rank })
+          .attr("id", function(d) { console.log(d); return "t" + d.rank })
           .attr("class", "children")
           .attr("href", "#")
           .html(function(d) { return d.size + " " + d.section});
@@ -233,12 +233,34 @@ var taxaBrowser = (function(){
       
       if (rank > 0) {
           // Ask the API for all immediate subtaxa
-          var url = paleo_nav.baseUrl + '/data1.1/taxa/list.json?id=' + taxon.oid + lim_str + '&show=sizefirst&rel=all_children&rank=' + rank;
+          var url = paleo_nav.baseUrl + '/data1.1/taxa/list.json?id=' + taxon.oid + lim_str + '&show=size&rel=all_children&rank=' + rank;
 
           d3.json(url, function(err, data) {
             if (data.records.length > 0) {
+
+              d3.select("#subtaxa").selectAll("li").remove();
+              d3.select("#subtaxa").selectAll("br").remove();
+
+              function compare(a,b) {
+                if (a.siz > b.siz)
+                   return -1;
+                if (a.siz < b.siz)
+                  return 1;
+                return 0;
+              }
+
+              data.records.sort(compare);
+
+              data.records.forEach(function(d) {
+                var taxaClass = (d.ext === 0) ? "extinct childTaxa" : "childTaxa";
+
+                $("#subtaxa").append("<li><a href='#' class='" + taxaClass + "' id='" + d.nam + "'>" + d.nam + " (" + d.siz + ") " + "</a></li>");
+              });
+              $("#subtaxa").append("<br>");
+
+
               // Clean up
-              d3.select("#subtaxaModalTable").selectAll("tr").remove();
+              /*d3.select("#subtaxaModalTable").selectAll("tr").remove();
 
               var records = d3.select("#subtaxaModalTable").selectAll(".records")
                 .data(data.records);
@@ -256,7 +278,7 @@ var taxaBrowser = (function(){
                 .attr("href", "#")
                 .html(function(d) {
                   return d.nam + " (" + taxaBrowser.rankMap(d.rnk) + ")";
-                });
+                });*/
 
               // Reattach interaction listeners to newly added elements
               taxaBrowser.reattachHandlers(taxon);
@@ -293,6 +315,7 @@ var taxaBrowser = (function(){
       $(".childTaxa").click(function(d) {
         d.preventDefault();
         $("#subtaxaModal").modal('hide');
+        $("#taxaFilterInput").val('');
         taxaBrowser.goToTaxon(d.target.id);
         navMap.filterByTaxon(d.target.id);
       });
@@ -310,6 +333,13 @@ var taxaBrowser = (function(){
         taxaBrowser.goToTaxon(d.target.id);
       });
 
-    }
+    },
+
+    "filter": function(param) {
+        var value = $(param).val();
+
+        $('#subtaxa > li:not(:contains(' + value + '))').hide(); 
+        $('#subtaxa > li:contains(' + value + ')').show();
+      }
   }
 })();

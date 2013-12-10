@@ -199,7 +199,7 @@ var paleo_nav = (function() {
                   $("#filterList").append("<li>Contributor - " + navMap.filters.personFilter.name + "</li>");
                   break;
                 case "taxon":
-                  $("#filterList").append("<li>Taxon - " + navMap.filters.taxon.nam + "</li>");
+                  $("#filterList").append("<li>Taxon - " + navMap.filters.taxon.name + "</li>");
                   break;
               }
               count += 1;
@@ -233,9 +233,9 @@ var paleo_nav = (function() {
       $("#saveBox").on('hide.bs.modal', function() {
         $("#filterList").html('');
         $("#downloadCount").html("");
-        $('#loc').prop('checked', false);
-        $('#ref').prop('checked', false);
-        $('#t').prop('checked', false);
+        //$('#loc').prop('checked', false);
+        //$('#ref').prop('checked', false);
+        //$('#t').prop('checked', false);
       });
 
       // Handler for the simple taxa search box

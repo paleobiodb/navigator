@@ -596,6 +596,22 @@ td:first-child {
 rect:active {
   stroke:#000;
 }
+
+ol {
+  width:100%;
+}
+ol li {
+  float:left;
+  width:15em;
+}
+br {
+  clear:left;
+}
+#taxaFilterInput {
+  width:50%;
+  display: inline;
+}
+
 @media(max-width: 988px) {
   .examples>button> img {
     height: 60px;
