@@ -144,7 +144,12 @@ var navMap = (function() {
 
       d3.select("#svgMap").style("display", "none");
       d3.select("#map").style("height", function() {
-        return ((window.innerHeight * 0.70) - 70) + "px";
+        if (window.innerHeight > window.innerWidth) {
+          var timeHeight = $("#time").height();
+          return (window.innerHeight - timeHeight - 70) + "px";
+        } else {
+          return ((window.innerHeight * 0.70) - 70) + "px";
+        }
       });
 
       map.setView([parseInt(projected[1]), parseInt(projected[0])], 3, {animate:false});
@@ -1020,7 +1025,12 @@ var navMap = (function() {
 
       d3.select("#svgMap").select("svg")
         .style("height", function(d) {
-          return ((window.innerHeight * 0.70) - 70) + "px";
+          if (window.innerHeight > window.innerWidth) {
+            var timeHeight = $("#time").height();
+            return (window.innerHeight - timeHeight - 100) + "px";
+          } else {
+            return ((window.innerHeight * 0.70) - 70) + "px";
+          }
         })
         .style("width", function(d) {
           return width - 15 + "px";
@@ -1031,7 +1041,12 @@ var navMap = (function() {
       if (parseInt(d3.select("#map").style("height")) > 1) { 
         d3.select("#map")
           .style("height", function(d) {
-            return ((window.innerHeight * 0.70) - 70) + "px";
+            if (window.innerHeight > window.innerWidth) {
+              var timeHeight = $("#time").height();
+              return (window.innerHeight - timeHeight - 70) + "px";
+            } else {
+              return ((window.innerHeight * 0.70) - 70) + "px";
+            }
           });
         map.invalidateSize();
       } else {
@@ -1040,7 +1055,12 @@ var navMap = (function() {
       
       d3.select("#infoContainer")
         .style("height", function(d) {
-          return ((window.innerHeight * 0.70) - 70) + "px";
+          if (window.innerHeight > window.innerWidth) {
+            var timeHeight = $("#time").height();
+            return (window.innerHeight - timeHeight - 86) + "px";
+          } else {
+            return ((window.innerHeight * 0.70) - 70) + "px";
+          }
         });
 
       d3.select(".filters")
@@ -1051,9 +1071,15 @@ var navMap = (function() {
 
       d3.selectAll(".helpModalTimescaleLabel")
         .style("top", function() {
-          return ((window.innerHeight * 0.70) - 70) + "px";
+          if (window.innerHeight > window.innerWidth) {
+            var timeHeight = $("#time").height();
+            return (window.innerHeight - timeHeight - 105) + "px";
+          } else {
+            return ((window.innerHeight * 0.70) - 70) + "px";
+          }
         });
 
+      $(".tt-dropdown-menu").width($(".twitter-typeahead").width() - 21);
     },
 
     "refreshFilterHandlers": function() {

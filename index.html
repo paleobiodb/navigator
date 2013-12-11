@@ -85,6 +85,16 @@
 
       	<div class="col-sm-12" id="graphics">
           <img src="build/img/loading.gif" id="loading"/>
+          <div class="universalSearch col-sm-4">
+            <form class="form-search universalSearchForm">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Time, taxa, authorizer" id="universalAutocompleteInput">
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-primary"><i class="icon icon-search"></i></button>
+                </span>
+              </div>
+            </form>
+          </div>
           <div class="filters">
             <p><strong id="filterTitle">Filters</strong></p>
             <div id="selectedInterval" class="filter"></div>
@@ -101,9 +111,9 @@
               <div class="zoom-out mapCtrl"><i class="icon-minus ctrlButton"></i></div>
               <!--<div class="layers"></div>-->
               <div class="rotate mapCtrl"><div id="rotateIcon"></div></div>
-              <div class="time mapCtrl"><i class="icon-time icon-2x ctrlButton"></i></div>
+              <!--<div class="time mapCtrl"><i class="icon-time icon-2x ctrlButton"></i></div>-->
               <div class="taxa mapCtrl"><i class="icon-bug icon-2x ctrlButton"></i></div>
-              <div class="userFilter mapCtrl"><i class="icon-user icon-2x ctrlButton"></i></div>
+              <!--<div class="userFilter mapCtrl"><i class="icon-user icon-2x ctrlButton"></i></div>-->
               <!--<div class="filt mapCtrl"><i class="icon-filter icon-2x ctrlButton"></i></a></div>-->
               <div class="save mapCtrl"><a data-toggle="modal" href="#saveBox"><i class="icon-save icon-2x ctrlButton"></i></a></div>
               
@@ -393,13 +403,7 @@
                 <i class="icon icon-angle-left"></i><p>Paleo view</p>
               </div>
               <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Time filter</p>
-              </div>
-              <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Taxon filter</p>
-              </div>
-              <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Contributor filter</p>
+                <i class="icon icon-angle-left"></i><p>Taxa browser</p>
               </div>
               <div class="helpModalControlLabel">
                 <i class="icon icon-angle-left"></i><p>Save data</p>
