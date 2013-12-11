@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "";
+  var baseUrl = "http://paleobiodb.org";
 
   return {
     "init": function() {
@@ -91,6 +91,16 @@ var paleo_nav = (function() {
 
       taxaButton.on("tap", function(event) {
         event.preventDefault();
+        var display = d3.select("#taxaBrowser").style("display");
+        if (display == "block") {
+          paleo_nav.closeTaxaBrowser();
+          d3.select(".taxa").style("color", "#000");
+        } else {
+          paleo_nav.openTaxaBrowser();
+          d3.select(".taxa").style("color", "#ff992c");
+        }
+
+       /* event.preventDefault();
         var visible = d3.select(".taxaToggler").style("display");
         if (visible == "block") {
           paleo_nav.untoggleTaxa();
@@ -105,7 +115,7 @@ var paleo_nav = (function() {
             d3.select(".taxaToggler").style("display", "block");
             d3.select(".taxa").style("color", "#ff992c");
           }
-        }
+        }*/
       });
 
       // Controls the "hide" and "show" taxa browser links
@@ -121,62 +131,75 @@ var paleo_nav = (function() {
         }
       });
 
-      // Handler for the contributor filter UI button 
-      var userFilterButton = $(".userFilter").hammer();
 
-      userFilterButton.on("tap", function(event) {
-        event.preventDefault();
-        var visible = d3.select(".userToggler").style("display");
-          if (visible == "block") {
-            paleo_nav.untoggleUser();
-          } else {
-            paleo_nav.untoggleTaxa();
+      var taxaTemplate = Mustache.compile('<p>{{nam}}      <small class="taxaRank">{{rnk}}</small></p>');
 
-            d3.select(".userToggler").style("display", "block");
-            d3.select(".userFilter")
-                .style("color", "#ff992c");
-          }
-      });
-
-      // Init contributor autocomplete search with Twitter Typeahead
-      var typeahead = $("#personInput").typeahead({
-        name: 'contribs',
-        prefetch: {
-          url: baseUrl + '/data1.1/people/list.json?name=%',
-          filter: function(data) {
-            return data.records;
-          }
+      var universalAutocomplete = $("#universalAutocompleteInput").typeahead([
+        {
+          name: 'time',
+          prefetch: {
+            url: baseUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
+            filter: function(data) {
+              return data.records;
+            }
+          },
+          valueKey: 'nam',
+          header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
+          limt: 5
         },
-        valueKey: 'nam',
-        limit: 8
-      });
+        {
+          name: 'contribs',
+          prefetch: {
+            url: baseUrl + '/data1.1/people/list.json?name=%',
+            filter: function(data) {
+              return data.records;
+            }
+          },
+          valueKey: 'nam',
+          header: '<h4 class="autocompleteTitle">Authorizers</h4>',
+          limit: 5
+        },
+        {
+          name: 'taxa',
+          remote: {
+            url: baseUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
+            filter: function(data) {
+              return data.records;
+            }
+          },
+          valueKey: 'nam',
+          minLength:3,
+          limit: 10,
+          header: '<h4 class="autocompleteTitle">Taxa</h4>',
+          template: taxaTemplate,
+        }
+      ]);
 
-      typeahead.on('typeahead:selected', function(evt, data) {
-        navMap.filterByPerson(data);
+      universalAutocomplete.on('typeahead:selected', function(evt, data, dataset) {
+        switch (dataset) {
+          case 'contribs':
+            navMap.filterByPerson(data);
+            document.activeElement.blur();
+            break;
+          case 'time': 
+            timeScale.goTo(data.nam);
+            navMap.filterByTime(data.nam);
+            navMap.refresh("reset");
+            break;
+          case 'taxa':
+            navMap.filterByTaxon(data);
+            break;
+          default:
+            console.log("default");
+            break;
+        }
+
         document.activeElement.blur();
-        $("#personInput").blur();
+        $("#universalAutocompleteInput").blur();
+        $("#universalAutocompleteInput").typeahead("setQuery", "");
       });
 
-      $("#personInput").on("blur", function() {window.scrollTo(0,0)});
-
-      var taxaTemplate = Mustache.compile('<p>{{name}}      <small class="taxaRank">{{rank}}</small></p>');
-
-      var taxaTypeahead = $("#taxaInput").typeahead({
-        name: 'taxa',
-        remote: 'assets/php/autocomplete.php?query=%QUERY',
-        valueKey: 'name',
-        minLength:3,
-        limit: 10,
-        template: taxaTemplate,
-      });
-
-      taxaTypeahead.on('typeahead:selected', function(evt, data) {
-        navMap.filterByTaxon(data.name);
-        document.activeElement.blur();
-        $("#taxaInput").blur();
-      });
-
-      $("#taxaInput").on("blur", function() {window.scrollTo(0,0)});
+       $("#universalAutocompleteInput").on("blur", function() {window.scrollTo(0,0)});
 
       //attach window resize listener to the window
       d3.select(window).on("resize", function() {
@@ -332,8 +355,10 @@ var paleo_nav = (function() {
       });
 
       if (!localStorage.pbdb) {
-        $("#helpModal").modal("show");
-        localStorage.pbdb = true;
+        if (window.innerWidth > 700) {
+          $("#helpModal").modal("show");
+          localStorage.pbdb = true;
+        }
       }
       
     },

@@ -5,9 +5,9 @@
 
 .tt-dropdown-menu {
   min-width: 184px;
-  margin-top: 2px;
-  margin-left:-2px;
-  padding: 5px 0;
+  margin-top: 16px;
+  margin-left: 0px;
+  padding: 5px 10px;
   background-color: rgba(255,255,255,0.95);
   border: 1px solid #ccc;
   border: 1px solid rgba(0,0,0,.2);
@@ -26,7 +26,7 @@
 
 .tt-suggestion {
   display: block;
-  padding: 5px 20px;
+  padding: 3px 20px;
   font-weight: normal;
 }
 

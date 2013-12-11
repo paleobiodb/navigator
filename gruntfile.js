@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 		uglify: {
 		    build: {
 		        files: {
-		            'build/js/script.min.js': ['assets/js/lib/bootstrap.min.js', 'assets/js/lib/typeahead.min.js', 'assets/js/lib/mustache.js', 'assets/js/timescale.js', 'assets/js/reconstruct.js', 'assets/js/taxaBrowser.js', 'assets/js/navMap.js', 'assets/js/navigator.js']
+		            'build/js/script.min.js': ['assets/js/lib/bootstrap.min.js', 'assets/js/lib/typeahead.js', 'assets/js/lib/mustache.js', 'assets/js/timescale.js', 'assets/js/reconstruct.js', 'assets/js/taxaBrowser.js', 'assets/js/navMap.js', 'assets/js/navigator.js']
 		        }
 		    }
 		},
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
 		        tasks: ['htmlhint']
 		    },
 		    js: {
-		        files: ['assets/js/lib/bootstrap.min.js', 'assets/js/lib/typeahead.min.js', 'assets/js/lib/mustache.js', 'assets/js/timescale.js', 'assets/js/reconstruct.js', 'assets/js/taxaBrowser.js', 'assets/js/navMap.js', 'assets/js/navigator.js'],
+		        files: ['assets/js/lib/bootstrap.min.js', 'assets/js/lib/typeahead.js', 'assets/js/lib/mustache.js', 'assets/js/timescale.js', 'assets/js/reconstruct.js', 'assets/js/taxaBrowser.js', 'assets/js/navMap.js', 'assets/js/navigator.js'],
 		        tasks: ['uglify']
 		    },
 		    css: {
