@@ -637,6 +637,11 @@ br {
   background-color:#000;
 }
 
+.misspelling {
+  font-size: 65%;
+  font-style: italic;
+}
+
 #taxaSearch > span > .tt-dropdown-menu {
   margin-top: -10px;
   min-width: 300px;
