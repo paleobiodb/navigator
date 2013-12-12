@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "";
+  var baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   return {
     "init": function() {
@@ -229,6 +229,34 @@ var paleo_nav = (function() {
       $("#universalSearchButton").click(function(event) {
         event.preventDefault();
         return;
+      });
+
+      $('input#universalAutocompleteInput').keypress(function (e) {
+        if (e.which == 13) {
+          var selectedValue = $('input#universalAutocompleteInput').data().ttView.dropdownView.getFirstSuggestion();
+
+          switch (selectedValue.dataset) {
+            case 'contribs':
+              navMap.filterByPerson(selectedValue.datum);
+              document.activeElement.blur();
+              break;
+            case 'time': 
+              timeScale.goTo(selectedValue.datum.nam);
+              navMap.filterByTime(selectedValue.datum.nam);
+              navMap.refresh("reset");
+              break;
+            case 'taxa':
+              navMap.filterByTaxon(selectedValue.datum.nam);
+              break;
+            default:
+              console.log("default");
+              break;
+          }
+          
+          document.activeElement.blur();
+          $("#universalAutocompleteInput").blur();
+          $("#universalAutocompleteInput").typeahead("setQuery", "");
+        }
       });
 
       //attach window resize listener to the window
