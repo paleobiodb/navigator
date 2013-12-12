@@ -263,8 +263,10 @@ var navMap = (function() {
         // If the new bounding box is a subset of the old one...
         if (prevne.lat > ne.lat && prevne.lng > ne.lng && prevsw.lat < sw.lat && prevsw.lng < sw.lng) {
           // Was there a change in the type of points needed?
-          if (prevzoom < 4 && zoom > 3) {
+          if (prevzoom < 3 && zoom > 2) {
             // refresh
+          } else if (prevzoom < 5 && zoom > 4) {
+            //refresh
           } else if (prevzoom < 7 && zoom > 6) {
             //refresh
           } else if (prevzoom === zoom) {
@@ -327,22 +329,18 @@ var navMap = (function() {
 
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
 
-      if (zoom < 4 && filtered == false) {
-        var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
+      if (zoom < 5 && filtered == false) {
+        var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=999999&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           navMap.drawBins(data, 1, zoom);
-          /*if (bounds._southWest.lng < -180 || bounds._northEast.lng > 180) {
-            navMap.refreshDateline(1, data);
-          } else {
-            navMap.drawBins(data, 1, zoom);
-          }*/
         });
-      } else if (zoom > 3 && zoom < 7 || zoom < 4 && filtered == true) {
+
+      } else if (zoom > 4 && zoom < 7 || zoom < 5 && filtered == true) {
 
         // If filtered only by a time interval...
         if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
-          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=2';
+          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=3';
           url = navMap.parseURL(url);
 
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -361,23 +359,16 @@ var navMap = (function() {
           }
         // If not filtered only by a time interval, refresh normally
         } else {
-          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
+          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=99999&show=time';
 
           currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
             navMap.drawBins(data, 2, zoom);
           });
         }
 
-        /*if (bounds._southWest.lng < -180 || bounds._northEast.lng > 180) {
-        navMap.refreshDateline(2);
-       } */
-
       } else {
         var url = paleo_nav.baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
 
-        /*if (bounds._southWest.lng < -180 || bounds._northEast.lng > 180) {
-          navMap.refreshDateline(3);
-        }*/
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           navMap.drawCollections(data, 3, zoom);
         });
@@ -390,21 +381,25 @@ var navMap = (function() {
       d3.select(".leaflet-zoom-hide").style("visibility", "hidden");
 
       var zoom = map.getZoom();
-      if (zoom < 4) {
+      if (zoom < 5) {
         if (navMap.checkFilters()) {
+          // Scale for level 3 or filtered + clusters
           var scale = d3.scale.log()
             .domain([1, 400])
             .range([4,30]);
           } else {
+            // Scale for level 2
             var scale = d3.scale.linear()
-            .domain([1, 4140])
+            .domain([1, 3140])
             .range([4, 30]);
           }
-      } else if (zoom > 3 && zoom < 7 ) {
+      } else if (zoom > 4 && zoom < 7 ) {
+        // Scale for level 3
         var scale = d3.scale.log()
           .domain([1, 400])
           .range([4,30]);
       } else {
+        // Scale for collections
         var scale = d3.scale.linear()
           .domain([1, 50])
           .range([12, 30]);
@@ -967,7 +962,7 @@ var navMap = (function() {
           if (navMap.checkFilters()) {
             return 0.48;
           } else {
-            return 0.38;
+            return 2;
           }
           break;
         case 5:
