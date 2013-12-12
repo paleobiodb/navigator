@@ -28,6 +28,7 @@
   display: block;
   padding: 3px 20px;
   font-weight: normal;
+  font-family: Open-sans,sans-serif;
 }
 
 .tt-suggestion.tt-is-under-cursor {

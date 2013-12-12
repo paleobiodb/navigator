@@ -226,6 +226,11 @@ var paleo_nav = (function() {
 
       $("#universalAutocompleteInput").on("blur", function() {window.scrollTo(0,0)});
 
+      $("#universalSearchButton").click(function(event) {
+        event.preventDefault();
+        return;
+      });
+
       //attach window resize listener to the window
       d3.select(window).on("resize", function() {
         timeScale.resize();
