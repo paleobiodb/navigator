@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "http://testpaleodb.geology.wisc.edu";
+  var baseUrl = "";
 
   return {
     "init": function() {
@@ -224,7 +224,7 @@ var paleo_nav = (function() {
         $("#universalAutocompleteInput").typeahead("setQuery", "");
       });
 
-       $("#universalAutocompleteInput").on("blur", function() {window.scrollTo(0,0)});
+      $("#universalAutocompleteInput").on("blur", function() {window.scrollTo(0,0)});
 
       //attach window resize listener to the window
       d3.select(window).on("resize", function() {
