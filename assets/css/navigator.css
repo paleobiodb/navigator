@@ -636,6 +636,11 @@ br {
 .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
   background-color:#000;
 }
+
+#taxaSearch > span > .tt-dropdown-menu {
+  margin-top: -10px;
+  min-width: 300px;
+}
 @media(max-width: 1050px) {
   .examples>button> img {
     height: 60px;

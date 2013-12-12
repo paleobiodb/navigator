@@ -1079,7 +1079,7 @@ var navMap = (function() {
           }
         });
 
-      $(".tt-dropdown-menu").width($(".twitter-typeahead").width() - 21);
+      $(".universalSearchForm > div > .twitter-typeahead > .tt-dropdown-menu").width($(".universalSearchForm > div > .twitter-typeahead").width() - 21);
     },
 
     "refreshFilterHandlers": function() {

@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "http://paleobiodb.org";
+  var baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   return {
     "init": function() {
@@ -131,8 +131,30 @@ var paleo_nav = (function() {
         }
       });
 
+      var taxaTemplate = Mustache.compile('<p>{{nam}}      <small class="taxaRank">{{rank}}</small></p>');
 
-      var taxaTemplate = Mustache.compile('<p>{{nam}}      <small class="taxaRank">{{rnk}}</small></p>');
+      var taxaAutocomplete = $("#taxonInput").typeahead({
+        name: 'taxa',
+        remote: {
+          url: baseUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
+          filter: function(data) {
+            data.records.forEach(function(d) {
+              d.rank = taxaBrowser.rankMap(d.rnk);
+            });
+            return data.records;
+          }
+        },
+        valueKey: 'nam',
+        minLength:3,
+        limit: 10,
+        template: taxaTemplate
+      });
+
+      taxaAutocomplete.on("typeahead:selected", function(event, data) {
+        navMap.filterByTaxon(data.nam);
+      });
+
+      
 
       var universalAutocomplete = $("#universalAutocompleteInput").typeahead([
         {
@@ -164,6 +186,9 @@ var paleo_nav = (function() {
           remote: {
             url: baseUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
             filter: function(data) {
+              data.records.forEach(function(d) {
+                d.rank = taxaBrowser.rankMap(d.rnk);
+              });
               return data.records;
             }
           },
@@ -171,7 +196,7 @@ var paleo_nav = (function() {
           minLength:3,
           limit: 10,
           header: '<h4 class="autocompleteTitle">Taxa</h4>',
-          template: taxaTemplate,
+          template: taxaTemplate
         }
       ]);
 
@@ -187,7 +212,7 @@ var paleo_nav = (function() {
             navMap.refresh("reset");
             break;
           case 'taxa':
-            navMap.filterByTaxon(data);
+            navMap.filterByTaxon(data.nam);
             break;
           default:
             console.log("default");
