@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "";
+  var baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   return {
     "init": function() {
@@ -134,7 +134,7 @@ var paleo_nav = (function() {
       var taxaTemplate = Mustache.compile('<p>{{nam}}      <small class="taxaRank">{{rank}}</small></p>');
 
       var taxaAutocomplete = $("#taxonInput").typeahead({
-        name: 'taxa',
+        name: 'taxaBrowser',
         remote: {
           url: baseUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
           filter: function(data) {
