@@ -204,8 +204,10 @@ var reconstructMap = (function() {
       var svg = d3.select("#reconstructContent");
 
       var scale = d3.scale.linear()
-        .domain([1, 4140])
-        .range([4, 30]);
+        .domain([1, 4240])
+        .range([4, 15]);
+
+      var zoom = 2;
 
       // Bind the data
       svg.selectAll("circle")
@@ -213,7 +215,7 @@ var reconstructMap = (function() {
       .enter().append("circle")
         .attr("class", "collection")
         .style("fill", interval.col)
-        .attr("r", function(d) { return scale(d.properties.nco); })
+        .attr("r", function(d) { console.log(d.properties); return scale(d.properties.nco)*0.7;})
         .attr("cx", function(d) {
           var coords = projection(d.geometry.coordinates);
           return coords[0];
