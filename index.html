@@ -42,8 +42,18 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
              <div>
-              <p class="navbar-text pull-right"><a data-toggle="modal" href="#helpModal" class="navbar-link">Help</a></p>
-              <p class="navbar-text pull-right"><a data-toggle="modal" href="#aboutModal" class="navbar-link">About</a></p>
+              <div class="universalSearch col-sm-4">
+                <form class="form-search universalSearchForm">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Time, taxa, authorizer" id="universalAutocompleteInput">
+                    <span class="input-group-btn">
+                      <button type="submit" class="btn btn-primary" id="universalSearchButton"><i class="icon icon-search"></i></button>
+                    </span>
+                  </div>
+                </form>
+              </div>
+             <!-- <p class="navbar-text pull-right"><a data-toggle="modal" href="#helpModal" class="navbar-link">Help</a></p>
+              <p class="navbar-text pull-right"><a data-toggle="modal" href="#aboutModal" class="navbar-link">About</a></p> -->
             </div>
           </ul>
         </div><!-- end nav-collapse -->
@@ -85,16 +95,6 @@
 
       	<div class="col-sm-12" id="graphics">
           <img src="build/img/loading.gif" id="loading"/>
-          <div class="universalSearch col-sm-4">
-            <form class="form-search universalSearchForm">
-              <div class="input-group">
-                <input type="text" class="form-control" placeholder="Time, taxa, authorizer" id="universalAutocompleteInput">
-                <span class="input-group-btn">
-                  <button type="submit" class="btn btn-primary"><i class="icon icon-search"></i></button>
-                </span>
-              </div>
-            </form>
-          </div>
           <div class="filters">
             <p><strong id="filterTitle">Filters</strong></p>
             <div id="selectedInterval" class="filter"></div>
