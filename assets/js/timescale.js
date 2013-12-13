@@ -148,7 +148,9 @@ var timeScale = (function() {
             .call(ccRect)
             .dblTap(function(d) {
               setTimeout(timeScale.goTo(d), 500);
-            });
+            })
+          .append("svg:title")
+            .text(function(d) { return d.nam; });
           ccRect.on("dblclick", function(d) {
             timeScale.goTo(d.target.__data__);
           });
@@ -223,7 +225,10 @@ var timeScale = (function() {
             .call(ccFull)
             .dblTap(function(d) {
               setTimeout(timeScale.goTo(d), 500);
-            });
+            })
+          .append("svg:title")
+            .text(function(d) { return d.nam; });
+
           ccFull.on("dblclick", function(d) {
             timeScale.goTo(d.target.__data__);
           });
@@ -248,7 +253,10 @@ var timeScale = (function() {
             .call(ccAbbr)
             .dblTap(function(d) {
               setTimeout(timeScale.goTo(d), 500);
-            });
+            })
+          .append("svg:title")
+            .text(function(d) { return d.nam; });
+            
           ccAbbr.on("dblclick", function(d) {
             timeScale.goTo(d.target.__data__);
           });
