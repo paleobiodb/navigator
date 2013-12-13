@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "";
+  var baseUrl = "http://paleobiodb.org";
 
   return {
     "init": function() {
@@ -233,6 +233,7 @@ var paleo_nav = (function() {
 
       $('input#universalAutocompleteInput').keypress(function (e) {
         if (e.which == 13) {
+          console.log($('input#universalAutocompleteInput').data().ttView);
           var selectedValue = $('input#universalAutocompleteInput').data().ttView.dropdownView.getFirstSuggestion();
 
           switch (selectedValue.dataset) {

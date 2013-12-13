@@ -66,7 +66,7 @@ function buildWKT(data) {
 var i = 0;
 
 function getJSON() {
-  var url = 'http://paleobiodb.org/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=999999&interval_id=' + intervals[i].oid + '&show=time';
+  var url = 'http://paleobiodb.org/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=3&limit=999999&interval_id=' + intervals[i].oid + '&show=time';
 
   // Make the GET request
   http.get(url, function(res) {
