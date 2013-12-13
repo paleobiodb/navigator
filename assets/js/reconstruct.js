@@ -148,7 +148,7 @@ var reconstructMap = (function() {
             /* If there is a taxon or contributor filter applied to the map, ask the API
                for all the level2 bins with those filters applied. */
             if (navMap.filters.exist.taxon || navMap.filters.exist.personFilter) {
-              var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=99999';
+              var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=3&limit=99999';
 
               url = navMap.parseURL(url); 
 
@@ -160,7 +160,7 @@ var reconstructMap = (function() {
                 var matches = [];
                 pbdbData.forEach(function(d) {
                   rotatedPoints.features.forEach(function(e) {
-                    if (d.oid == parseInt(e.properties.NAME)) {
+                    if (d.oid === parseInt(e.properties.NAME)) {
                       matches.push(e);
                     }
                   });
@@ -215,7 +215,7 @@ var reconstructMap = (function() {
       .enter().append("circle")
         .attr("class", "collection")
         .style("fill", interval.col)
-        .attr("r", function(d) { console.log(d.properties); return scale(d.properties.nco)*0.7;})
+        .attr("r", function(d) { return scale(d.properties.nco)*0.7;})
         .attr("cx", function(d) {
           var coords = projection(d.geometry.coordinates);
           return coords[0];
