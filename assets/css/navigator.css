@@ -646,6 +646,20 @@ br {
   margin-top: -10px;
   min-width: 300px;
 }
+
+.tab-pane {
+  margin-top: 1em;
+}
+.nav-tabs > li {
+  font-size: 11px;
+}
+.nav-tabs > li > a {
+  color: #777;
+}
+.occurrenceTabRow {
+  width: 100%;
+}
+
 @media(max-width: 1050px) {
   .examples>button> img {
     height: 60px;

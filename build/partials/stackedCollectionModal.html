@@ -7,6 +7,13 @@
   </a>
   <div id="collapse{{oid}}" class="panel-collapse collapse collectionCollapse">
     <div class="panel-body">
+      <ul class="nav nav-tabs">
+  <li class="active"><a href="#general{{oid}}" data-toggle="tab">General</a></li>
+  <li><a href="#occurrences{{oid}}" data-toggle="tab" class="occurrenceTab" id="occToggle{{oid}}">Occurrences</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="general{{oid}}">
       <table class="table">
         <tr>
           <td style="border-top:0;"><strong>Collection number</strong></td>
@@ -18,7 +25,7 @@
         </tr>
         {{#strat}}<tr>
           <td><strong>Stratigraphy</strong></td>
-          <td>{{#grp}}{{grp}}{{/grp}}{{#fmm}}{{#grp}} - {{/grp}}{{fmm}}{{#mbb}} - {{/mbb}}{{/fmm}}{{#mbb}}{{mbb}}{{/mbb}}</td>
+          <td>{{#grp}}{{grp}} Grp.{{/grp}}{{#fmm}}{{#grp}} - {{/grp}}{{fmm}} Fm.{{#mbb}} - {{/mbb}}{{/fmm}}{{#mbb}}{{mbb}} Mbr.{{/mbb}}</td>
         </tr>{{/strat}}
         <tr>
           <td><strong>Interval(s)</strong></td>
@@ -45,6 +52,11 @@
           <td id="ref{{oid}}"></td>
         </tr>
       </table>
+    </div>
+    <div class="tab-pane" id="occurrences{{oid}}">
+        <h1>Occs here</h1>
+      </div>
+    </div>
     </div>
   </div>
 </div>
