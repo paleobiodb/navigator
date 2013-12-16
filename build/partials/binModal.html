@@ -22,10 +22,6 @@
     <td>{{collections}}</td>
   </tr>
   <tr>
-    <td><strong>Number of occurrences</strong></td>
-    <td>{{occurrences}}</td>
-  </tr>
-  <tr>
     <td><strong>Interval</strong></td>
     <td>{{#interval}}{{interval}}{{/interval}}{{^interval}}Unknown{{/interval}}</td>
   </tr>
@@ -33,11 +29,17 @@
     <td><strong>Stratigraphy</strong></td>
     <td>
       <table class="table table-condensed" id="formationTable">
+          <tr>
+            <td><strong>Unit</strong></td>
+            <td><strong>Collections</strong></td>
+            <td><strong>Occurrences</strong></td>
+          </tr>
         <tbody>
           {{#formations}}
             <tr>
-              <td><strong>{{name}} Fm.</strong></td>
+              <td>{{name}} Fm.</td>
               <td>{{count}}</td>
+              <td>{{occurrences}}</td>
             </tr>
           {{/formations}}
         </tbody>
