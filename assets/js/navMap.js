@@ -715,12 +715,15 @@ var navMap = (function() {
       d3.json(url, function(err, data) {
         var formations = {};
         data.records.forEach(function(d, i) {
+          console.log(d);
           if (d.fmm) {
             if (formations[d.fmm]) {
               formations[d.fmm].count += 1;
+              formations[d.fmm].occurrences += d.noc;
             } else {
               formations[d.fmm] = {};
               formations[d.fmm].count = 1;
+              formations[d.fmm].occurrences += d.noc;
             }
           }
         });
