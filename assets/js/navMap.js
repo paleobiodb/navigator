@@ -778,7 +778,27 @@ var navMap = (function() {
           $("#collectionName").html(data.records[0].nam);
           $("#collectionModalBody").html(output);
           $("#collectionBox").modal();
+
+          $(".occurrenceTab").on("show.bs.tab", function(d) {
+            var id = d.target.id;
+            id = id.replace("occToggle", "");
+            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id, function(err, data) {
+              data.records.forEach(function(d) {
+                d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
+              });
+              d3.text(window.location.pathname + "build/partials/occurrences.html", function(error, template) {
+                var output = Mustache.render(template, data);
+                $("#occurrences" + id).html(output);
+
+                $(".filterByOccurrence").click(function(event) {
+                  event.preventDefault();
+                  navMap.filterByTaxon($(this).attr("data-name"));
+                });
+              });
+            });
+          });
         });
+
       });
     },
 
@@ -806,6 +826,25 @@ var navMap = (function() {
             $("#ref" + id).html(data.records[0].ref);
           });
         });
+
+        $(".occurrenceTab").on("show.bs.tab", function(d) {
+            var id = d.target.id;
+            id = id.replace("occToggle", "");
+            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id, function(err, data) {
+              data.records.forEach(function(d) {
+                d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
+              });
+              d3.text(window.location.pathname + "build/partials/occurrences.html", function(error, template) {
+                var output = Mustache.render(template, data);
+                $("#occurrences" + id).html(output);
+
+                $(".filterByOccurrence").click(function(event) {
+                  event.preventDefault();
+                  navMap.filterByTaxon($(this).attr("data-name"));
+                });
+              });
+            });
+          });
 
         $("#collectionModal").modal();
       });
