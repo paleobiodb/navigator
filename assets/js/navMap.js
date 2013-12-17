@@ -41,9 +41,9 @@ var navMap = (function() {
 
       var attrib = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 
-      navMap.stamen = new L.TileLayer('http://{s}.tile.stamen.com/toner-background/{z}/{x}/{y}.png', {attribution: attrib}).addTo(map);
+      stamen = new L.TileLayer('http://{s}.tile.stamen.com/toner-background/{z}/{x}/{y}.png', {attribution: attrib}).addTo(map);
 
-      navMap.stamenLabels = new L.TileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: attrib});
+      stamenLabels = new L.TileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: attrib});
 
       // Called every time the map is panned, zoomed, or resized
       map.on("moveend", function(event) {
@@ -175,21 +175,21 @@ var navMap = (function() {
 
     "selectBaseMap": function(zoom) {
       if (zoom < 5) {
-        if (map.hasLayer(navMap.stamenLabels)) {
-          map.removeLayer(navMap.stamenLabels);
-          map.addLayer(navMap.stamen);
+        if (map.hasLayer(stamenLabels)) {
+          map.removeLayer(stamenLabels);
+          map.addLayer(stamen);
         }
       } else if (zoom > 4 && zoom < 8) {
-        if (map.hasLayer(navMap.stamenLabels)) {
-          map.removeLayer(navMap.stamenLabels);
-          map.addLayer(navMap.stamen);
+        if (map.hasLayer(stamenLabels)) {
+          map.removeLayer(stamenLabels);
+          map.addLayer(stamen);
         }
       } else {
-        if (map.hasLayer(navMap.stamenLabels)) {
-          map.removeLayer(navMap.stamen);
+        if (map.hasLayer(stamenLabels)) {
+          map.removeLayer(stamen);
         } else {
-          map.addLayer(navMap.stamenLabels);
-          map.removeLayer(navMap.stamen);
+          map.addLayer(stamenLabels);
+          map.removeLayer(stamen);
         }
       }
     },
@@ -797,6 +797,7 @@ var navMap = (function() {
             d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id, function(err, data) {
               data.records.forEach(function(d) {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
+                d.itallics = (d.rnk < 6) ? "itallics" : ""; 
               });
               d3.text(window.location.pathname + "build/partials/occurrences.html", function(error, template) {
                 var output = Mustache.render(template, data);
@@ -1262,22 +1263,6 @@ var navMap = (function() {
 
       url += "&show=ref,loc,time";
 
-     /* var options = [];
-      if ($("#loc:checked").length > 0) {
-        options.push("loc");
-      }
-      if ($("#ref:checked").length > 0) {
-        options.push("ref");
-      }
-      if ($("#t:checked").length > 0) {
-        options.push("time");
-      }
-      if (options.length > 0) {
-        url += "&show=";
-        options.forEach(function(d) {
-          url += d + ",";
-        });
-      }*/
       url = url.substring(0, url.length - 1);
       window.open(url);
     },
@@ -1358,8 +1343,6 @@ var navMap = (function() {
       return params;
     },
 
-    "stamen": stamen,
-    "stamenLabels": stamenLabels,
     "filters": filters
   }
 })();

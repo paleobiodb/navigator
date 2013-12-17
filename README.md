@@ -15,10 +15,7 @@ All working files (the ones you want to edit) are found in the ````assets```` di
 ##Setup
 1. Clone or fork this repository, and navigate into it
 2. ````npm install````
-3. ````grunt````
-4. ````grunt shell````
-
-\#4 will take a while to run, as it populates all the caches for the application. Once it has finished, you can start a simple Python server with ````python -m SimpleHTTPServer```` and navigate to localhost:8000 in a web browser. 
+3. Start a simple Python server with ````python -m SimpleHTTPServer```` and navigate to localhost:8000 in a web browser. 
 
 
 ##Helpful hints
@@ -37,7 +34,7 @@ To:
 PaleoDB Navigator is an open-source project and welcomes feedback/contributions from the community. If you see a bug and would like to fix it, please submit a pull request. If you see a bug or have a suggestion but do not know how to fix it, please open a new issue or contact John Czaplewski at jczaplewski@wisc.edu
 
 ##License
-Paleobiology Database data is used under a [CC-BY 3.0](http://creativecommons.org/licenses/by/3.0/) Creative Commons license. Plate and collection rotation data from [GPlates](http://www.gplates.org) is used under a GNU [General Public License (GPL), version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), and taxonomic images from [Phylopic.org](http://phylopic.org/) are used under either a Public Domain or Creative Commons license.
+Paleobiology Database data is used under a [CC-BY 4.0](http://creativecommons.org/licenses/by/4.0/) Creative Commons license. Plate and collection rotation data from [GPlates](http://www.gplates.org) is used under a GNU [General Public License (GPL), version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), and taxonomic images from [Phylopic.org](http://phylopic.org/) are used under either a Public Domain or Creative Commons license.
 
 All code unique to the PaleoDB Navigator interface is written by John Czaplewski unless otherwise specified, and uses a [CC0 1.0 Universal](http://creativecommons.org/publicdomain/zero/1.0/) Public Domain Dedication.
 

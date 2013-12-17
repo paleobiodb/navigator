@@ -29,7 +29,6 @@
 
   <body>
     <div class="container">
-      <!-- Static navbar -->
       <div class="navbar navbar-default navbar-static-top">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -41,8 +40,8 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="navbar-text"><a data-toggle="modal" href="#helpModal" class="navbar-link">Help</a></li>
             <li class="navbar-text"><a data-toggle="modal" href="#aboutModal" class="navbar-link">About</a></li>
+            <li class="navbar-text"><a data-toggle="modal" href="#helpModal" class="navbar-link">Help</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
              <div>
@@ -60,7 +59,7 @@
               
             </div>
           </ul>
-        </div><!-- end nav-collapse -->
+        </div>
       </div> <!-- end navbar -->
      
       <div class="row" id="graphicRow">
@@ -113,12 +112,8 @@
             <div class="customControl buttons leaflet-control">
               <div class="zoom-in mapCtrl" title="Zoom in"><i class="icon-plus ctrlButton"></i></div>
               <div class="zoom-out mapCtrl" title="Zoom out"><i class="icon-minus ctrlButton"></i></div>
-              <!--<div class="layers"></div>-->
               <div class="rotate mapCtrl" title="Toggle paleogeography"><div id="rotateIcon"></div></div>
-              <!--<div class="time mapCtrl"><i class="icon-time icon-2x ctrlButton"></i></div>-->
               <div class="taxa mapCtrl" title="Toggle taxa browser"><i class="icon-bug icon-2x ctrlButton"></i></div>
-              <!--<div class="userFilter mapCtrl"><i class="icon-user icon-2x ctrlButton"></i></div>-->
-              <!--<div class="filt mapCtrl"><i class="icon-filter icon-2x ctrlButton"></i></a></div>-->
               <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="icon-save icon-2x ctrlButton"></i></a></div>
               
             </div>
@@ -140,7 +135,6 @@
               <a href="#" class="taxaBrowserToggle" style="color:#777;">Expand taxa browser<i class="icon-double-angle-right" style="margin-left:5px;"></i></a>
             </div>
             <div class="customControl userToggler leaflet-control">
-             <!-- <form onSubmit="return navMap.filterByPerson()">-->
               <form>
                 <input type="text" id="personInput" class="form-control" placeholder="Enter an authorizer" size="22"/>
               </form>
@@ -185,29 +179,14 @@
             <p class="text-muted" id="downloadCount"></p>
           </div>
           <div class="modal-body">
-            <h4>Filters:</h4>
-            <ul id="filterList"></ul>
-            <br>
             <div class="row">
-              <!--<div class="col-sm-6">
-                <h4>Additional information:</h4>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" id="loc">Location
-                  </label>
-                </div>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" id="ref">Reference
-                  </label>
-                </div>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" id="t">Time
-                  </label>
-                </div>
-              </div>-->
-              <div class="col-sm-6">
+              <div class="col-sm-12">
+                <h4>Filters:</h4>
+                <ul id="filterList"></ul>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
                 <h4>Format:</h4>
                 <div class="radio">
                   <label>
@@ -319,9 +298,6 @@
             <div id="subTaxaModalList">
               <ol class="list-unstyled" id="subtaxa"></ol>
             </div>
-            <!--<table class="table table-hover table-condensed">
-              <tbody id="subtaxaModalTable"></tbody>
-            </table>-->
           </div>
         </div>
       </div>
@@ -336,7 +312,7 @@
           </div>
           <div class="modal-body">
             <h4>The Application</h4>
-            <p>Built on the <a href="http://paleobiodb.org/data1.1/">PaleoDB API</a>, PaleoDB Navigator allows users to explore the Paleobiology Database through space, time, and taxonomy. Paleobiology Database data is used under a <a href="http://creativecommons.org/licenses/by/3.0/">CC-BY 3.0</a> Creative Commons license. In addition to the Paleobiology Database, it utilizes data from <a href="http://www.gplates.org">GPlates</a> under a GNU <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">General Public License (GPL), version 2</a> license for plate and collection rotations, and <a href="http://phylopic.org/">Phylopic.org</a> for taxonomic images under either a Public Domain or Creative Commons license. All code unique to the PaleoDB Navigator interface uses a <a href="http://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal</a> Public Domain Dedication, and the all the code for it can be found on <i>insert link to Github repo here</i>.</p><br>
+            <p>Built on the <a href="http://paleobiodb.org/data1.1/">PaleoDB API</a>, PaleoDB Navigator allows users to explore the Paleobiology Database through space, time, and taxonomy. Paleobiology Database data is used under a <a href="http://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a> Creative Commons license. In addition to the Paleobiology Database, it utilizes data from <a href="http://www.gplates.org">GPlates</a> under a GNU <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">General Public License (GPL), version 2</a> license for plate and collection rotations, and <a href="http://phylopic.org/">Phylopic.org</a> for taxonomic images under either a Public Domain or Creative Commons license. All code unique to the PaleoDB Navigator interface uses a <a href="http://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal</a> Public Domain Dedication, and the all the code for it can be found on <i>insert link to Github repo here</i>.</p><br>
             <h4>Project Funding</h4>
             <p>Current development of the PaleoDB database, API, website, and example applications is being carried out in the <a href="http://geoscience.wisc.edu/geoscience/">Department of Geoscience</a> at the <a href="http://wisc.edu">University of Wisconsin-Madison</a>. It is supported by the UW-Madison Deptartment of Geoscience and the U.S. National Science Foundation EAR Geoinformatics grant 0949416.</p><br>
             <h4>Project Team</h4>
@@ -424,14 +400,12 @@
       </div>
     </div><!-- end helpModal -->
     
-
     <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
     <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/hammer.js/1.0.5/jquery.hammer.min.js"></script>
-
 
     <script src="build/js/script.min.js"></script>
   </body>
