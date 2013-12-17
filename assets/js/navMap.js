@@ -747,6 +747,16 @@ var navMap = (function() {
             everything.push(tempFormation);
           });
 
+          function compare(a,b) {
+            if (a.count > b.count)
+               return -1;
+            if (a.count < b.count)
+              return 1;
+            return 0;
+          }
+          
+          everything.sort(compare);
+
           var formationData = {"formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           // render template with the names of the formations and then number of collections in each
