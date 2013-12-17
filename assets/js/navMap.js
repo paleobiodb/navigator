@@ -715,7 +715,6 @@ var navMap = (function() {
       d3.json(url, function(err, data) {
         var formations = {};
         data.records.forEach(function(d, i) {
-          console.log(d);
           if (d.fmm) {
             if (formations[d.fmm]) {
               formations[d.fmm].count += 1;
@@ -723,7 +722,7 @@ var navMap = (function() {
             } else {
               formations[d.fmm] = {};
               formations[d.fmm].count = 1;
-              formations[d.fmm].occurrences += d.noc;
+              formations[d.fmm].occurrences = d.noc;
             }
           }
         });
@@ -744,7 +743,7 @@ var navMap = (function() {
           var everything = [];
 
           Object.keys(formations).forEach(function(d) {
-            var tempFormation = { "name": d, "count": formations[d].count };
+            var tempFormation = { "name": d, "count": formations[d].count, "occurrences": formations[d].occurrences };
             everything.push(tempFormation);
           });
 

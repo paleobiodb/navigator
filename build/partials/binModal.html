@@ -18,10 +18,6 @@
 {{/formationCount}}
 {{^formationCount}}
   <tr>
-    <td><strong>Number of collections</strong></td>
-    <td>{{collections}}</td>
-  </tr>
-  <tr>
     <td><strong>Interval</strong></td>
     <td>{{#interval}}{{interval}}{{/interval}}{{^interval}}Unknown{{/interval}}</td>
   </tr>
@@ -43,6 +39,11 @@
             </tr>
           {{/formations}}
         </tbody>
+        <tr>
+          <td><strong>Totals</strong></td>
+          <td>{{collections}}</td>
+          <td>{{occurrences}}</td>
+        </tr>
       </table>
     </td>
   </tr>
