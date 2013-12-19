@@ -120,6 +120,7 @@ var navMap = (function() {
           .attr("class", "countries")
           .attr("d", path);
 
+      //TODO: Yeaaaah...
         reconstructMap.resize();
         timeScale.resize();
 
@@ -311,13 +312,8 @@ var navMap = (function() {
       prevne = ne;
       prevzoom = zoom;
       // Make sure bad requests aren't made
-      //sw.lng = (sw.lng < -180) ? -180 : sw.lng;
       sw.lat = (sw.lat < -90) ? -90 : sw.lat;
-      //ne.lng = (ne.lng > 180) ? 180 : ne.lng;
       ne.lat = (ne.lat > 90) ? 90 : ne.lat;
-
-      // Redefine to check if we are crossing the date line
-      //bounds = map.getBounds();
 
       // Abort any pending requests
       if(typeof(currentRequest) != 'undefined') {
@@ -465,11 +461,6 @@ var navMap = (function() {
         })
         .on("click", function(d) {
           d3.event.stopPropagation();
-          /*d3.select(".info")
-            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
-            .style("display", "block");
-          timeScale.highlight(this);
-          navMap.openBinModal(d);*/
         });
       
       bins.exit().remove();
@@ -713,18 +704,23 @@ var navMap = (function() {
       url += "&show=ref,loc,time";
 
       d3.json(url, function(err, data) {
-        var formations = {};
+        var formations = {},
+            collections = data.records.length,
+            occurrences = 0;
+
         data.records.forEach(function(d, i) {
           if (d.fmm) {
             if (formations[d.fmm]) {
               formations[d.fmm].count += 1;
-              formations[d.fmm].occurrences += d.noc;
+              formations[d.fmm].occurrences += (d.properties) ? d.properties.noc : d.noc;
             } else {
               formations[d.fmm] = {};
               formations[d.fmm].count = 1;
-              formations[d.fmm].occurrences = d.noc;
+              formations[d.fmm].occurrences = (d.properties) ? d.properties.noc : d.noc;
             }
           }
+
+          occurrences += (d.properties) ? d.properties.noc : d.noc;
         });
 
         if (Object.keys(formations).length > 10) {
@@ -927,7 +923,6 @@ var navMap = (function() {
             });
             navMap.drawCollections(response, 3, zoom);
           });
-          //TODO add query and call appropriate function
           break;
       }
     },
