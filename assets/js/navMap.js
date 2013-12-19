@@ -495,7 +495,7 @@ var navMap = (function() {
               .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
               .style("display", "block");
             timeScale.highlight(this);
-            navMap.openBinModal(d, d.nco, d.noc, timeScale.interval_hash[d.cxi].nam);
+            navMap.openBinModal(d);
           }
         });
 
@@ -515,7 +515,7 @@ var navMap = (function() {
               .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
               .style("display", "block");
             timeScale.highlight(this);
-            navMap.openBinModal(d, d.nco, d.noc);
+            navMap.openBinModal(d);
           }
         })
         .on("mouseout", function() {
@@ -705,7 +705,7 @@ var navMap = (function() {
 
       d3.json(url, function(err, data) {
         var formations = {},
-            collections = data.records.length,
+            collections = 0,
             occurrences = 0;
 
         data.records.forEach(function(d, i) {
@@ -718,10 +718,25 @@ var navMap = (function() {
               formations[d.fmm].count = 1;
               formations[d.fmm].occurrences = (d.properties) ? d.properties.noc : d.noc;
             }
-          }
 
-          occurrences += (d.properties) ? d.properties.noc : d.noc;
+            collections += 1;
+            occurrences += (d.properties) ? d.properties.noc : d.noc;
+          } else {
+            if (formations.Unknown) {
+              formations.Unknown.count += 1;
+              formations.Unknown.occurrences += (d.properties) ? d.properties.noc : d.noc;
+            } else {
+              formations.Unknown = {};
+              formations.Unknown.count = 1;
+              formations.Unknown.occurrences = (d.properties) ? d.properties.noc : d.noc;
+            }
+          }
         });
+
+        collections = (d.nco) ? d.nco : collections;
+        occurrences = (d.noc) ? d.noc : occurrences;
+
+        var interval = (d.cxi) ? timeScale.interval_hash[d.cxi].nam : "Unknown";
 
         if (Object.keys(formations).length > 10) {
           //render template saying how many formations there are
