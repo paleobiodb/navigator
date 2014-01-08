@@ -1,27 +1,26 @@
 {
   "name": "PaleoDBNavigator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Space, time, taxa",
   "main": "gruntfile.js",
   "scripts": {
-  	"start": "python -m SimpleHTTPServer",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "python -m SimpleHTTPServer"
   },
   "repository" : {
     "type" : "git",
-    "url" : "https://github.com/xxx/xxx.git"
+    "url" : "https://github.com/paleobiodb/navigator.git"
   },
   "author": "John J Czaplewski || jczaplewski@wisc.edu",
   "license": "CC0",
   "devDependencies" : {
-        "grunt" :                   "~0.4.0",
-        "topojson" :				        "latest",
-        "grunt-contrib-cssmin":         "*",
-        "grunt-contrib-uglify":         "*",
-        "grunt-contrib-watch":          "*",
-        "grunt-cssc":                   "*",
-        "grunt-htmlhint":               "*",
-        "grunt-shell":					"*",
-        "matchdep":                     "*"
-    } 
+    "grunt" :                   "~0.4.0",
+    "topojson" :                "latest",
+    "grunt-contrib-cssmin":         "*",
+    "grunt-contrib-uglify":         "*",
+    "grunt-contrib-watch":          "*",
+    "grunt-cssc":                   "*",
+    "grunt-htmlhint":               "*",
+    "grunt-shell":                  "*",
+    "matchdep":                     "*"
+  } 
 }
