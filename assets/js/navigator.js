@@ -337,6 +337,7 @@ var paleo_nav = (function() {
       // Handlers for the example map states
       $("#trilobita").on("click", function(event) {
         event.preventDefault();
+        paleo_nav.closeReconstructMap();
         var state = {
           "authFilter": {
             "id": "",
@@ -363,6 +364,7 @@ var paleo_nav = (function() {
 
       $("#dinosauria").on("click", function(event) {
         event.preventDefault();
+        paleo_nav.closeReconstructMap();
         var state = {
           "authFilter": {
             "id": "",

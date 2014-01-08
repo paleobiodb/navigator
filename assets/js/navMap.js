@@ -1350,6 +1350,7 @@ var navMap = (function() {
         }
         if (params.reconstruct === "block") {
           reconstructMap.rotate(params.currentReconstruction);
+          paleo_nav.toggleReconstructMap();
         }
         
         navMap.resize();
