@@ -387,27 +387,34 @@ var paleo_nav = (function() {
         $("#helpModal").modal('hide');
       });
 
-      $("#aves").on("click", function(event) {
+      $("#plantae").on("click", function(event) {
         event.preventDefault();
         var state = {
           "authFilter": {
             "id": "",
             "name": ""
           },
-          "center": [51.46085, 3.72436],
-          "currentReconstruction": "",
-          "reconstruct": "none",
+          "center": "",
+          "currentReconstruction": {
+            "nam": "Permian", 
+            "col": "#F04028",
+            "mid": 275,
+            "oid": 17,
+            "taxon": "Plantae", 
+            "person": ""
+          },
+          "reconstruct": "block",
           "taxonFilter": {
-            "id": 98802,
-            "nam": "Aves"
+            "id": 151418,
+            "nam": "Plantae"
           },
           "timeFilter": {
-            "nam": "Cenozoic",
-            "oid": 1,
-            "mid": 33
+            "nam": "Permian",
+            "oid": 17,
+            "mid": 275
           },
-          "timeScale": "Cenozoic",
-          "zoom":7
+          "timeScale": "Permian",
+          "zoom":""
         };
         navMap.restoreState(state);
         $("#helpModal").modal('hide');

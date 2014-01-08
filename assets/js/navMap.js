@@ -1287,9 +1287,9 @@ var navMap = (function() {
       an object will indicate another type of preserved state, i.e. something
       like the example map states
     */
-      if (typeof state == "object") {
+      if (typeof state === "object") {
         var params = state;
-        if (params.zoom > 2) {
+        if (params.zoom && params.zoom > 2) {
           navMap.goTo(params.center, params.zoom);
         }
         if (params.timeScale != "Phanerozoic") {
@@ -1298,11 +1298,14 @@ var navMap = (function() {
         if (params.taxonFilter.id > 0) {
           navMap.filterByTaxon(params.taxonFilter.nam);
         }
-        if (typeof(params.timeFilter) == "object") {
+        if (typeof(params.timeFilter) === "object") {
           navMap.filterByTime(params.timeFilter.nam);
         }
         if (params.authFilter.id > 0) {
           navMap.filterByPerson(params.authFilter);
+        }
+        if (params.reconstruct === "block") {
+          reconstructMap.rotate(params.currentReconstruction);
         }
         
         navMap.resize();

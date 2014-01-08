@@ -246,13 +246,13 @@ var reconstructMap = (function() {
       paleo_nav.hideLoading();
 
       // Update currentReconstruction
-      currentReconstruction = {"nam": interval.nam, "taxon": "", "person": ""};
+      reconstructMap.currentReconstruction = {"nam": interval.nam, "col":interval.col, "mid": interval.mid, "oid": interval.oid, "taxon": "", "person": ""};
 
       if (navMap.filters.exist.taxon) {
-        currentReconstruction.taxon =  navMap.filters.taxon.name;
+        reconstructMap.currentReconstruction.taxon =  navMap.filters.taxon.name;
       }
       if (navMap.filters.exist.personFilter) {
-        currentReconstruction.person = navMap.filters.personFilter.name;
+        reconstructMap.currentReconstruction.person = navMap.filters.personFilter.name;
       }
 
     },
