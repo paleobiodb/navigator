@@ -25,10 +25,12 @@ var taxaBrowser = (function(){
           } else {
             if ( data.records.length > 0 ) {
               // Update the map filters
+              var taxon = {"id": data.records[0].oid, "name": data.records[0].nam};
+
+              navMap.filters.taxa.push(taxon);
               navMap.filters.exist.taxon = true;
-              navMap.filters.taxon.id = data.records[0].oid;
-              navMap.filters.taxon.name = data.records[0].nam;
-              navMap.updateFilterList("taxon");
+
+              navMap.updateFilterList("taxon", data.records[0].oid);
               paleo_nav.untoggleTaxa();
               
               // Update the selected taxon in the taxa browser

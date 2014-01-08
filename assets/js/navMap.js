@@ -10,7 +10,8 @@ var navMap = (function() {
     prevzoom = 3,
     currentRequest;
 
-  var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxon": {"id": "", "name": ""}, "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false}};
+  //var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxon": {"id": "", "name": ""}, "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false}};
+  var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxa": [], "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false}};
 
   // Variables used thoughout
   var width = 960,
@@ -219,7 +220,7 @@ var navMap = (function() {
 
         if (filtered) {
           if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
-            url += "&level=2";
+            url += "&level=3";
             url = navMap.parseURL(url);
 
             if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -965,7 +966,12 @@ var navMap = (function() {
                 url += '&person_id=' + filters.personFilter.id;
                 break;
               case "taxon":
-                url += '&base_id=' + filters.taxon.id;
+                url += '&taxon_id=';
+                filters.taxa.forEach(function(d) {
+                  url += d.id + ",";
+                });
+                // remove last comma
+                url = url.slice(0, -1);
                 break;
             }
             count += 1;
@@ -1143,13 +1149,48 @@ var navMap = (function() {
       d3.selectAll(".removeFilter").on("click", function() {
         var parent = d3.select(this).node().parentNode;
         parent = d3.select(parent);
-        parent.style("display", "none").html("");
-        var type = parent.attr("id");
-        filters.exist[type] = false;
+        var type = parent.attr("id"),
+            id = parent.attr("data-id");
 
-        var keys = Object.keys(filters[type]);
-        for (var i=0; i < keys.length; i++) {
-          filters[type][keys[i]] = "";
+        switch(type) {
+          case "selectedInterval":
+            parent.style("display", "none").html("");
+            filters.exist["selectedInterval"] = false;
+            d3.select(".time").style("box-shadow", "");
+            timeScale.unhighlight();
+            var keys = Object.keys(filters[type]);
+            for (var i=0; i < keys.length; i++) {
+              filters[type][keys[i]] = "";
+            }
+            break;
+          case "personFilter":
+            parent.style("display", "none").html("");
+            filters.exist["personFilter"] = false;
+            d3.select(".userFilter").style("box-shadow", "");
+            var keys = Object.keys(filters[type]);
+            for (var i=0; i < keys.length; i++) {
+              filters[type][keys[i]] = "";
+            }
+            break;
+          case "taxon":
+            parent.remove();
+            var index;
+            // Find the index of the taxon being removed
+            filters.taxa.forEach(function(d, i) {
+              if (d.id === id) {
+                index = i;
+              }
+            });
+            // Remove from taxa filter array
+            filters.taxa.splice(index, 1);
+
+            // Check if there are any others left
+            if (filters.taxa.length < 1) {
+              filters.exist["taxon"] = false;
+            }
+
+            d3.select(".taxa").style("box-shadow", "");
+            break;
         }
 
         if (d3.select("#reconstructMap").style("display") == "block") {
@@ -1158,23 +1199,10 @@ var navMap = (function() {
           navMap.refresh("reset");
         }
 
-        switch(type) {
-          case "selectedInterval":
-            d3.select(".time").style("box-shadow", "");
-            timeScale.unhighlight();
-            break;
-          case "personFilter":
-            d3.select(".userFilter").style("box-shadow", "");
-            break;
-          case "taxon":
-            d3.select(".taxa").style("box-shadow", "");
-            break;
-        }
-
       });
     },
 
-    "updateFilterList": function(type) {
+    "updateFilterList": function(type, id) {
 
       switch(type) {
         case "selectedInterval":
@@ -1192,9 +1220,23 @@ var navMap = (function() {
           navMap.refreshFilterHandlers();
           break;
         case "taxon":
-          d3.select("#taxon")
+          var index;
+          // Find the index of the taxon being added
+          filters.taxa.forEach(function(d, i) {
+            if (d.id === id) {
+              index = i;
+            }
+          });
+          d3.select(".filters")
+            .append("div")
+            .attr("id", "taxon")
+            .attr("class", "filter")
+            .attr("data-id", id)
             .style("display", "block")
-            .html(filters.taxon.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
+            .html(filters.taxa[index].name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>')
+        /*  d3.select("#taxon")
+            .style("display", "block")
+            .html(filters.taxon.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');*/
           d3.select(".taxa").style("box-shadow", "inset 3px 0 0 #ff992c");
           navMap.refreshFilterHandlers();
           break;
@@ -1295,8 +1337,10 @@ var navMap = (function() {
         if (params.timeScale != "Phanerozoic") {
           timeScale.goTo(params.timeScale);
         }
-        if (params.taxonFilter.id > 0) {
-          navMap.filterByTaxon(params.taxonFilter.nam);
+        if (params.taxonFilter.length > 0) {
+          params.taxonFilter.forEach(function(d) {
+            navMap.filterByTaxon(d.nam);
+          });
         }
         if (typeof(params.timeFilter) === "object") {
           navMap.filterByTime(params.timeFilter.nam);
@@ -1351,7 +1395,7 @@ var navMap = (function() {
           zoom = map.getZoom(),
           reconstruct = d3.select("#reconstructMap").style("display");
 
-      var params = {"timeScale": timeScale.currentInterval.nam, "taxonFilter": filters.taxon, "timeFilter": filters.selectedInterval, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
+      var params = {"timeScale": timeScale.currentInterval.nam, "taxonFilter": filters.taxa, "timeFilter": filters.selectedInterval, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
       
       return params;
     },
