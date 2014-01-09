@@ -99,10 +99,12 @@ nav {
 .helpModalClose:active {
   color:rgb(255, 153, 44);
 }
-.binContent > tr > td {
+.binContent > tbody > tr > td {
   font-size: 0.9em;
-  width:35%;
   vertical-align: top;
+}
+.binContentNoFmm {
+  width:35%;
 }
 .warningText {
   text-align: left;

@@ -1,4 +1,5 @@
 {{#formationCount}}
+<tbody class="binContentNoFmm">
   <tr class="binID">
     <td><strong>Bin ID</strong></td>
     <td>{{binID}}</td>
@@ -19,8 +20,10 @@
     <td><strong>Formations</strong></td>
     <td>{{formationCount}}</td>
   </tr>
+</tbody>
 {{/formationCount}}
 {{^formationCount}}
+<tbody>
   <tr class="binID">
     <td><strong>Bin ID</strong></td>
     <td>{{binID}}</td>
@@ -55,4 +58,5 @@
       </table>
     </td>
   </tr>
+</tbody>
 {{/formationCount}}
