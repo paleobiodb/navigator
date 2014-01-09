@@ -705,6 +705,7 @@ var navMap = (function() {
       url += "&show=ref,loc,time";
 
       d3.json(url, function(err, data) {
+        // Formations counts the number of collections present in each formation, collections and occurrences sum bin totals
         var formations = {},
             collections = 0,
             occurrences = 0;
@@ -731,11 +732,14 @@ var navMap = (function() {
               formations.Unknown.count = 1;
               formations.Unknown.occurrences = (d.properties) ? d.properties.noc : d.noc;
             }
+
+            collections += 1;
+            occurrences += (d.properties) ? d.properties.noc : d.noc;
           }
         });
 
-        collections = (d.nco) ? d.nco : collections;
-        occurrences = (d.noc) ? d.noc : occurrences;
+        //collections = (d.nco) ? d.nco : collections;
+        //occurrences = (d.noc) ? d.noc : occurrences;
 
         var interval = (d.cxi) ? timeScale.interval_hash[d.cxi].nam : "Unknown";
 
