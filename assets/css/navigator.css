@@ -104,6 +104,25 @@ nav {
   width:35%;
   vertical-align: top;
 }
+.warningText {
+  text-align: left;
+}
+.warning {
+  font-size: 0.85em;
+  color: #777;
+}
+.general {
+  color: #777;
+}
+.nationalParks {
+  color: #FF4136;
+}
+.federalLands {
+  color: #eecd00;
+}
+.icon-warning-sign {
+  margin-right: 10px;
+}
 .table tbody>tr>td, .table tbody>tr>th, .table tfoot>tr>td, .table tfoot>tr>th, .table thead>tr>td, .table thead>tr>th {
   vertical-align: top;
 }

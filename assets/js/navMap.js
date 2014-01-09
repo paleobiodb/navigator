@@ -801,6 +801,27 @@ var navMap = (function() {
           var output = Mustache.render(template, data);
           $("#collectionName").html(data.records[0].nam);
           $("#collectionModalBody").html(output);
+
+          /* Placeholder for land type
+          switch (d.landType) {
+            case 0:
+              $(".general").css("display", "block");
+              $(".nationalParks, .federalLands").css("display", "none");
+              break;
+            case 1:
+              $(".nationalParks").css("display", "block");
+              $(".general, .federalLands").css("display", "none");
+              break;
+            case 2:
+              $(".federalLands").css("display", "block");
+              $(".general, .nationalParks").css("display", "none");
+              break;
+          }*/
+
+          // To be replaced by above code once land type is in data service
+          $(".general").css("display", "block");
+          $(".nationalParks, .federalLands").css("display", "none");
+
           $("#collectionBox").modal();
 
           $(".occurrenceTab").on("show.bs.tab", function(d) {
@@ -870,6 +891,26 @@ var navMap = (function() {
               });
             });
           });
+
+        /* Placeholder for land type
+        switch (d.landType) {
+          case 0:
+            $(".general").css("display", "block");
+            $(".nationalParks, .federalLands").css("display", "none");
+            break;
+          case 1:
+            $(".nationalParks").css("display", "block");
+            $(".general, .federalLands").css("display", "none");
+            break;
+          case 2:
+            $(".federalLands").css("display", "block");
+            $(".general, .nationalParks").css("display", "none");
+            break;
+        }*/
+
+        // To be replaced by above code once land type is in data service
+        $(".general").css("display", "block");
+        $(".nationalParks, .federalLands").css("display", "none");
 
         $("#collectionModal").modal();
       });
