@@ -747,7 +747,7 @@ var navMap = (function() {
           //render template saying how many formations there are
           var formationData = {"binID":id, "formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
 
-          d3.text('/build/partials/binModal.html', function(error, template) {
+          d3.text('build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select(".binContent").html(output);
 
@@ -774,7 +774,7 @@ var navMap = (function() {
           var formationData = {"binID":id, "formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           // render template with the names of the formations and then number of collections in each
-          d3.text('/build/partials/binModal.html', function(error, template) {
+          d3.text('build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select(".binContent").html(output);
 
@@ -797,7 +797,7 @@ var navMap = (function() {
          // d.env = (d.env) ? d.env : "Unknown";
         });
 
-        d3.text("/build/partials/collectionModal.html", function(error, template) {
+        d3.text("build/partials/collectionModal.html", function(error, template) {
           var output = Mustache.render(template, data);
           $("#collectionName").html(data.records[0].nam);
           $("#collectionModalBody").html(output);
@@ -832,7 +832,7 @@ var navMap = (function() {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
                 d.itallics = (d.rnk < 6) ? "itallics" : ""; 
               });
-              d3.text("/build/partials/occurrences.html", function(error, template) {
+              d3.text("build/partials/occurrences.html", function(error, template) {
                 var output = Mustache.render(template, data);
                 $("#occurrences" + id).html(output);
 
@@ -862,7 +862,7 @@ var navMap = (function() {
        // d.env = (d.env) ? d.env : "Unknown";
       });
 
-      d3.text("/build/partials/stackedCollectionModal.html", function(error, template) {
+      d3.text("build/partials/stackedCollectionModal.html", function(error, template) {
         var output = Mustache.render(template, data);
 
         d3.select("#binID").html("Collections at [" + data.lat + ", " + data.lng + "]");
@@ -883,7 +883,7 @@ var navMap = (function() {
               data.records.forEach(function(d) {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
               });
-              d3.text("/build/partials/occurrences.html", function(error, template) {
+              d3.text("build/partials/occurrences.html", function(error, template) {
                 var output = Mustache.render(template, data);
                 $("#occurrences" + id).html(output);
 
