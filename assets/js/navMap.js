@@ -741,12 +741,10 @@ var navMap = (function() {
 
         if (Object.keys(formations).length > 10) {
           //render template saying how many formations there are
-          var formationData = {"formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
+          var formationData = {"binID":id, "formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
-            d3.select("#binNumber").html("Bin " + id);
-            d3.select("#binModalTitle").html("Summary");
             d3.select(".binContent").html(output);
 
             $("#binModal").modal();
@@ -769,13 +767,11 @@ var navMap = (function() {
           
           everything.sort(compare);
 
-          var formationData = {"formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
+          var formationData = {"binID":id, "formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           // render template with the names of the formations and then number of collections in each
           d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
-            d3.select("#binNumber").html("Bin " + id);
-            d3.select("#binModalTitle").html("Summary");
             d3.select(".binContent").html(output);
 
             $("#binModal").modal();
