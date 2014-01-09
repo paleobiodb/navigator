@@ -346,10 +346,10 @@ var paleo_nav = (function() {
           "center": [30.3539163, 113.24707],
           "currentReconstruction": "",
           "reconstruct": "none",
-          "taxonFilter": {
+          "taxaFilter": [{
             "id": 19100,
             "nam": "Trilobita"
-          },
+          }],
           "timeFilter": {
             "nam": "Cambrian",
             "oid": 22,
@@ -373,10 +373,10 @@ var paleo_nav = (function() {
           "center": [40.5305, -109.5117],
           "currentReconstruction": "",
           "reconstruct": "none",
-          "taxonFilter": {
+          "taxaFilter": [{
             "id": 19968,
             "nam": "Dinosauria"
-          },
+          }],
           "timeFilter": {
             "nam": "Jurassic",
             "oid": 15,
@@ -406,10 +406,10 @@ var paleo_nav = (function() {
             "person": ""
           },
           "reconstruct": "block",
-          "taxonFilter": {
+          "taxaFilter": [{
             "id": 151418,
             "nam": "Plantae"
-          },
+          }],
           "timeFilter": {
             "nam": "Permian",
             "oid": 17,

@@ -942,7 +942,7 @@ var navMap = (function() {
                 url += '&person_id=' + filters.personFilter.id;
                 break;
               case "taxon":
-                url += '&taxon_id=';
+                url += '&base_id=';
                 filters.taxa.forEach(function(d) {
                   url += d.id + ",";
                 });
@@ -1203,16 +1203,15 @@ var navMap = (function() {
               index = i;
             }
           });
+
           d3.select(".filters")
             .append("div")
             .attr("id", "taxon")
             .attr("class", "filter")
             .attr("data-id", id)
             .style("display", "block")
-            .html(filters.taxa[index].name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>')
-        /*  d3.select("#taxon")
-            .style("display", "block")
-            .html(filters.taxon.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');*/
+            .html(filters.taxa[index].name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
+
           d3.select(".taxa").style("box-shadow", "inset 3px 0 0 #ff992c");
           navMap.refreshFilterHandlers();
           break;
@@ -1255,8 +1254,7 @@ var navMap = (function() {
         filters.personFilter.name = (person.name) ? person.name : person.nam;
         navMap.updateFilterList("personFilter");
         d3.select(".userToggler").style("display", "none");
-        d3.select(".userFilter")
-            .style("color", "");
+        d3.select(".userFilter").style("color", "");
 
         if (d3.select("#reconstructMap").style("display") == "block") {
           reconstructMap.rotate(filters.selectedInterval);
@@ -1313,8 +1311,8 @@ var navMap = (function() {
         if (params.timeScale != "Phanerozoic") {
           timeScale.goTo(params.timeScale);
         }
-        if (params.taxonFilter.length > 0) {
-          params.taxonFilter.forEach(function(d) {
+        if (params.taxaFilter.length > 0) {
+          params.taxaFilter.forEach(function(d) {
             navMap.filterByTaxon(d.nam);
           });
         }
@@ -1327,6 +1325,7 @@ var navMap = (function() {
         if (params.reconstruct === "block") {
           reconstructMap.rotate(params.currentReconstruction);
           paleo_nav.toggleReconstructMap();
+          navMap.checkFilters();
         }
         
         navMap.resize();
@@ -1372,7 +1371,13 @@ var navMap = (function() {
           zoom = map.getZoom(),
           reconstruct = d3.select("#reconstructMap").style("display");
 
-      var params = {"timeScale": timeScale.currentInterval.nam, "taxonFilter": filters.taxa, "timeFilter": filters.selectedInterval, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
+      var params = {"timeScale": timeScale.currentInterval.nam, "taxaFilter": [], "timeFilter": filters.selectedInterval, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
+
+      if(filters.taxa.length > 0) {
+        filters.taxa.forEach(function(d) {
+          params.taxaFilter.push(d);
+        });
+      }
       
       return params;
     },
