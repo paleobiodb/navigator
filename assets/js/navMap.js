@@ -1150,7 +1150,7 @@ var navMap = (function() {
         var parent = d3.select(this).node().parentNode;
         parent = d3.select(parent);
         var type = parent.attr("id"),
-            id = parent.attr("data-id");
+            id = parseInt(parent.attr("data-id"));
 
         switch(type) {
           case "selectedInterval":
@@ -1177,7 +1177,7 @@ var navMap = (function() {
             var index;
             // Find the index of the taxon being removed
             filters.taxa.forEach(function(d, i) {
-              if (d.id === id) {
+              if (parseInt(d.id) === id) {
                 index = i;
               }
             });
