@@ -747,7 +747,7 @@ var navMap = (function() {
           //render template saying how many formations there are
           var formationData = {"binID":id, "formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
 
-          d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
+          d3.text('/build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select(".binContent").html(output);
 
@@ -774,7 +774,7 @@ var navMap = (function() {
           var formationData = {"binID":id, "formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           // render template with the names of the formations and then number of collections in each
-          d3.text(window.location.pathname + 'build/partials/binModal.html', function(error, template) {
+          d3.text('/build/partials/binModal.html', function(error, template) {
             var output = Mustache.render(template, formationData);
             d3.select(".binContent").html(output);
 
@@ -797,13 +797,13 @@ var navMap = (function() {
          // d.env = (d.env) ? d.env : "Unknown";
         });
 
-        d3.text(window.location.pathname + "build/partials/collectionModal.html", function(error, template) {
+        d3.text("/build/partials/collectionModal.html", function(error, template) {
           var output = Mustache.render(template, data);
           $("#collectionName").html(data.records[0].nam);
           $("#collectionModalBody").html(output);
 
           /* Placeholder for land type
-          switch (d.landType) {
+          switch (d.prt) {
             case 0:
               $(".general").css("display", "block");
               $(".nationalParks, .federalLands").css("display", "none");
@@ -832,7 +832,7 @@ var navMap = (function() {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
                 d.itallics = (d.rnk < 6) ? "itallics" : ""; 
               });
-              d3.text(window.location.pathname + "build/partials/occurrences.html", function(error, template) {
+              d3.text("/build/partials/occurrences.html", function(error, template) {
                 var output = Mustache.render(template, data);
                 $("#occurrences" + id).html(output);
 
@@ -849,6 +849,9 @@ var navMap = (function() {
     },
 
     "openStackedCollectionModal": function(data) {
+      // Grab the land type of the first collection, as they should all be identical
+      //var landType = data.members[0].prt;
+
       data.members.forEach(function(d) {
         d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
         d.strat = (d.fmm || d.grp || d.mbb) ? true : false;
@@ -859,7 +862,7 @@ var navMap = (function() {
        // d.env = (d.env) ? d.env : "Unknown";
       });
 
-      d3.text(window.location.pathname + "build/partials/stackedCollectionModal.html", function(error, template) {
+      d3.text("/build/partials/stackedCollectionModal.html", function(error, template) {
         var output = Mustache.render(template, data);
 
         d3.select("#binID").html("Collections at [" + data.lat + ", " + data.lng + "]");
@@ -880,7 +883,7 @@ var navMap = (function() {
               data.records.forEach(function(d) {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
               });
-              d3.text(window.location.pathname + "build/partials/occurrences.html", function(error, template) {
+              d3.text("/build/partials/occurrences.html", function(error, template) {
                 var output = Mustache.render(template, data);
                 $("#occurrences" + id).html(output);
 
@@ -893,7 +896,7 @@ var navMap = (function() {
           });
 
         /* Placeholder for land type
-        switch (d.landType) {
+        switch (landType) {
           case 0:
             $(".general").css("display", "block");
             $(".nationalParks, .federalLands").css("display", "none");
@@ -914,74 +917,6 @@ var navMap = (function() {
 
         $("#collectionModal").modal();
       });
-    },
-
-  // TODO: remove this function()?
-    "refreshDateline": function(lvl) {
-      var bounds = map.getBounds(),
-          sw = bounds._southWest,
-          ne = bounds._northEast,
-          zoom = map.getZoom(),
-          west;
-
-      sw.lng = (sw.lng < -180) ? sw.lng + 360 : sw.lng;
-      sw.lat = (sw.lat < -90) ? -90 : sw.lat;
-      ne.lng = (ne.lng > 180) ? ne.lng - 360 : ne.lng;
-      ne.lat = (ne.lat > 90) ? 90 : ne.lat;
-
-      bounds = map.getBounds();
-      if (bounds._southWest.lng < -180) {
-        west = true;
-        ne.lng = 180;
-      }
-      if (bounds._northEast.lng > 180) {
-        west = false;
-        sw.lng = -180;
-      }
-      switch(lvl) {
-        case 1: 
-          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=1&limit=999999&show=time';
-          url = navMap.parseURL(url);
-          d3.json(url, function(error, response) {
-            response.records.forEach(function(d) {
-              if (west) {
-                d.LatLng = new L.LatLng(d.lat,d.lng - 360);
-              } else {
-                d.LatLng = new L.LatLng(d.lat,d.lng + 360);
-              }
-            });
-            navMap.drawBins(response, 1, zoom);
-          });
-          break;
-        case 2:
-          var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=99999&show=time';
-          url = navMap.parseURL(url);
-          d3.json(url, function(error, response) {
-            response.records.forEach(function(d) {
-              if (west) {
-                d.LatLng = new L.LatLng(d.lat,d.lng - 360);
-              } else {
-                d.LatLng = new L.LatLng(d.lat,d.lng + 360);
-              }
-            });
-            navMap.drawBins(response, 2, zoom);
-          });
-          break;
-        case 3:
-          var url = paleo_nav.baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
-           url = navMap.parseURL(url);
-           d3.json(url, function(error, response) {
-            response.records.forEach(function(d) {
-              if (west) {
-                d.LatLng = new L.LatLng(d.lat,d.lng - 360);
-              } else {
-                d.LatLng = new L.LatLng(d.lat,d.lng + 360);
-              }
-            });
-            navMap.drawCollections(response, 3, zoom);
-          });
-          break;
-      }
     },
 
     "buildWKT": function(data) {
