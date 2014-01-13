@@ -599,6 +599,7 @@ var navMap = (function() {
           same interval, but I doubt that it's always true */
         d.cxi = d.members[0].cxi;
         d.noc = d3.sum(totalOccurrences);
+        d.nam = d.members.length + " Collections";
       });
 
       var clusters = g.selectAll(".clusters")
@@ -882,6 +883,7 @@ var navMap = (function() {
             d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id, function(err, data) {
               data.records.forEach(function(d) {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
+                d.itallics = (d.rnk < 6) ? "itallics" : ""; 
               });
               d3.text("build/partials/occurrences.html", function(error, template) {
                 var output = Mustache.render(template, data);

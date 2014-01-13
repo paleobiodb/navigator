@@ -155,15 +155,14 @@
               <div id="reconstructMapRefContainerContainer">
                 <div id="reconstructMapRefContainer">
                   <div id="reconstructMapReference">
-                    <a data-toggle="modal" href="#gPlatesBox">
-                      <img id="gplatesLogo" src="build/img/gplates_icon.jpg">
-                    </a>
                     <div id="reconstructMapStats">
+                      <a id="gPlatesLogoLink" data-toggle="modal" href="#gPlatesBox">
+                        <img id="gplatesLogo" src="build/img/gplates_icon.jpg">
+                      </a>
                       <h5 id="interval"></h5>
                       <p id="age"></p>
+                      <a id="mapSwitch" href="#"><i class="icon-circle-arrow-left"></i> Back to main map</a>
                     </div>
-                    <br>
-                    <a id="mapSwitch" href="#"><i class="icon-circle-arrow-left"></i> Back to main map</a>
                   </div>
                 </div>
               </div>
@@ -295,8 +294,7 @@
             <h4 class="modal-title" id="binNumber">Summary bin</h4>
           </div>
           <div class="modal-body">
-            <table class="table">
-              <tbody class="binContent"></tbody>
+            <table class="table binContent">
             </table>
           </div>
           <div class="modal-footer warningText">
@@ -328,21 +326,59 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">About PaleoDB Navigator</h4>
+            <h4 class="modal-title">PaleoDB Navigator Alpha 1.0</h4>
           </div>
           <div class="modal-body">
             <h4>The Application</h4>
-            <p>Built on the <a href="http://paleobiodb.org/data1.1/">PaleoDB API</a>, PaleoDB Navigator allows users to explore the Paleobiology Database through space, time, and taxonomy. Paleobiology Database data is used under a <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0 International License </a>. In addition to the Paleobiology Database, it utilizes data from <a href="http://www.gplates.org">GPlates</a> under a GNU <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">General Public License (GPL), version 2</a> license for plate and collection rotations, and <a href="http://phylopic.org/">Phylopic.org</a> for taxonomic images under either a Public Domain or Creative Commons license. All code unique to the PaleoDB Navigator interface uses a <a href="http://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 Universal</a> Public Domain Dedication, and can be found on <a href="https://github.com/paleobiodb/navigator" target="_blank">Github</a>.</p><br>
+            <p>Built on the <a href="http://paleobiodb.org/data1.1/" target="_blank">PaleoDB API</a>, PaleoDB Navigator allows users to explore the <a href="/" target="_blank">Paleobiology Database</a> through space, time, and taxonomy. All code unique to the PaleoDB Navigator interface uses a <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0 1.0 Universal</a> Public Domain Dedication, and can be found on <a href="https://github.com/paleobiodb/navigator" target="_blank">Github</a>.</p><br>
+
+            <h4>Data Sources</h4>
+            <div class="row">
+              <div class="col-sm-4 dataSource">
+                <a href="/" target="_blank"><img src="build/img/PaleoDB_logo_clear.png"/></a>
+                <p>Paleobiology Database</p>
+                <p class="text-muted"><a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0 International</a></p>
+              </div>
+              <div class="col-sm-4 dataSource">
+                <a href="http://www.gplates.org" target="_blank"><img src="build/img/gplates_icon.jpg"/></a>
+                <p>GPlates</p>
+                <p class="text-muted"><a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_blank">GNU GPL, version 2</a></p>
+              </div>
+              <div class="col-sm-4 dataSource">
+                <a href="http://phylopic.org/" target="_blank"><img src="build/img/trilobita.png"/></a>
+                <p>Phylopic</p>
+                <p class="text-muted"><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank">CC BY</a> or <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0</a></p>
+              </div>
+            </div>
+            <br>
             <h4>Project Funding</h4>
-            <p>Current development of the PaleoDB database, API, website, and example applications is being carried out in the <a href="http://geoscience.wisc.edu/geoscience/">Department of Geoscience</a> at the <a href="http://wisc.edu">University of Wisconsin-Madison</a>. It is supported by the UW-Madison Deptartment of Geoscience and the U.S. National Science Foundation EAR Geoinformatics grant 0949416.</p><br>
+            <p>Current development of the PaleoDB database, API, website, and example applications is being carried out in the <a href="http://geoscience.wisc.edu/geoscience/" target="_blank">Department of Geoscience</a> at the <a href="http://wisc.edu" target="_blank">University of Wisconsin-Madison</a>. It is supported by the UW-Madison Deptartment of Geoscience and the U.S. National Science Foundation EAR Geoinformatics grant 0949416.</p><br>
             <h4>Project Team</h4>
-            <p>
-              <a href="http://strata.geology.wisc.edu">Shanan Peters</a> - Principal Investigator<br>
-              <a href="http://strata.geology.wisc.edu/Home/Team.html">Michael McClennen</a> - Chief Informaticist<br>
-              <a href="http://twitter.com/JJCzaplewski">John Czaplewski</a> - Front end designer, developer, and cartographer
-            </p><br>
+            <div class="row">
+              <div class="col-sm-3 mugshot">
+                <a href="http://strata.geology.wisc.edu"><img src="build/img/shanan.jpg"/></a>
+                <p>Shanan Peters</p>
+                <p class="text-muted">Principal Investigator</p>
+              </div>
+              <div class="col-sm-3 mugshot">
+                <a href="http://strata.geology.wisc.edu/Home/Team.html"><img src="build/img/michael.jpg"/></a>
+                <p>Michael McClennen</p>
+                <p class="text-muted">Chief Informaticist</p>
+              </div>
+              <div class="col-sm-3 mugshot">
+                <a href="http://twitter.com/JJCzaplewski"><img src="build/img/john.jpg"/></a>
+                <p>John Czaplewski</p>
+                <p class="text-muted">Web developer / designer / cartographer</p>
+              </div>
+              <div class="col-sm-3 mugshot">
+                <a href="#/people"><img src="build/img/people.png"/></a>
+                <p>PBDB Contributors</p>
+                <p class="text-muted">Data entry & vetting</p>
+              </div>
+            </div>
+            <br>
             <h4>Issues</h4>
-            <p>For general questions about the Paleobiology Database or PaleoDB Navigator, please email to <a href="mailto:admin@paleobiodb.org">admin@paleobiodb.org</a>. See something that doesn't look right? Please file a new issue or comment on an existing one on the <a href="https://github.com/paleobiodb/navigator/issues" target="_blank">issues page</a>.</p>
+            <p>Currently in alpha, PaleoDB Navigator is not yet feature complete and still contains many problems. However, you can help us improve it by filing a new issue or commenting on an existing one on the <a href="https://github.com/paleobiodb/navigator/issues" target="_blank">issues page</a>. For general questions about the Paleobiology Database or PaleoDB Navigator, please email <a href="mailto:admin@paleobiodb.org">admin@paleobiodb.org</a>.</p>
           </div>
         </div>
       </div>

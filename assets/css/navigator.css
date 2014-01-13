@@ -494,14 +494,7 @@ td:first-child {
   width:100%;
   display: none;
 }
-/* #reconstructMapInfo {
-  position: absolute;
-  width: 18em;
-  border-right: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
-  padding: 15px;
-  background-color:rgba(255,255,255,0.9);
-}*/
+
 #gplatesLogo {
   height:35px;
   float:left;
@@ -515,6 +508,19 @@ td:first-child {
 }
 #reconstructMapStats {
   display: inline;
+}
+#gPlatesLogoLink > a {
+  float:left;
+}
+#interval {
+  display: inline;
+}
+#age {
+  display: inline;
+  font-size: 0.8em;
+}
+#mapSwitch {
+  display: block;
 }
 #reconstructMapRefContainerContainer {
   float:right;
@@ -540,15 +546,6 @@ td:first-child {
   stroke:#777;
   stroke-width:.75px;
   opacity:1;
-}
-#interval {
-  text-align: center;
-  display: inline;
-}
-#age {
-  text-align: center;
-  display: inline;
-  font-size: 0.8em;
 }
 
 #loading {
@@ -695,12 +692,53 @@ br {
 .navbar-nav {
   margin-left:15px;
 }
+
+.dataSource {
+  text-align: center;
+  line-height: 0.8em;
+}
+
+.dataSource > a > img {
+  height:125px;
+}
+
+.dataSource > p {
+  margin-top:10px;
+}
+
+.dataSource > .text-muted {
+  line-height: 0.3em;
+  font-size: 0.8em;
+}
+
+.mugshot {
+  text-align: center;
+  line-height: 0.8em;
+}
+
+.mugshot > a > img {
+  height:175px;
+  border-radius: 175px;
+}
+
+.mugshot > p {
+  margin-top:10px;
+}
+
+.mugshot > .text-muted {
+  line-height: 1.2em;
+}
+
 @media(max-width: 1050px) {
   .examples>button> img {
     height: 60px;
   }
   .examples > button {
     padding:20px;
+  }
+  .mugshot > a > img {
+    height:115px;
+    border-radius: 150px;
   }
 }
 @media(max-width: 890px) {
@@ -710,6 +748,10 @@ br {
   .examples > button {
     padding: 15px;
   }
+  .mugshot > a > img {
+    height:100px;
+    border-radius: 150px;
+  }
 }
 @media(max-width: 800px) {
   .examples>button> img {
@@ -717,6 +759,9 @@ br {
   }
   .examples > button {
     padding: 10px;
+  }
+  .dataSource > a > img {
+    height:100px;
   }
 }
 @media screen and (max-width: 580px) {
@@ -733,5 +778,9 @@ br {
     clear:right;
     margin-right: 1em;
     line-height: 0;
+  }
+  .mugshot > a > img {
+    height:125px;
+    border-radius: 120px;
   }
 }
