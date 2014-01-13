@@ -699,7 +699,7 @@ br {
 }
 
 .dataSource > a > img {
-  height:125px;
+  height:105px;
 }
 
 .dataSource > p {
@@ -717,8 +717,8 @@ br {
 }
 
 .mugshot > a > img {
-  height:175px;
-  border-radius: 175px;
+  height:155px;
+  border-radius: 155px;
 }
 
 .mugshot > p {
@@ -737,7 +737,7 @@ br {
     padding:20px;
   }
   .mugshot > a > img {
-    height:115px;
+    height:95px;
     border-radius: 150px;
   }
 }
@@ -749,7 +749,7 @@ br {
     padding: 15px;
   }
   .mugshot > a > img {
-    height:100px;
+    height:80px;
     border-radius: 150px;
   }
 }
@@ -761,7 +761,7 @@ br {
     padding: 10px;
   }
   .dataSource > a > img {
-    height:100px;
+    height:80px;
   }
 }
 @media screen and (max-width: 580px) {
@@ -780,7 +780,7 @@ br {
     line-height: 0;
   }
   .mugshot > a > img {
-    height:125px;
+    height:105px;
     border-radius: 120px;
   }
 }
