@@ -307,22 +307,23 @@ var taxaBrowser = (function(){
 
     "reattachHandlers": function(taxon) {
       // Handler for direct parents of focal taxon
+      $(".parents").off("click");
       $(".parents").click(function(d) {
         d.preventDefault();
         taxaBrowser.goToTaxon(d.target.id);
-        navMap.filterByTaxon(d.target.id);
       });
 
       // Handler for taxa in children modal
+      $(".childTaxa").off("click");
       $(".childTaxa").click(function(d) {
         d.preventDefault();
         $("#subtaxaModal").modal('hide');
         $("#taxaFilterInput").val('');
         taxaBrowser.goToTaxon(d.target.id);
-        navMap.filterByTaxon(d.target.id);
       });
 
       // Handler for direct children of focal taxon
+      $(".children").off("click");
       $(".children").click(function(d) {
         d.preventDefault();
         /* When clicked, get all subtaxa given the focal taxon and 
@@ -330,6 +331,7 @@ var taxaBrowser = (function(){
         taxaBrowser.getSubtaxa(taxon, d.target.id.substr(1));
       });
 
+      $(".taxonTitle").off("click");
       $(".taxonTitle").click(function(d) {
         d.preventDefault();
         taxaBrowser.goToTaxon(d.target.id);

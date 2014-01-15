@@ -2,7 +2,7 @@ var reconstructMap = (function() {
   /* reconstruction is used to inform other components that a map is being reconstructed, and 
          currentReconstruction is used to record the most recent reconstruction */
   var reconstructing = false,
-      currentReconstruction = {"nam":"", "taxon": "", "person": ""},
+      currentReconstruction = {"nam":"", "taxa": [], "person": ""},
       rotatedPoints;
 
   var height = 500,
@@ -46,19 +46,51 @@ var reconstructMap = (function() {
       // Moved to navigator.js:~155
 
       $("#mapSwitch").on("click", function(event) {
-          event.preventDefault();
-          paleo_nav.closeReconstructMap();
-        });
+        event.preventDefault();
+        paleo_nav.closeReconstructMap();
+      });
+
+      d3.json("build/js/plates/Holocene.json", function(er, topoPlates) {
+        // Add the rotated plates to the map
+        var group = d3.select("#reconstructGroup")
+          .append("g")
+          .attr("id", "reconstructContent");
+        group.selectAll(".plateLines")
+          .data(topojson.feature(topoPlates, topoPlates.objects["Holocene"]).features)
+        .enter().append("path")
+          .attr("class", "plates")
+          .attr("d", path);
+      });
     
     },
     "rotate": function(interval) {
       // If nothing has changed since the last reconstruct, do nothing
-      if (interval.nam == currentReconstruction.nam && navMap.filters.taxon.name == currentReconstruction.taxon && navMap.filters.personFilter.name == currentReconstruction.person) {
-        // Make sure the time interval filter remove button is hidden
-        d3.select("#selectedInterval")
-          .select("button")
-            .style("display", "none");
-        return;
+      if (interval.nam === reconstructMap.currentReconstruction.nam && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person) {
+
+        var taxaChange = 0;
+
+        if (navMap.filters.taxa.length === reconstructMap.currentReconstruction.taxa.length) {
+          navMap.filters.taxa.forEach(function(d) {
+            var found = false;
+            reconstructMap.currentReconstruction.taxa.forEach(function(j) {
+              if (d.name === j.name) {
+                found = true;
+              }
+            });
+            if (!found) {
+              taxaChange += 1;
+            }
+          });
+          // If no taxa have changed, don't refresh
+          if (taxaChange === 0) {
+            // Make sure the time interval filter remove button is hidden
+            d3.select("#selectedInterval")
+              .select("button")
+                .style("display", "none");
+            return;
+          }
+        }
+        
       }
 
       navMap.filterByTime(interval.nam);
@@ -103,20 +135,12 @@ var reconstructMap = (function() {
 
         // Load the rotated plates
         d3.json("build/js/plates/" + filename + ".json", function(er, topoPlates) {
-            // Convert rotated plates from topojson to geojson
-           // var geojsonPlates = topojson.feature(topoPlates, topoPlates.objects[filename]);
-
             // Add the rotated plates to the map
             svg.selectAll(".plateLines")
               .data(topojson.feature(topoPlates, topoPlates.objects[filename]).features)
             .enter().append("path")
               .attr("class", "plates")
               .attr("d", path);
-
-           /* svg.insert("path")
-              .datum(geojsonPlates)
-              .attr("class", "plates")
-              .attr("d", path);*/
 
             timeScale.highlight(interval.nam);
 
@@ -246,10 +270,12 @@ var reconstructMap = (function() {
       paleo_nav.hideLoading();
 
       // Update currentReconstruction
-      reconstructMap.currentReconstruction = {"nam": interval.nam, "col":interval.col, "mid": interval.mid, "oid": interval.oid, "taxon": "", "person": ""};
+      reconstructMap.currentReconstruction = {"nam": interval.nam, "col":interval.col, "mid": interval.mid, "oid": interval.oid, "taxa": [], "person": ""};
 
       if (navMap.filters.exist.taxon) {
-        reconstructMap.currentReconstruction.taxon =  navMap.filters.taxon.name;
+        navMap.filters.taxa.forEach(function(d) {
+          reconstructMap.currentReconstruction.taxa.push({ "name": d.name });
+        });
       }
       if (navMap.filters.exist.personFilter) {
         reconstructMap.currentReconstruction.person = navMap.filters.personFilter.name;

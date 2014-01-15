@@ -1116,7 +1116,7 @@ var navMap = (function() {
             var timeHeight = $("#time").height();
             return (window.innerHeight - timeHeight - 105) + "px";
           } else {
-            return ((window.innerHeight * 0.70) - 70) + "px";
+            return ((window.innerHeight * 0.70) - 73) + "px";
           }
         });
 
@@ -1282,8 +1282,10 @@ var navMap = (function() {
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
-      } else {
+      } else if ($("#csv:checked").length > 0) {
         url += "csv";
+      } else {
+        url += "json";
       }
 
       url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';

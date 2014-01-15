@@ -69,6 +69,10 @@ nav {
   letter-spacing: 0.05em;
   font-size: 1.5em;
 }
+.modal-title > small {
+  font-size: 0.6em;
+  margin-left: 5px;
+}
 #helpModal > .modal-dialog {
   left:0;
   width:100%;

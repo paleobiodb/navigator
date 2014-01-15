@@ -91,6 +91,7 @@ var paleo_nav = (function() {
 
       taxaButton.on("tap", function(event) {
         event.preventDefault();
+        event.stopPropagation();
         var display = d3.select("#taxaBrowser").style("display");
         if (display == "block") {
           paleo_nav.closeTaxaBrowser();
@@ -154,7 +155,6 @@ var paleo_nav = (function() {
         navMap.filterByTaxon(data.nam);
       });
 
-      
 
       var universalAutocomplete = $("#universalAutocompleteInput").typeahead([
         {
@@ -281,7 +281,9 @@ var paleo_nav = (function() {
                   $("#filterList").append("<li>Contributor - " + navMap.filters.personFilter.name + "</li>");
                   break;
                 case "taxon":
-                  $("#filterList").append("<li>Taxon - " + navMap.filters.taxon.name + "</li>");
+                  navMap.filters.taxa.forEach(function(d) {
+                    $("#filterList").append("<li>Taxon - " + d.name + "</li>");
+                  });
                   break;
               }
               count += 1;
@@ -516,13 +518,30 @@ var paleo_nav = (function() {
       if (navMap.filters.exist.selectedInterval) {
         reconstructMap.rotate(navMap.filters.selectedInterval);
       } else {
-        if (interval.nam == reconstructMap.currentReconstruction.nam && navMap.filters.taxon.name == reconstructMap.currentReconstruction.taxon && navMap.filters.personFilter.name == reconstructMap.currentReconstruction.person) {
-          return;
+          if (interval.nam === reconstructMap.currentReconstruction.nam && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person) {
+
+          var taxaChange = 0;
+
+          if (navMap.filters.taxa.length === reconstructMap.currentReconstruction.taxa.length) {
+            navMap.filters.taxa.forEach(function(d) {
+              var found = false;
+              reconstructMap.currentReconstruction.taxa.forEach(function(j) {
+                if (d.name === j.name) {
+                  found = true;
+                }
+              });
+              if (!found) {
+                taxaChange += 1;
+              }
+            });
+            // If no taxa have changed, don't refresh
+            if (taxaChange === 0) {
+              return;
+            }
+          }
         } else if (reconstructMap.currentReconstruction.nam.length < 1) {
-          reconstructMap.reset();
           alert("Please click a time interval below to build a reconstruction map");
         } else {
-          reconstructMap.reset();
           alert("Please click a time interval below to build a reconstruction map");
         }
       }

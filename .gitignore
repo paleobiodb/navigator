@@ -13,6 +13,7 @@ results
 npm-debug.log
 node_modules
 
+ai
 build/js/tempjson
 parse_geojson.py
 parse_topojson.js
