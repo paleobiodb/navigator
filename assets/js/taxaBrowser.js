@@ -27,6 +27,14 @@ var taxaBrowser = (function(){
               // Update the map filters
               var taxon = {"id": data.records[0].oid, "name": data.records[0].nam};
 
+              // Check if we have already applied this taxon filter
+              for (var i = 0; i < navMap.filters.taxa.length; i++) {
+                if (navMap.filters.taxa[i].name === taxon.name) {
+                  // If so, ignore the request to add another taxon filter
+                  return;
+                }
+              }
+
               navMap.filters.taxa.push(taxon);
               navMap.filters.exist.taxon = true;
 
