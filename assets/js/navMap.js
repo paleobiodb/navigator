@@ -1171,7 +1171,7 @@ var navMap = (function() {
             break;
         }
 
-        if (d3.select("#reconstructMap").style("display") == "block") {
+        if (d3.select("#reconstructMap").style("display") === "block") {
           reconstructMap.rotate(filters.selectedInterval);
         } else {
           navMap.refresh("reset");

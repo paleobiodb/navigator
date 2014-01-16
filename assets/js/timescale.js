@@ -111,7 +111,6 @@ var timeScale = (function() {
 
       // Load the time scale data
       d3.json(paleo_nav.baseUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
-     // d3.json("js/intervals.json", function(error, result) {
 
         for(var i=0; i < result.records.length; i++) {
           var r = result.records[i];
@@ -313,8 +312,8 @@ var timeScale = (function() {
     }, // End time.labelLevels
 
     "labelAbbrX": function(d) {
-      var rectWidth = parseFloat(d3.select("#t" + d.oid).attr("width")),
-          rectX = parseFloat(d3.select("#t" + d.oid).attr("x"));
+      var rectWidth = parseFloat(d3.select("rect#t" + d.oid).attr("width")),
+          rectX = parseFloat(d3.select("rect#t" + d.oid).attr("x"));
 
       var labelWidth;
       try {
@@ -330,8 +329,8 @@ var timeScale = (function() {
     },
 
     "labelX": function(d) {
-      var rectWidth = parseFloat(d3.select("#t" + d.oid).attr("width")),
-          rectX = parseFloat(d3.select("#t" + d.oid).attr("x"));
+      var rectWidth = parseFloat(d3.select("rect#t" + d.oid).attr("width")),
+          rectX = parseFloat(d3.select("rect#t" + d.oid).attr("x"));
 
       var labelWidth;
       try {
@@ -345,13 +344,13 @@ var timeScale = (function() {
       } else {
         d3.select("#a" + d.oid).style("display", "none");
       }
-
+      
       return rectX + (rectWidth - labelWidth) / 2;
     },
 
     "labelY": function(d) {
-      var rectHeight = parseFloat(d3.select("#t" + d.oid).attr("height")), 
-          rectY = parseFloat(d3.select("#t" + d.oid).attr("y")),
+      var rectHeight = parseFloat(d3.select("rect#t" + d.oid).attr("height")), 
+          rectY = parseFloat(d3.select("rect#t" + d.oid).attr("y")),
           labelHeight = d3.select("#l" + d.oid).node().getBBox().height,
           scale = parseInt(d3.select(".timeScale").style("width"))/961;
 
@@ -359,8 +358,8 @@ var timeScale = (function() {
     },
 
     "labelAbbrY": function(d) {
-      var rectHeight = parseFloat(d3.select("#t" + d.oid).attr("height")), 
-          rectY = parseFloat(d3.select("#t" + d.oid).attr("y")),
+      var rectHeight = parseFloat(d3.select("rect#t" + d.oid).attr("height")), 
+          rectY = parseFloat(d3.select("rect#t" + d.oid).attr("y")),
           labelHeight = d3.select("#l" + d.oid).node().getBBox().height,
           scale = parseInt(d3.select(".timeScale").style("width"))/961;
 

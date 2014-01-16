@@ -100,23 +100,6 @@ var paleo_nav = (function() {
           paleo_nav.openTaxaBrowser();
           d3.select(".taxa").style("color", "#ff992c");
         }
-
-       /* event.preventDefault();
-        var visible = d3.select(".taxaToggler").style("display");
-        if (visible == "block") {
-          paleo_nav.untoggleTaxa();
-        } else {
-          var browserVisible = d3.select("#taxaBrowser").style("display");
-          if (browserVisible == "block") {
-            paleo_nav.closeTaxaBrowser();
-            paleo_nav.untoggleTaxa();
-          } else {
-            paleo_nav.untoggleUser();
-
-            d3.select(".taxaToggler").style("display", "block");
-            d3.select(".taxa").style("color", "#ff992c");
-          }
-        }*/
       });
 
       // Controls the "hide" and "show" taxa browser links
