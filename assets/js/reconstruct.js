@@ -90,7 +90,6 @@ var reconstructMap = (function() {
             return;
           }
         }
-        
       }
 
       navMap.filterByTime(interval.nam);
@@ -135,31 +134,31 @@ var reconstructMap = (function() {
 
         // Load the rotated plates
         d3.json("build/js/plates/" + filename + ".json", function(er, topoPlates) {
-            // Add the rotated plates to the map
-            svg.selectAll(".plateLines")
-              .data(topojson.feature(topoPlates, topoPlates.objects[filename]).features)
-            .enter().append("path")
-              .attr("class", "plates")
-              .attr("d", path);
+          // Add the rotated plates to the map
+          svg.selectAll(".plateLines")
+            .data(topojson.feature(topoPlates, topoPlates.objects[filename]).features)
+          .enter().append("path")
+            .attr("class", "plates")
+            .attr("d", path);
 
-            timeScale.highlight(interval.nam);
+          timeScale.highlight(interval.nam);
 
-            // Switch to reconstruct map now
-            if(parseInt(d3.select("#map").style("height")) > 1) {
-              d3.select("#map").style("display", "none");
-            }
+          // Switch to reconstruct map now
+          if(parseInt(d3.select("#map").style("height")) > 1) {
+            d3.select("#map").style("display", "none");
+          }
 
-            d3.select("#svgMap").style("display", "none");
+          d3.select("#svgMap").style("display", "none");
 
-            d3.select("#reconstructMap").style("display", "block");
-            
-            // Make sure the reconstruct map is properly sized for the window
-            reconstructMap.resize();
+          d3.select("#reconstructMap").style("display", "block");
+          
+          // Make sure the reconstruct map is properly sized for the window
+          reconstructMap.resize();
 
-            // Hide the info window
-            d3.select(".info")
-              .html('')
-              .style("display", "none");
+          // Hide the info window
+          d3.select(".info")
+            .html('')
+            .style("display", "none");
 
           // Load the rotated intervals
           d3.json("build/js/rotatedIntervals/" + filename + ".json", function(err, result) {
