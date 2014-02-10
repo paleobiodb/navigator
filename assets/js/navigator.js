@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "";
+  var baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   return {
     "init": function() {
@@ -180,6 +180,16 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Taxa</h4>',
           template: taxaTemplate
+        },
+        {
+          name: 'strat',
+          minLength: 3,
+          limit: 10,
+          header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
+          remote: {
+            url: 'http://teststrata.geology.wisc.edu/larkin/stratigraphy_autocomplete?name=%QUERY'
+          },
+          valueKey: 'display_name'
         }
       ]);
 
@@ -197,6 +207,8 @@ var paleo_nav = (function() {
           case 'taxa':
             navMap.filterByTaxon(data.nam);
             break;
+          case 'strat':
+            navMap.filterByStratigraphy(data);
           default:
             console.log("default");
             break;
