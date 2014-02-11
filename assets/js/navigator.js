@@ -331,16 +331,23 @@ var paleo_nav = (function() {
       });
 
       $("#fetchURL").on("click", function() {
-        var params = navMap.getUrl(),
-            state = {"state": params};
 
-        var poster = d3.xhr("http://teststrata.geology.wisc.edu/larkin/app-state");
+        var request = $.ajax({
+          url: "http://teststrata.geology.wisc.edu/larkin/app-state",
+          async: false,
+          type: "POST",
+          data: {
+            state: navMap.getUrl()
+          },
+          ContentType: "application/x-www-form-urlencoded",
+          dataType: "json"
+        });
 
-        poster.post(state, function(error, response) {
-          var id = $.parseJSON(response.response).id;
-          $("#url").val("http://paleobiodb.org/navigator/#/" + id);
+        request.success(function(result) {
+          $("#url").val("http://paleobiodb.org/navigator/#/" + result.id);
           $("#url").select();
         });
+
       });
       // Handler for the simple taxa search box
       $("#taxaForm").submit(function() {
