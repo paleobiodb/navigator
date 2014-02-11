@@ -25,16 +25,16 @@
         </tr>
         {{#strat}}<tr>
           <td><strong>Stratigraphy</strong></td>
-          <td>{{#grp}}{{grp}} Grp.{{/grp}}{{#fmm}}{{#grp}} - {{/grp}}{{fmm}} Fm.{{#mbb}} - {{/mbb}}{{/fmm}}{{#mbb}}{{mbb}} Mbr.{{/mbb}}</td>
+          <td>{{#sgr}}{{sgr}} Grp.{{/sgr}}{{#sfm}}{{#sgr}} - {{/sgr}}{{sfm}} Fm.{{#smb}} - {{/smb}}{{/sfm}}{{#smb}}{{smb}} Mbr.{{/smb}}</td>
         </tr>{{/strat}}
         <tr>
           <td><strong>Interval(s)</strong></td>
           <td>{{intervals}}</td>
         </tr>
-        {{#lit}}<tr>
+        {{#lt1}}<tr>
           <td><strong>Lithology</strong></td>
-          <td>{{lit}}</td>
-        </tr>{{/lit}}
+          <td>{{lt1}}{{#lt2}}, {{lt2}}{{/lt2}}</td>
+        </tr>{{/lt1}}
         {{#env}}<tr>
           <td><strong>Environment</strong></td>
           <td>{{env}}</td>

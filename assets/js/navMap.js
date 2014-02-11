@@ -10,8 +10,7 @@ var navMap = (function() {
     prevzoom = 3,
     currentRequest;
 
-  //var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxon": {"id": "", "name": ""}, "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false}};
-  var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxa": [], "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false}};
+  var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxa": [], "stratigraphy": {"name": "", "rank": ""}, "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false, "stratigraphy": false}};
 
   // Variables used thoughout
   var width = 960,
@@ -706,7 +705,7 @@ var navMap = (function() {
           url = paleo_nav.baseUrl + "/data1.1/colls/list.json?clust_id=" + id;
 
       url = navMap.parseURL(url);
-      url += "&show=ref,loc,time";
+      url += "&show=ref,loc,time,strat";
 
       d3.json(url, function(err, data) {
         // Formations counts the number of collections present in each formation, collections and occurrences sum bin totals
@@ -715,14 +714,14 @@ var navMap = (function() {
             occurrences = 0;
 
         data.records.forEach(function(d, i) {
-          if (d.fmm) {
-            if (formations[d.fmm]) {
-              formations[d.fmm].count += 1;
-              formations[d.fmm].occurrences += (d.properties) ? d.properties.noc : d.noc;
+          if (d.sfm) {
+            if (formations[d.sfm]) {
+              formations[d.sfm].count += 1;
+              formations[d.sfm].occurrences += (d.properties) ? d.properties.noc : d.noc;
             } else {
-              formations[d.fmm] = {};
-              formations[d.fmm].count = 1;
-              formations[d.fmm].occurrences = (d.properties) ? d.properties.noc : d.noc;
+              formations[d.sfm] = {};
+              formations[d.sfm].count = 1;
+              formations[d.sfm].occurrences = (d.properties) ? d.properties.noc : d.noc;
             }
 
             collections += 1;
@@ -789,16 +788,11 @@ var navMap = (function() {
     },
 
     "openCollectionModal": function(d) {
-      d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time", function(err, data) {
+      d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
 
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
-          d.strat = (d.fmm || d.grp || d.mbb) ? true : false;
-         // d.fmm = (d.fmm) ? d.fmm : "Unknown";
-         // d.grp = (d.grp) ? d.grp : "Unknown";
-         // d.mbb = (d.mbb) ? d.mbb : "Unknown";
-         // d.lit = (d.lit) ? d.lit : "Unknown";
-         // d.env = (d.env) ? d.env : "Unknown";
+          d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
         });
 
         d3.text("build/partials/collectionModal.html", function(error, template) {
@@ -807,7 +801,7 @@ var navMap = (function() {
           $("#collectionModalBody").html(output);
 
           /* Placeholder for land type
-          switch (d.prt) {
+          switch (d.ptd) {
             case 0:
               $(".general").css("display", "block");
               $(".nationalParks, .federalLands").css("display", "none");
@@ -854,16 +848,11 @@ var navMap = (function() {
 
     "openStackedCollectionModal": function(data) {
       // Grab the land type of the first collection, as they should all be identical
-      //var landType = data.members[0].prt;
+      //var landType = data.members[0].ptd;
 
       data.members.forEach(function(d) {
         d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
-        d.strat = (d.fmm || d.grp || d.mbb) ? true : false;
-       // d.fmm = (d.fmm) ? d.fmm : "Unknown";
-       // d.grp = (d.grp) ? d.grp : "Unknown";
-       // d.mbb = (d.mbb) ? d.mbb : "Unknown";
-      //  d.lit = (d.lit) ? d.lit : "Unknown";
-       // d.env = (d.env) ? d.env : "Unknown";
+        d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
       });
 
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) {
@@ -875,7 +864,7 @@ var navMap = (function() {
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
           var id = d.target.id;
           id = id.replace("collapse", "");
-          d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref", function(err, data) {
+          d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,strat,geo,lith,entname,prot&markrefs", function(err, data) {
             $("#ref" + id).html(data.records[0].ref);
           });
         });
@@ -954,6 +943,16 @@ var navMap = (function() {
                 // remove last comma
                 url = url.slice(0, -1);
                 break;
+              case "stratigraphy":
+                if (filters.stratigraphy.rank === "formation") {
+                  url += '&formation=' + filters.stratigraphy.name;
+                } else if (filters.stratigraphy.rank === "group") {
+                  url += '&stratgroup=' + filters.stratigraphy.name;
+                } else if (filters.stratigraphy.rank === "member") {
+                  url += '&member=' + filters.stratigraphy.name;
+                } else {
+                  // ?
+                }
             }
             count += 1;
           }
@@ -1178,6 +1177,14 @@ var navMap = (function() {
 
             d3.select(".taxa").style("box-shadow", "");
             break;
+          case "stratigraphy":
+            parent.style("display", "none").html("");
+            filters.exist["stratigraphy"] = false;
+            var keys = Object.keys(filters[type]);
+            for (var i=0; i < keys.length; i++) {
+              filters[type][keys[i]] = "";
+            }
+            break;
         }
 
         if (d3.select("#reconstructMap").style("display") === "block") {
@@ -1226,6 +1233,12 @@ var navMap = (function() {
           d3.select(".taxa").style("box-shadow", "inset 3px 0 0 #ff992c");
           navMap.refreshFilterHandlers();
           break;
+        case "stratigraphy":
+          d3.select("#stratFilter")
+            .style("display", "block")
+            .html(filters.stratigraphy.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
+          navMap.refreshFilterHandlers();
+          break;
       }
       
       d3.select(".filters")
@@ -1267,11 +1280,21 @@ var navMap = (function() {
         d3.select(".userToggler").style("display", "none");
         d3.select(".userFilter").style("color", "");
 
-        if (d3.select("#reconstructMap").style("display") == "block") {
+        if (d3.select("#reconstructMap").style("display") === "block") {
           reconstructMap.rotate(filters.selectedInterval);
         } else {
           navMap.refresh("reset");
         }
+      }
+    },
+
+    "filterByStratigraphy": function(rock) {
+      // rock is = {"name": "stratName", "rank": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
+      if (rock) {
+        filters.exist.stratigraphy = true;
+        filters.stratigraphy.name = rock.name;
+        filters.stratigraphy.rank = rock.rank;
+        navMap.updateFilterList("stratigraphy");
       }
     },
 
@@ -1329,6 +1352,11 @@ var navMap = (function() {
             navMap.filterByTaxon(d.nam);
           });
         }
+        if (typeof(params.stratFilter) === "object" ) {
+          if (params.stratFilter.name != "") {
+            navMap.filterByStratigraphy(params.stratFilter);
+          }
+        }
         if (typeof(params.timeFilter) === "object") {
           navMap.filterByTime(params.timeFilter.nam);
         }
@@ -1384,7 +1412,7 @@ var navMap = (function() {
           zoom = map.getZoom(),
           reconstruct = d3.select("#reconstructMap").style("display");
 
-      var params = {"timeScale": timeScale.currentInterval.nam, "taxaFilter": [], "timeFilter": filters.selectedInterval, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
+      var params = {"timeScale": timeScale.currentInterval.nam, "taxaFilter": [], "timeFilter": filters.selectedInterval, "stratFilter": {"name": filters.stratigraphy.name, "rank": filters.stratigraphy.rank}, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
 
       if(filters.taxa.length > 0) {
         filters.taxa.forEach(function(d) {
