@@ -451,6 +451,7 @@ var paleo_nav = (function() {
     },
 
     "prelaunch": function() {
+      
       var location = window.location,
           state = location.hash.substr(2);
 
