@@ -65,7 +65,7 @@ var reconstructMap = (function() {
     },
     "rotate": function(interval) {
       // If nothing has changed since the last reconstruct, do nothing
-      if (interval.nam === reconstructMap.currentReconstruction.nam && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person) {
+      if (interval.nam === reconstructMap.currentReconstruction.name && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person && navMap.filters.stratigraphy.name === reconstructMap.currentReconstruction.stratigraphy) {
 
         var taxaChange = 0;
 
@@ -269,7 +269,7 @@ var reconstructMap = (function() {
       paleo_nav.hideLoading();
 
       // Update currentReconstruction
-      reconstructMap.currentReconstruction = {"nam": interval.nam, "col":interval.col, "mid": interval.mid, "oid": interval.oid, "taxa": [], "person": ""};
+      reconstructMap.currentReconstruction = {"name": interval.nam, "color":interval.col, "mid": interval.mid, "id": interval.oid, "taxa": [], "person": "", "stratigraphy": ""};
 
       if (navMap.filters.exist.taxon) {
         navMap.filters.taxa.forEach(function(d) {
@@ -278,6 +278,9 @@ var reconstructMap = (function() {
       }
       if (navMap.filters.exist.personFilter) {
         reconstructMap.currentReconstruction.person = navMap.filters.personFilter.name;
+      }
+      if (navMap.filters.exist.stratigraphy) {
+        reconstructMap.currentReconstruction.stratigraphy = navMap.filters.stratigraphy.name;
       }
 
     },
@@ -350,7 +353,7 @@ var reconstructMap = (function() {
     },
 
     "resize": function() {
-      var windowWidth = parseInt(d3.select("#graphics").style("width"));
+      var width = parseInt(d3.select("#graphics").style("width"));
 
       var g = d3.select("#reconstructMap").select("svg");
 
@@ -368,22 +371,28 @@ var reconstructMap = (function() {
               height: g.node().clientHeight
             }
           }
-          
-          if (windowWidth > (box.width + 50)) {
-            return "scale(" + window.innerHeight/800 + ")translate(" + ((windowWidth - box.width)/2) + ",0)";
+          var height = ((window.innerHeight * 0.70) - 70);
+
+          if (width > (box.width + 50)) {
+            return "scale(" + window.innerHeight/800 + ")translate(" + ((width - box.width)/2) + ",0)";
           } else {
             var svgHeight = ((window.innerHeight * 0.70) - 70),
-                mapHeight = (windowWidth/970 ) * 500;
-            return "scale(" + windowWidth/970 + ")translate(0," + (svgHeight - mapHeight)/2 + ")";
+                mapHeight = (width/970 ) * 500;
+            return "scale(" + width/970 + ")translate(0," + (svgHeight - mapHeight)/2 + ")";
           }
         });
 
       d3.select("#reconstructMap").select("svg")
         .style("height", function(d) {
-          return ((window.innerHeight * 0.70) - 70) + "px";
+          if (d3.select(".timeScale").style("visibility") === "hidden") {
+            return (window.innerHeight - 70) + "px";
+          } else {
+            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+            return (window.innerHeight - timeHeight - 70) + "px";
+          }
         })
         .style("width", function(d) {
-          return windowWidth - 15 + "px";
+          return width - 15 + "px";
         });
 
       d3.select("#reconstructMapRefContainer")

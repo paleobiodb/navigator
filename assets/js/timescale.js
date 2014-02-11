@@ -308,6 +308,8 @@ var timeScale = (function() {
           d3.selectAll('.fullName').filter(function(d) {
             return d.name === parent;
           }).attr("x", 430);
+
+          paleo_nav.prelaunch();
         }
     }, // End time.labelLevels
 

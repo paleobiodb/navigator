@@ -195,6 +195,7 @@ color: rgb(245,245,245);
 #graphicRow {
   width:100%;
   margin-top: 2.5em;
+  visibility: hidden;
 }
 #mapContainer {
   display: inline;
@@ -693,8 +694,16 @@ br {
   margin-top:2px;
   font-size: 0.8em;
 }
+
 .navbar-nav {
   margin-left:15px;
+}
+
+#waiting {
+  color: #777;
+  position: absolute;
+  top: 30%;
+  left: 40%;
 }
 
 .dataSource {
@@ -733,6 +742,30 @@ br {
   line-height: 1.2em;
 }
 
+#downloadModalHeader {
+  border-bottom: 0;
+}
+
+.downloadTab {
+  font-size: 1.35em !important;
+}
+
+.downloadTab > a > i {
+  margin-right: 6px;
+}
+
+#downloadModalContent {
+  margin-top: -40px;
+}
+
+#downloadOpts {
+  padding:20px;
+}
+
+.downloadButton {
+  float:right;
+  margin:3px;
+}
 @media(max-width: 1050px) {
   .examples>button> img {
     height: 60px;

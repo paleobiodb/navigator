@@ -26,7 +26,7 @@ var navMap = (function() {
     .projection(projection);
 
   return {
-    "init": function() {
+    "init": function(callback) {
       // Init the leaflet map
       map = new L.Map('map', {
         center: new L.LatLng(7, 0),
@@ -59,7 +59,7 @@ var navMap = (function() {
             if (window.innerWidth > 700) {
               d3.select("#map").style("height", 0);
               d3.select("#svgMap").style("display", "block");
-              setTimeout(navMap.resizeSvgMap, 300);
+              setTimeout(navMap.resizeSvgMap, 400);
             }
           }
 
@@ -126,12 +126,7 @@ var navMap = (function() {
         reconstructMap.resize();
         timeScale.resize();
 
-        navMap.refresh("reset");
-        navMap.resizeSvgMap();
-        setTimeout(navMap.resize, 100);
-        setTimeout(navMap.resize, 100);
-        setTimeout(navMap.resize, 100);
-        navMap.resizeSvgMap();
+        callback();
       });
 
     },
@@ -1131,12 +1126,8 @@ var navMap = (function() {
 
       d3.selectAll(".helpModalTimescaleLabel")
         .style("top", function() {
-          if (window.innerHeight > window.innerWidth) {
-            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-            return (window.innerHeight - timeHeight - 105) + "px";
-          } else {
-            return ((window.innerHeight * 0.70) - 73) + "px";
-          }
+          var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+          return (window.innerHeight - timeHeight - 78) + "px";
         });
 
       $(".universalSearchForm > div > .twitter-typeahead > .tt-dropdown-menu").width($(".universalSearchForm > div > .twitter-typeahead").width() - 21);
@@ -1310,7 +1301,7 @@ var navMap = (function() {
       }
     },
 
-    "downloadView": function() {
+    "downloadRefs": function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
           ne = bounds._northEast;
@@ -1322,22 +1313,57 @@ var navMap = (function() {
         ne.lat = 90;
       }
 
-      var url = paleo_nav.baseUrl + '/data1.1/colls/list.';
+      var url = paleo_nav.baseUrl + '/data1.1/occs/refs.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
       } else if ($("#csv:checked").length > 0) {
         url += "csv";
-      } else {
+      } else if ($("#json:checked").length > 0) {
         url += "json";
+      } else {
+        url += "ris";
       }
 
       url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';
       url = navMap.parseURL(url);
 
-      url += "&show=ref,loc,time";
+      url += "&show=comments,ent,entname,crmod";
 
-      url = url.substring(0, url.length - 1);
+      //url = url.substring(0, url.length - 1);
+      window.open(url);
+    },
+
+    "downloadOccs": function() {
+      var bounds = map.getBounds(),
+          sw = bounds._southWest,
+          ne = bounds._northEast;
+
+      if (parseInt(d3.select("#map").style("height")) < 1) {
+        sw.lng = -180,
+        ne.lng = 180,
+        sw.lat = -90,
+        ne.lat = 90;
+      }
+
+      var url = paleo_nav.baseUrl + '/data1.1/occs/list.';
+
+      if ($("#tsv:checked").length > 0) {
+        url += "txt";
+      } else if ($("#csv:checked").length > 0) {
+        url += "csv";
+      } else if ($("#json:checked").length > 0) {
+        url += "json";
+      } else {
+        return alert("RIS format not available for occurences. Please select a different format.");
+      }
+
+      url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';
+      url = navMap.parseURL(url);
+
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod";
+
+      //url = url.substring(0, url.length - 1);
       window.open(url);
     },
 
@@ -1383,39 +1409,51 @@ var navMap = (function() {
         
         navMap.resize();
         window.scrollTo(0,0);
+      } else {
+        // Retrieve state from URL
+        var location = window.location,
+            state = location.hash.substr(2);
+
+        // If there is a preserved state hash
+        if (state.length > 1) {
+          d3.json("http://teststrata.geology.wisc.edu/larkin/app-state?id=" + state, function(error, result) {
+            var params = result;
+
+            console.log(result);
+
+            if (params.zoom && params.zoom > 2) {
+              navMap.goTo(params.center, params.zoom);
+            }
+            if (params.timeScale != "Phanerozoic") {
+              timeScale.goTo(params.timeScale);
+            }
+            if (params.taxaFilter.length > 0) {
+              params.taxaFilter.forEach(function(d) {
+                navMap.filterByTaxon(d.nam);
+              });
+            }
+            if (typeof(params.stratFilter) === "object" ) {
+              if (params.stratFilter.name != "") {
+                navMap.filterByStratigraphy(params.stratFilter);
+              }
+            }
+            if (typeof(params.timeFilter) === "object") {
+              navMap.filterByTime(params.timeFilter.nam);
+            }
+            if (params.authFilter.id > 0) {
+              navMap.filterByPerson(params.authFilter);
+            }
+            if (params.reconstruct === "block") {
+              reconstructMap.rotate(params.currentReconstruction);
+              paleo_nav.toggleReconstructMap();
+              navMap.checkFilters();
+            }
+
+            paleo_nav.launch();
+          });
+        }
       }
 
-    //TODO: this is the bones of allowing saving/retrieving of map states via url 
-      /*var location = window.location,
-          state = location.hash.substr(2);
-
-      // If there is a preserved state hash
-      if (state.length > 1) {
-        d3.json(paleo_nav.baseUrl + "/data1.1/...?key=" + state, function(error, result) {
-          var params = result.records[0];
-
-          if (params.zoom > 2) {
-            navMap.goTo(params.center, params.zoom);
-          }
-          if (params.timeScale != "Phanerozoic") {
-            timeScale.goTo(params.timeScale);
-          }
-          if (params.taxonFilter.id > 0) {
-            navMap.filterByTaxon(params.taxonFilter.nam);
-          }
-          if (typeof(params.timeFilter) == "object") {
-            navMap.filterByTime(params.timeFilter.nam);
-          }
-          if (params.authFilter.id > 0) {
-            navMap.filterByPerson(params.authFilter);
-          }
-          if (reconstruct == "block") {
-            navMap.rotate(params.currentReconstruction);
-          }
-        });
-      } else {
-        return;
-      }*/
     },
 
     "getUrl": function() {

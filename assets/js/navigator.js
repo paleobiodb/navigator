@@ -8,7 +8,11 @@ var paleo_nav = (function() {
 
       // Initialize each of the major application components
       timeScale.init("time");
-      navMap.init();
+      navMap.init(function(){
+        navMap.resizeSvgMap();
+        navMap.resize();
+        navMap.refresh("reset");
+      });
       reconstructMap.init();
       taxaBrowser.init();
 
@@ -77,7 +81,7 @@ var paleo_nav = (function() {
         event.preventDefault();
         var rotateChecked = document.getElementById("reconstructBox").checked;
         // If toggled, untoggle
-        if (rotateChecked == true) {
+        if (rotateChecked === true) {
           paleo_nav.closeReconstructMap();
 
         // If not toggled, toggle
@@ -325,11 +329,23 @@ var paleo_nav = (function() {
       $("#saveBox").on('hide.bs.modal', function() {
         $("#filterList").html('');
         $("#downloadCount").html("");
-        //$('#loc').prop('checked', false);
-        //$('#ref').prop('checked', false);
-        //$('#t').prop('checked', false);
       });
 
+      $("#fetchURL").on("click", function() {
+        var params = navMap.getUrl(),
+            state = {"state": params};
+
+        var poster = d3.xhr("http://teststrata.geology.wisc.edu/larkin/app-state");
+
+        poster.post(state, function(error, response) {
+          if (error) {
+            console.log(error);
+          } else {
+            $("#url").val("http://paleobiodb.org/navigator/#/" + response.id);
+            $("#url").select();
+          }
+        });
+      });
       // Handler for the simple taxa search box
       $("#taxaForm").submit(function() {
         navMap.filterByTaxon();
@@ -431,6 +447,25 @@ var paleo_nav = (function() {
         navMap.restoreState(state);
         $("#helpModal").modal('hide');
       });
+      
+    },
+
+    "prelaunch": function() {
+      var location = window.location,
+          state = location.hash.substr(2);
+
+      if (state.length > 1) {
+        navMap.restoreState();
+      } else {
+        paleo_nav.launch();
+      }
+    },
+
+    "launch": function() {
+      d3.select("#graphicRow").style("visibility", "visible");
+      d3.select("#waiting").style("display", "none");
+      navMap.resizeSvgMap();
+      navMap.resize();
 
       if (!localStorage.pbdb) {
         if (window.innerWidth > 700) {
@@ -438,7 +473,6 @@ var paleo_nav = (function() {
           localStorage.pbdb = true;
         }
       }
-      
     },
 
     "showLoading": function() {
@@ -526,7 +560,7 @@ var paleo_nav = (function() {
       if (navMap.filters.exist.selectedInterval) {
         reconstructMap.rotate(navMap.filters.selectedInterval);
       } else {
-          if (interval.nam === reconstructMap.currentReconstruction.nam && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person) {
+          if (interval.nam === reconstructMap.currentReconstruction.name && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person && navMap.filters.stratigraphy.name === reconstructMap.currentReconstruction.stratigraphy) {
 
           var taxaChange = 0;
 
@@ -547,7 +581,7 @@ var paleo_nav = (function() {
               return;
             }
           }
-        } else if (reconstructMap.currentReconstruction.nam.length < 1) {
+        } else if (reconstructMap.currentReconstruction.name.length < 1) {
           alert("Please click a time interval below to build a reconstruction map");
         } else {
           alert("Please click a time interval below to build a reconstruction map");
