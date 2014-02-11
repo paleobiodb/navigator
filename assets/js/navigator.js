@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "";
+  var baseUrl = "http://testpaleodb.geology.wisc.edu";
 
   return {
     "init": function() {
@@ -143,12 +143,9 @@ var paleo_nav = (function() {
         {
           name: 'time',
           prefetch: {
-            url: baseUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
-            filter: function(data) {
-              return data.records;
-            }
+            url: 'http://teststrata.geology.wisc.edu/larkin/time_scale'
           },
-          valueKey: 'nam',
+          valueKey: 'name',
           header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
           limt: 5
         },
@@ -190,8 +187,8 @@ var paleo_nav = (function() {
             document.activeElement.blur();
             break;
           case 'time': 
-            timeScale.goTo(data.nam);
-            navMap.filterByTime(data.nam);
+            timeScale.goTo(data.name);
+            navMap.filterByTime(data.name);
             navMap.refresh("reset");
             break;
           case 'taxa':
@@ -200,6 +197,9 @@ var paleo_nav = (function() {
           default:
             console.log("default");
             break;
+
+          $(".navbar-collapse").css("height", "auto");
+          $(".navbar-collapse").css("max-height", "340px");
         }
 
         document.activeElement.blur();
@@ -207,7 +207,17 @@ var paleo_nav = (function() {
         $("#universalAutocompleteInput").typeahead("setQuery", "");
       });
 
-      $("#universalAutocompleteInput").on("blur", function() {window.scrollTo(0,0)});
+      $("#universalAutocompleteInput").on("focus", function() {
+        $(".navbar-collapse").css("height", window.innerHeight - 50 + "px");
+        $(".navbar-collapse").css("max-height", window.innerHeight - 50 + "px");
+        $(".tt-dropdown-menu").css("width", $("#universalAutocompleteInput").width() + "px");
+      });
+
+      $("#universalAutocompleteInput").on("blur", function() {
+        window.scrollTo(0,0);
+        $(".navbar-collapse").css("height", "auto");
+        $(".navbar-collapse").css("max-height", "340px");
+      });
 
       $("#universalSearchButton").click(function(event) {
         event.preventDefault();

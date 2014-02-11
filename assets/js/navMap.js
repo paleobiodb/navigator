@@ -57,9 +57,11 @@ var navMap = (function() {
 
           // If viewing the projected map...
           if (map.getZoom() < 3) {
-            d3.select("#map").style("height", 0);
-            d3.select("#svgMap").style("display", "block");
-            setTimeout(navMap.resizeSvgMap, 300);
+            if (window.innerWidth > 700) {
+              d3.select("#map").style("height", 0);
+              d3.select("#svgMap").style("display", "block");
+              setTimeout(navMap.resizeSvgMap, 300);
+            }
           }
 
           navMap.refresh();
@@ -129,6 +131,7 @@ var navMap = (function() {
         navMap.resizeSvgMap();
         setTimeout(navMap.resize, 100);
         setTimeout(navMap.resize, 100);
+        setTimeout(navMap.resize, 100);
         navMap.resizeSvgMap();
       });
 
@@ -146,11 +149,11 @@ var navMap = (function() {
 
       d3.select("#svgMap").style("display", "none");
       d3.select("#map").style("height", function() {
-        if (window.innerHeight > window.innerWidth) {
-          var timeHeight = $("#time").height();
-          return (window.innerHeight - timeHeight - 70) + "px";
+        if (d3.select(".timeScale").style("visibility") === "hidden") {
+          return (window.innerHeight - 70) + "px";
         } else {
-          return ((window.innerHeight * 0.70) - 70) + "px";
+          var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+          return (window.innerHeight - timeHeight - 70) + "px";
         }
       });
 
@@ -443,7 +446,7 @@ var navMap = (function() {
         });
 
       bins
-        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
+        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .attr("id", function(d) { return "p" + d.cxi; })
         .attr("r", function(d) { return scale(d.nco)*navMap.multiplier(zoom); })
         .attr("cx", function(d) {
@@ -483,7 +486,7 @@ var navMap = (function() {
 
       points
         .attr("id", function(d) { return "p" + d.cxi; })
-        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
+        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
             .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
@@ -503,7 +506,7 @@ var navMap = (function() {
       points.enter().append("circle")
         .attr("class", "bins")
         .attr("id", function(d) { return "p" + d.cxi; })
-        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
+        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
             .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
@@ -607,7 +610,7 @@ var navMap = (function() {
 
       clusters
         .attr("id", function(d) { return "p" + d.members[0].cxi; })
-        .style("fill", function(d) { return timeScale.interval_hash[d.cxi].col; })
+        .style("fill", function(d) { return timeScale.interval_hash[d.cxi].color; })
         .on("mouseover", function(d) {
           d3.select(".info")
             .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
@@ -628,7 +631,7 @@ var navMap = (function() {
       clusters.enter().append("circle")
         .attr("class", "clusters")
         .attr("id", function(d) { return "p" + d.members[0].cxi; })
-        .style("fill", function(d) { return (timeScale.interval_hash[d.members[0].cxi]) ? timeScale.interval_hash[d.members[0].cxi].col : "#000"; })
+        .style("fill", function(d) { return (timeScale.interval_hash[d.members[0].cxi]) ? timeScale.interval_hash[d.members[0].cxi].color : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
             .html("<strong>" + d.members.length + " collections</strong><br>" + d.noc + " occurrences")
@@ -653,7 +656,7 @@ var navMap = (function() {
 
       existingPoints = points
         .attr("id", function(d) { return "p" + d.cxi })
-        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
+        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
             .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
@@ -674,7 +677,7 @@ var navMap = (function() {
       points.enter().append("circle")
         .attr("id", function(d) { return "p" + d.cxi })
         .attr("class", "bins")
-        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].col : "#000"; })
+        .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
             .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
@@ -1066,11 +1069,11 @@ var navMap = (function() {
 
       d3.select("#svgMap").select("svg")
         .style("height", function(d) {
-          if (window.innerHeight > window.innerWidth) {
-            var timeHeight = $("#time").height();
-            return (window.innerHeight - timeHeight - 100) + "px";
+          if (d3.select(".timeScale").style("visibility") === "hidden") {
+            return (window.innerHeight - 70) + "px";
           } else {
-            return ((window.innerHeight * 0.70) - 70) + "px";
+            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+            return (window.innerHeight - timeHeight - 70) + "px";
           }
         })
         .style("width", function(d) {
@@ -1079,14 +1082,20 @@ var navMap = (function() {
     },
 
     "resize": function() {
-      if (parseInt(d3.select("#map").style("height")) > 1) { 
+      if (window.innerWidth < 700) {
+        d3.select("#svgMap").style("display", "none");
+        d3.select("#map").style("height", function() {
+          return (window.innerHeight - 70) + "px";
+        });
+        map.invalidateSize();
+      } else if (parseInt(d3.select("#map").style("height")) > 1) { 
         d3.select("#map")
           .style("height", function(d) {
-            if (window.innerHeight > window.innerWidth) {
-              var timeHeight = $("#time").height();
-              return (window.innerHeight - timeHeight - 70) + "px";
+            if (d3.select(".timeScale").style("visibility") === "hidden") {
+              return (window.innerHeight - 70) + "px";
             } else {
-              return ((window.innerHeight * 0.70) - 70) + "px";
+              var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+              return (window.innerHeight - timeHeight - 70) + "px";
             }
           });
         map.invalidateSize();
@@ -1096,11 +1105,11 @@ var navMap = (function() {
       
       d3.select("#infoContainer")
         .style("height", function(d) {
-          if (window.innerHeight > window.innerWidth) {
-            var timeHeight = $("#time").height();
-            return (window.innerHeight - timeHeight - 86) + "px";
+          if (d3.select(".timeScale").style("visibility") === "hidden") {
+            return (window.innerHeight - 56) + "px";
           } else {
-            return ((window.innerHeight * 0.70) - 70) + "px";
+            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+            return (window.innerHeight - timeHeight - 70) + "px";
           }
         });
 
@@ -1113,7 +1122,7 @@ var navMap = (function() {
       d3.selectAll(".helpModalTimescaleLabel")
         .style("top", function() {
           if (window.innerHeight > window.innerWidth) {
-            var timeHeight = $("#time").height();
+            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
             return (window.innerHeight - timeHeight - 105) + "px";
           } else {
             return ((window.innerHeight * 0.70) - 73) + "px";
@@ -1229,13 +1238,13 @@ var navMap = (function() {
     "filterByTime": function(time) {
       // accepts a named time interval
       var d = d3.selectAll('rect').filter(function(e) {
-        return e.nam === time;
+        return e.name === time;
       });
       d = d[0][0].__data__;
-      filters.selectedInterval.nam = d.nam;
+      filters.selectedInterval.nam = d.name;
       filters.selectedInterval.mid = d.mid;
-      filters.selectedInterval.col = d.col;
-      filters.selectedInterval.oid = d.oid;
+      filters.selectedInterval.col = d.color;
+      filters.selectedInterval.oid = d.id;
       filters.exist.selectedInterval = true;
       navMap.updateFilterList("selectedInterval");
     },

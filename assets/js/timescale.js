@@ -19,7 +19,7 @@ d3.selection.prototype.dblTap = function(callback) {
 }
 
 var timeScale = (function() {
-  var data = { oid: 0, col: "#000000", nam: "Geologic Time", children: [] },
+  var data = { id: 0, color: "#000000", name: "Geologic Time", children: [] },
       interval_hash = { 0: data },
       currentInterval,
       dragStart, transformStart;
@@ -70,7 +70,7 @@ var timeScale = (function() {
 
     "init": function(div) {
       var width = 960,
-          height = 130,
+          height = 110,
           x = d3.scale.linear().range([0, width - 5]),
           y = d3.scale.linear().range([0, height]),
           newX = 0.01;
@@ -110,16 +110,16 @@ var timeScale = (function() {
         .attr("transform", "translate(0,125)");
 
       // Load the time scale data
-      d3.json(paleo_nav.baseUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
+      d3.json("http://teststrata.geology.wisc.edu/larkin/time_scale", function(error, result) {
 
-        for(var i=0; i < result.records.length; i++) {
-          var r = result.records[i];
+        for(var i=0; i < result.length; i++) {
+          var r = result[i];
           r.children = [];
           r.pid = r.pid || 0;
-          r.abr = r.abr || r.nam.charAt(0);
-          r.mid = parseInt((r.eag + r.lag) / 2),
-          r.total = r.eag - r.lag;
-          interval_hash[r.oid] = r;
+          r.abbr = r.abbr || r.name.charAt(0);  
+          r.mid = parseInt((r.early_age + r.late_age) / 2),
+          r.total = r.early_age - r.late_age;
+          interval_hash[r.id] = r;
           interval_hash[r.pid].children.push(r);
         }
 
@@ -140,8 +140,8 @@ var timeScale = (function() {
             .attr("y", function(d) { return y(d.y); })
             .attr("width", function(d) { return x(d.dx); })
             .attr("height", function(d) { return y(d.dy); })
-            .attr("fill", function(d) { return d.col || "#000000"; })
-            .attr("id", function(d) { return "t" + d.oid; })
+            .attr("fill", function(d) { return d.color || "#000000"; })
+            .attr("id", function(d) { return "t" + d.id; })
             .style("opacity", 0.83)
             .call(drag)
             .call(ccRect)
@@ -149,7 +149,7 @@ var timeScale = (function() {
               setTimeout(timeScale.goTo(d), 500);
             })
           .append("svg:title")
-            .text(function(d) { return d.nam; });
+            .text(function(d) { return d.name; });
           ccRect.on("dblclick", function(d) {
             timeScale.goTo(d.target.__data__);
           });
@@ -163,9 +163,9 @@ var timeScale = (function() {
 
         var hash = scaleBar.enter().append("g")
           .attr("class", function(d) {
-            return "tickGroup s" + ((typeof(d.lvl) === "undefined") ? 0 : d.lvl);
+            return "tickGroup s" + ((typeof(d.level) === "undefined") ? 0 : d.level);
           })
-          .attr("transform", function(d) { return "translate(" + x(d.x) + ", 0)"});
+          .attr("transform", function(d) { return "translate(" + x(d.x) + ", -20)"});
 
         hash.append("line")
           .attr("x1", 0)
@@ -177,16 +177,16 @@ var timeScale = (function() {
         hash.append("text")
           .attr("x", 0)
           .attr("y", 20)
-          .style("text-anchor", function(d) { return (d.eag == 0.0117) ? "end" : "middle"; })
+          .style("text-anchor", function(d) { return (d.early_age === 0.0117) ? "end" : "middle"; })
           .style("font-size", "0.85em")
           .style("fill", "#777")
-          .text(function(d) {return d.eag});
+          .text(function(d) {return d.early_age});
 
         // Create a tick for year 0
         var now = scale.append("g")
           .data([{x:1, y:0}])
           .attr("class", "tickGroup s1 s2 s3 s4 s5")
-          .attr("transform","translate(955, 0)");
+          .attr("transform","translate(955, -20)");
 
         now.append("line")
           .attr("x1", 0)
@@ -212,13 +212,13 @@ var timeScale = (function() {
         textGroup.selectAll("fullName")
             .data(partition.nodes(data))
           .enter().append("svg:text")
-            .text(function(d) { return d.nam; })
+            .text(function(d) { return d.name; })
             .attr("x", 1)
             .attr("y", function(d) { return y(d.y) + 15;})
             .attr("width", function() { return this.getComputedTextLength(); })
             .attr("height", function(d) { return y(d.dy); })
-            .attr("class", function(d) { return "fullName level" + ((typeof(d.lvl) === "undefined") ? 0 : d.lvl); })
-            .attr("id", function(d) { return "l" + d.oid; })
+            .attr("class", function(d) { return "fullName level" + ((typeof(d.level) === "undefined") ? 0 : d.level); })
+            .attr("id", function(d) { return "l" + d.id; })
             .attr("x", function(d) { return timeScale.labelX(d); })
             .call(drag)
             .call(ccFull)
@@ -226,7 +226,7 @@ var timeScale = (function() {
               setTimeout(timeScale.goTo(d), 500);
             })
           .append("svg:title")
-            .text(function(d) { return d.nam; });
+            .text(function(d) { return d.name; });
 
           ccFull.on("dblclick", function(d) {
             timeScale.goTo(d.target.__data__);
@@ -245,16 +245,16 @@ var timeScale = (function() {
             .attr("y", function(d) { return y(d.y) + 15; })
             .attr("width", 30)
             .attr("height", function(d) { return y(d.dy); })
-            .text(function(d) { return d.abr || d.nam.charAt(0); })
-            .attr("class", function(d) { return "abbr level" + ((typeof(d.lvl) === "undefined") ? 0 : d.lvl); })
-            .attr("id", function(d) { return "a" + d.oid; })
+            .text(function(d) { return d.abbr || d.name.charAt(0); })
+            .attr("class", function(d) { return "abbr level" + ((typeof(d.level) === "undefined") ? 0 : d.level); })
+            .attr("id", function(d) { return "a" + d.id; })
             .attr("x", function(d) { return timeScale.labelAbbrX(d); })
             .call(ccAbbr)
             .dblTap(function(d) {
               setTimeout(timeScale.goTo(d), 500);
             })
           .append("svg:title")
-            .text(function(d) { return d.nam; });
+            .text(function(d) { return d.name; });
             
           ccAbbr.on("dblclick", function(d) {
             timeScale.goTo(d.target.__data__);
@@ -286,81 +286,81 @@ var timeScale = (function() {
 
     "labelLevels": function(d) {
         // Center whichever interval was clicked
-        d3.select("#l" + d.oid).attr("x", 430);
+        d3.select("#l" + d.id).attr("x", 430);
 
         // Position all the parent labels in the middle of the scale
         if (typeof d.parent !== 'undefined') {
           var depth = d.depth,
               loc = "d.parent";
           for (var i=0; i<depth;i++) {
-            var parent = eval(loc).nam;
+            var parent = eval(loc).name;
             d3.selectAll('.abbr').filter(function(d) {
-              return d.nam === parent;
+              return d.name === parent;
             }).attr("x", 430);
             d3.selectAll('.fullName').filter(function(d) {
-              return d.nam === parent;
+              return d.name === parent;
             }).attr("x", 430);
             loc += ".parent";
           }
           d3.selectAll('.abbr').filter(function(d) {
-            return d.nam === parent;
+            return d.name === parent;
           }).attr("x", 430);
           d3.selectAll('.fullName').filter(function(d) {
-            return d.nam === parent;
+            return d.name === parent;
           }).attr("x", 430);
         }
     }, // End time.labelLevels
 
     "labelAbbrX": function(d) {
-      var rectWidth = parseFloat(d3.select("rect#t" + d.oid).attr("width")),
-          rectX = parseFloat(d3.select("rect#t" + d.oid).attr("x"));
+      var rectWidth = parseFloat(d3.select("rect#t" + d.id).attr("width")),
+          rectX = parseFloat(d3.select("rect#t" + d.id).attr("x"));
 
       var labelWidth;
       try {
-        labelWidth = d3.select("#a" + d.oid).node().getComputedTextLength();
+        labelWidth = d3.select("#a" + d.id).node().getComputedTextLength();
       } catch(err) {
         labelWidth = 11;
       }
 
       if (rectWidth - 8 < labelWidth) {
-         d3.select("#a" + d.oid).style("display", "none");
+         d3.select("#a" + d.id).style("display", "none");
       }
       return rectX + (rectWidth - labelWidth) / 2;
     },
 
     "labelX": function(d) {
-      var rectWidth = parseFloat(d3.select("rect#t" + d.oid).attr("width")),
-          rectX = parseFloat(d3.select("rect#t" + d.oid).attr("x"));
+      var rectWidth = parseFloat(d3.select("rect#t" + d.id).attr("width")),
+          rectX = parseFloat(d3.select("rect#t" + d.id).attr("x"));
 
       var labelWidth;
       try {
-        labelWidth = d3.select("#l" + d.oid).node().getComputedTextLength();
+        labelWidth = d3.select("#l" + d.id).node().getComputedTextLength();
       } catch(err) {
         labelWidth = 25;
       }
 
       if (rectWidth - 8 < labelWidth) {
-         d3.select("#l" + d.oid).style("display", "none");
+         d3.select("#l" + d.id).style("display", "none");
       } else {
-        d3.select("#a" + d.oid).style("display", "none");
+        d3.select("#a" + d.id).style("display", "none");
       }
       
       return rectX + (rectWidth - labelWidth) / 2;
     },
 
     "labelY": function(d) {
-      var rectHeight = parseFloat(d3.select("rect#t" + d.oid).attr("height")), 
-          rectY = parseFloat(d3.select("rect#t" + d.oid).attr("y")),
-          labelHeight = d3.select("#l" + d.oid).node().getBBox().height,
+      var rectHeight = parseFloat(d3.select("rect#t" + d.id).attr("height")), 
+          rectY = parseFloat(d3.select("rect#t" + d.id).attr("y")),
+          labelHeight = d3.select("#l" + d.id).node().getBBox().height,
           scale = parseInt(d3.select(".timeScale").style("width"))/961;
 
       return (rectY * 0.8) + ((rectHeight - labelHeight) / 2) + 8;
     },
 
     "labelAbbrY": function(d) {
-      var rectHeight = parseFloat(d3.select("rect#t" + d.oid).attr("height")), 
-          rectY = parseFloat(d3.select("rect#t" + d.oid).attr("y")),
-          labelHeight = d3.select("#l" + d.oid).node().getBBox().height,
+      var rectHeight = parseFloat(d3.select("rect#t" + d.id).attr("height")), 
+          rectY = parseFloat(d3.select("rect#t" + d.id).attr("y")),
+          labelHeight = d3.select("#l" + d.id).node().getBBox().height,
           scale = parseInt(d3.select(".timeScale").style("width"))/961;
 
       return (rectY * 0.8) + (rectHeight - labelHeight) / 2;
@@ -371,22 +371,22 @@ var timeScale = (function() {
       var reconstructCheck = document.getElementById('reconstructBox').checked;
 
       // If the interval clicked on is already the selected filter, ignore
-      if (d.oid === navMap.filters.selectedInterval.oid) {
+      if (d.id === navMap.filters.selectedInterval.oid) {
         return;
       }
 
-      timeScale.highlight(d.nam);
+      timeScale.highlight(d.name);
       // Update the map filter info
-      navMap.filters.selectedInterval.nam = d.nam;
+      navMap.filters.selectedInterval.nam = d.name;
       navMap.filters.selectedInterval.mid = d.mid;
-      navMap.filters.selectedInterval.col = d.col;
-      navMap.filters.selectedInterval.oid = d.oid;
+      navMap.filters.selectedInterval.col = d.color;
+      navMap.filters.selectedInterval.oid = d.id;
       navMap.filters.exist.selectedInterval = true;
 
       navMap.updateFilterList("selectedInterval");
 
       if (reconstructCheck) {
-        var requestYear = parseInt((d.eag + d.lag) / 2);
+        var requestYear = parseInt((d.early_age + d.late_age) / 2);
         if (d.depth < 3) {
           return alert("Please select a period or finer interval");
         } else if (requestYear > 550) {
@@ -403,9 +403,9 @@ var timeScale = (function() {
 
     // Zooms the graph to a given time interval
     "goTo": function(d) {
-      if (typeof d == "string") {
+      if (typeof d === "string") {
         var d = d3.selectAll('rect').filter(function(e) {
-          return e.nam === d;
+          return e.name === d;
         });
         d = d[0][0].__data__;
       } else if (d.children) {
@@ -458,7 +458,7 @@ var timeScale = (function() {
             d3.select(this).select("text")
               .style("text-anchor", "end");
           }
-          return "translate(" + x(d.x) + ", 0)"; 
+          return "translate(" + x(d.x) + ", -20)"; 
         });
 
       // When complete, calls labelTrans() 
@@ -515,7 +515,7 @@ var timeScale = (function() {
         d3.selectAll("#l" + d.cxi).moveToFront();
       } else if (typeof d == "string") {
         var id = d3.selectAll('rect').filter(function(e) {
-          return e.nam === d;
+          return e.name === d;
         }).attr("id");
         id = id.replace("t", "");
       } else {

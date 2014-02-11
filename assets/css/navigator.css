@@ -27,7 +27,7 @@ nav {
 }
 .navbar-default {
   background-color: rgba(71,76,80,0.93);
-  z-index: 9;
+  z-index: 99;
   border-color: rgba(0,0,0,0);
 }
 .navbar-default .navbar-brand {
@@ -766,6 +766,25 @@ br {
   }
   .dataSource > a > img {
     height:80px;
+  }
+}
+@media(max-width: 700px) {
+  .save {
+    display: none;
+  }
+  .rotate {
+    display: none;
+  }
+  .timeScale {
+    visibility: hidden;
+  }
+  .navbar-text.help {
+    display: none;
+  }
+  .navbar-text.about {
+    float:right;
+    margin-right:46px;
+    font-size: 1.3em;
   }
 }
 @media screen and (max-width: 580px) {
