@@ -17,7 +17,7 @@
       </tr>
       {{#strat}}<tr>
         <td><strong>Stratigraphy</strong></td>
-        <td>{{#sgr}}{{sgr}} Grp.{{/sgr}}{{#sfm}}{{#sgr}} - {{/sgr}}{{sfm}} Fm.{{#smb}} - {{/smb}}{{/sfm}}{{#smb}}{{smb}} Mbr.{{/smb}}</td>
+        <td>{{#sgr}}{{sgr}} Grp.{{/sgr}}{{#sfm}}{{#sgr}} - {{/sgr}}{{sfm}} Fm.{{#smb}} - {{/smb}}{{/sfm}}{{#smb}} - {{smb}} Mbr.{{/smb}}</td>
       </tr>{{/strat}}
       <tr>
         <td><strong>Interval(s)</strong></td>
@@ -35,10 +35,10 @@
         <td><strong>Location</strong><br><small>(latitude, longitude)</small></td>
         <td>{{lat}}, {{lng}}</td>
       </tr>
-      {{#aut}}<tr>
+      {{#ath}}<tr>
         <td><strong>Authorizer</strong></td>
-        <td>{{aut}}</td>
-      </tr>{{/aut}}
+        <td>{{ath}}</td>
+      </tr>{{/ath}}
       <tr>
         <td><strong>Reference</strong></td>
         <td>{{#ref}}{{{.}}}<br><br>{{/ref}}</td>

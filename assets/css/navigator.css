@@ -120,10 +120,10 @@ nav {
 .general {
   color: #777;
 }
-.nationalParks {
+.nationalParks > i {
   color: #FF4136;
 }
-.federalLands {
+.federalLands > i {
   color: #eecd00;
 }
 .icon-warning-sign {
@@ -783,7 +783,7 @@ br {
   }
   .navbar-text.about {
     float:right;
-    margin-right:46px;
+    margin-right:10px;
     font-size: 1.3em;
   }
 }
@@ -796,6 +796,8 @@ br {
   .universalSearch {
     position: relative;
     padding-bottom: 15px;
+    float:right;
+    margin-right:10px;
   }
   .pull-right {
     clear:right;

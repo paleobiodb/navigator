@@ -793,6 +793,8 @@ var navMap = (function() {
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
+          d.lat = d.lat.toFixed(4);
+          d.lng = d.lng.toFixed(4);
         });
 
         d3.text("build/partials/collectionModal.html", function(error, template) {
@@ -800,25 +802,24 @@ var navMap = (function() {
           $("#collectionName").html(data.records[0].nam);
           $("#collectionModalBody").html(output);
 
-          /* Placeholder for land type
-          switch (d.ptd) {
-            case 0:
-              $(".general").css("display", "block");
-              $(".nationalParks, .federalLands").css("display", "none");
-              break;
-            case 1:
+          switch (data.records[0].ptd) {
+            case "NPS":
               $(".nationalParks").css("display", "block");
               $(".general, .federalLands").css("display", "none");
               break;
-            case 2:
+            case "FED":
               $(".federalLands").css("display", "block");
               $(".general, .nationalParks").css("display", "none");
               break;
-          }*/
+            default:
+              $(".general").css("display", "block");
+              $(".nationalParks, .federalLands").css("display", "none");
+              break;
+          }
 
           // To be replaced by above code once land type is in data service
-          $(".general").css("display", "block");
-          $(".nationalParks, .federalLands").css("display", "none");
+         // $(".general").css("display", "block");
+         // $(".nationalParks, .federalLands").css("display", "none");
 
           $("#collectionBox").modal();
 
@@ -848,11 +849,13 @@ var navMap = (function() {
 
     "openStackedCollectionModal": function(data) {
       // Grab the land type of the first collection, as they should all be identical
-      //var landType = data.members[0].ptd;
+      var landType = data.members[0].ptd;
 
       data.members.forEach(function(d) {
         d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
         d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
+        d.lat = d.lat.toFixed(4);
+        d.lng = d.lng.toFixed(4);
       });
 
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) {
@@ -889,25 +892,24 @@ var navMap = (function() {
             });
           });
 
-        /* Placeholder for land type
         switch (landType) {
-          case 0:
-            $(".general").css("display", "block");
-            $(".nationalParks, .federalLands").css("display", "none");
-            break;
-          case 1:
+          case "NPS":
             $(".nationalParks").css("display", "block");
             $(".general, .federalLands").css("display", "none");
             break;
-          case 2:
+          case "FED":
             $(".federalLands").css("display", "block");
             $(".general, .nationalParks").css("display", "none");
             break;
-        }*/
+          default:
+            $(".general").css("display", "block");
+            $(".nationalParks, .federalLands").css("display", "none");
+            break;
+        }
 
         // To be replaced by above code once land type is in data service
-        $(".general").css("display", "block");
-        $(".nationalParks, .federalLands").css("display", "none");
+       // $(".general").css("display", "block");
+       // $(".nationalParks, .federalLands").css("display", "none");
 
         $("#collectionModal").modal();
       });
@@ -927,7 +929,7 @@ var navMap = (function() {
       var count = 0;
       for (var key in filters.exist) {
         if (filters.exist.hasOwnProperty(key)) {
-          if (filters.exist[key] == true) {
+          if (filters.exist[key] === true) {
             switch(key) {
               case "selectedInterval":
                 url += '&interval_id=' + filters.selectedInterval.oid;
@@ -944,11 +946,11 @@ var navMap = (function() {
                 url = url.slice(0, -1);
                 break;
               case "stratigraphy":
-                if (filters.stratigraphy.rank === "formation") {
+                if (filters.stratigraphy.rank === "Fm") {
                   url += '&formation=' + filters.stratigraphy.name;
-                } else if (filters.stratigraphy.rank === "group") {
+                } else if (filters.stratigraphy.rank === "Gp") {
                   url += '&stratgroup=' + filters.stratigraphy.name;
-                } else if (filters.stratigraphy.rank === "member") {
+                } else if (filters.stratigraphy.rank === "Mbr") {
                   url += '&member=' + filters.stratigraphy.name;
                 } else {
                   // ?
@@ -1105,7 +1107,13 @@ var navMap = (function() {
       d3.select("#infoContainer")
         .style("height", function(d) {
           if (d3.select(".timeScale").style("visibility") === "hidden") {
-            return (window.innerHeight - 56) + "px";
+            if (window.innerWidth < 468) {
+              return (window.innerHeight - 102) + "px";
+            } else if (window.innerWidth < 648) {
+              return (window.innerHeight - 85) + "px";
+            } else {
+              return (window.innerHeight - 56) + "px";
+            }
           } else {
             var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
             return (window.innerHeight - timeHeight - 70) + "px";
@@ -1114,6 +1122,9 @@ var navMap = (function() {
 
       d3.select(".filters")
         .style("bottom", function() {
+          if (window.innerWidth < 468) {
+            return (window.innerHeight - 102) + "px";
+          }
           var height = parseInt(d3.select("#time").select("svg").style("height"));
           return (height + 20) + "px";
         });
@@ -1177,12 +1188,12 @@ var navMap = (function() {
 
             d3.select(".taxa").style("box-shadow", "");
             break;
-          case "stratigraphy":
+          case "stratFilter":
             parent.style("display", "none").html("");
             filters.exist["stratigraphy"] = false;
-            var keys = Object.keys(filters[type]);
+            var keys = Object.keys(filters.stratigraphy);
             for (var i=0; i < keys.length; i++) {
-              filters[type][keys[i]] = "";
+              filters.stratigraphy[keys[i]] = "";
             }
             break;
         }
@@ -1289,12 +1300,13 @@ var navMap = (function() {
     },
 
     "filterByStratigraphy": function(rock) {
-      // rock is = {"name": "stratName", "rank": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
+      // rock is = {"name": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
       if (rock) {
         filters.exist.stratigraphy = true;
         filters.stratigraphy.name = rock.name;
-        filters.stratigraphy.rank = rock.rank;
+        filters.stratigraphy.rank = rock.type;
         navMap.updateFilterList("stratigraphy");
+        navMap.refresh("reset");
       }
     },
 

@@ -254,8 +254,11 @@ var paleo_nav = (function() {
             case 'taxa':
               navMap.filterByTaxon(selectedValue.datum.nam);
               break;
+            case 'strat':
+              navMap.filterByStratigraphy(selectedValue.datum);
+              break;
             default:
-              console.log("default");
+              console.log("Default");
               break;
           }
 
@@ -567,7 +570,6 @@ var paleo_nav = (function() {
         .on("tap", function(event) {
           event.preventDefault();
           if (parseInt(d3.select("#map").style("height")) < 1) {
-            console.log('here');
             d3.select("#svgMap").style("display", "none");
             d3.select("#map").style("height", function() {
               return ((window.innerHeight * 0.70) - 70) + "px";
