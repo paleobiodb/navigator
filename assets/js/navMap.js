@@ -1407,19 +1407,29 @@ var navMap = (function() {
         // If there is a preserved state hash
         if (state.length > 1) {
           d3.json("http://teststrata.geology.wisc.edu/larkin/app-state?id=" + state, function(error, result) {
-            var params = result;
 
-            console.log(result);
+            var params = result[0].data;
+
+            params.zoom = parseInt(params.zoom);
+            params.center[0] = parseFloat(params.center[0]);
+            params.center[1] = parseFloat(params.center[1]);
+            params.taxaFilter.forEach(function(d) {
+              d.id = parseInt(d.id);
+            });
+            params.timeFilter.mid = parseInt(params.timeFilter.mid);
+            params.timeFilter.oid = parseInt(params.timeFilter.oid);
+
+            console.log(params);
 
             if (params.zoom && params.zoom > 2) {
               navMap.goTo(params.center, params.zoom);
             }
-            if (params.timeScale != "Phanerozoic") {
+            if (params.timeScale && params.timeScale != "Phanerozoic") {
               timeScale.goTo(params.timeScale);
             }
             if (params.taxaFilter.length > 0) {
               params.taxaFilter.forEach(function(d) {
-                navMap.filterByTaxon(d.nam);
+                navMap.filterByTaxon(d.name);
               });
             }
             if (typeof(params.stratFilter) === "object" ) {
