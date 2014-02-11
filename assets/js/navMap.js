@@ -1413,15 +1413,16 @@ var navMap = (function() {
             params.zoom = parseInt(params.zoom);
             params.center[0] = parseFloat(params.center[0]);
             params.center[1] = parseFloat(params.center[1]);
-            if (params.taxaFilter.length > 0) {
-              params.taxaFilter.forEach(function(d) {
-                d.id = parseInt(d.id);
-              });
+            if (params.taxaFilter) {
+              if (params.taxaFilter.length > 0) {
+                params.taxaFilter.forEach(function(d) {
+                  d.id = parseInt(d.id);
+                });
+              }
             }
+  
             params.timeFilter.mid = parseInt(params.timeFilter.mid);
             params.timeFilter.oid = parseInt(params.timeFilter.oid);
-
-            console.log(params);
 
             if (params.zoom && params.zoom > 2) {
               navMap.goTo(params.center, params.zoom);
@@ -1429,11 +1430,14 @@ var navMap = (function() {
             if (params.timeScale && params.timeScale != "Phanerozoic") {
               timeScale.goTo(params.timeScale);
             }
-            if (params.taxaFilter.length > 0) {
-              params.taxaFilter.forEach(function(d) {
-                navMap.filterByTaxon(d.name);
-              });
+            if (params.taxaFilter) {
+              if (params.taxaFilter.length > 0) {
+                params.taxaFilter.forEach(function(d) {
+                  navMap.filterByTaxon(d.name);
+                });
+              }
             }
+  
             if (typeof(params.stratFilter) === "object" ) {
               if (params.stratFilter.name != "") {
                 navMap.filterByStratigraphy(params.stratFilter);
