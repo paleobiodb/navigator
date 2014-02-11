@@ -93,7 +93,7 @@ var navMap = (function() {
         .on("zoom",function() {
           if (d3.event.sourceEvent.wheelDelta > 0) {
             navMap.changeMaps(d3.mouse(this));
-          } else if (d3.event.sourceEvent.type == "touchmove") {
+          } else if (d3.event.sourceEvent.type === "touchmove") {
             navMap.changeMaps([d3.event.sourceEvent.pageX, d3.event.sourceEvent.pageY]);
           }
         });
@@ -216,7 +216,7 @@ var navMap = (function() {
         var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time';
 
         if (filtered) {
-          if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
+          if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
             url += "&level=3";
             url = navMap.parseURL(url);
 
@@ -285,7 +285,7 @@ var navMap = (function() {
           }
         } else if (prevzoom > 2 && zoom < 7) {
           if (filtered) {
-            if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
+            if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
               if (d3.select("#binHolder").selectAll("circle")[0].length < 1) {
                 // refresh
               } else if (prevzoom < 7 && zoom > 6 || prevzoom > 6 && zoom < 7) {
@@ -323,17 +323,17 @@ var navMap = (function() {
 
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
 
-      if (zoom < 5 && filtered == false) {
+      if (zoom < 5 && filtered === false) {
         var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=999999&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           navMap.drawBins(data, 1, zoom);
         });
 
-      } else if (zoom > 4 && zoom < 7 || zoom < 5 && filtered == true) {
+      } else if (zoom > 4 && zoom < 7 || zoom < 5 && filtered === true) {
 
         // If filtered only by a time interval...
-        if (filters.exist.selectedInterval == true && !filters.exist.personFilter && !filters.exist.taxon) {
+        if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
           var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999&show=time&level=3';
           url = navMap.parseURL(url);
 
@@ -539,12 +539,12 @@ var navMap = (function() {
         for (var j=0; j<data.records.length; j++) {
           // If another collection has the same lat/lng and a different OID, create a new cluster
           // SIDENOTE: this could be extended for binning by specifying a tolerance instead of an exact match of coordinates
-          if (data.records[i].lat == data.records[j].lat && data.records[i].lng == data.records[j].lng && data.records[i].oid != data.records[j].oid) {
+          if (data.records[i].lat === data.records[j].lat && data.records[i].lng === data.records[j].lng && data.records[i].oid != data.records[j].oid) {
             var newCluster = {"lat":data.records[i].lat, "lng":data.records[i].lng, "members": []},
                 exists = 0;
             // Make sure a cluster with those coordinates doesn't already exist
             for (var z=0; z<clusters.length;z++) {
-              if (newCluster.lat == clusters[z].lat && newCluster.lng == clusters[z].lng) {
+              if (newCluster.lat === clusters[z].lat && newCluster.lng === clusters[z].lng) {
                 exists += 1;
               }
             }
@@ -566,7 +566,7 @@ var navMap = (function() {
       var toRemove = [];
       for (var i=0; i<clusters.length; i++) {
         for (var j=0; j<data.records.length; j++) {
-          if (clusters[i].lat == data.records[j].lat && clusters[i].lng == data.records[j].lng) {
+          if (clusters[i].lat === data.records[j].lat && clusters[i].lng === data.records[j].lng) {
             clusters[i].members.push(data.records[j]);
             toRemove.push(data.records[j].oid);
           }
@@ -788,8 +788,8 @@ var navMap = (function() {
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
-          d.lat = d.lat.toFixed(4);
-          d.lng = d.lng.toFixed(4);
+          d.lat = Math.round(d.lat * 10000) / 10000;
+          d.lng = Math.round(d.lng * 10000) / 10000;
         });
 
         d3.text("build/partials/collectionModal.html", function(error, template) {
@@ -811,10 +811,6 @@ var navMap = (function() {
               $(".nationalParks, .federalLands").css("display", "none");
               break;
           }
-
-          // To be replaced by above code once land type is in data service
-         // $(".general").css("display", "block");
-         // $(".nationalParks, .federalLands").css("display", "none");
 
           $("#collectionBox").modal();
 
@@ -849,14 +845,14 @@ var navMap = (function() {
       data.members.forEach(function(d) {
         d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
         d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
-        d.lat = d.lat.toFixed(4);
-        d.lng = d.lng.toFixed(4);
+        d.lat = Math.round(d.lat * 10000) / 10000;
+        d.lng = Math.round(d.lng * 10000) / 10000;
       });
 
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) {
         var output = Mustache.render(template, data);
 
-        d3.select("#binID").html("Collections at [" + data.lat + ", " + data.lng + "]");
+        d3.select("#binID").html("Collections at [" + (Math.round(data.lat * 10000) / 10000) + ", " + (Math.round(data.lng * 10000) / 10000) + "]");
         d3.select("#accordion").html(output);
 
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
@@ -901,10 +897,6 @@ var navMap = (function() {
             $(".nationalParks, .federalLands").css("display", "none");
             break;
         }
-
-        // To be replaced by above code once land type is in data service
-       // $(".general").css("display", "block");
-       // $(".nationalParks, .federalLands").css("display", "none");
 
         $("#collectionModal").modal();
       });
@@ -955,7 +947,7 @@ var navMap = (function() {
           }
         }
       }
-      if (count > 0 && d3.select("#reconstructMap").style("display") == "none") {
+      if (count > 0 && d3.select("#reconstructMap").style("display") === "none") {
         d3.select(".filters").style("display", "block");
       }
 
@@ -967,7 +959,7 @@ var navMap = (function() {
       var count = 0;
       for (var key in filters.exist) {
         if (filters.exist.hasOwnProperty(key)) {
-          if (filters.exist[key] == true) {
+          if (filters.exist[key] === true) {
             count += 1;
           }
         }
@@ -1330,7 +1322,6 @@ var navMap = (function() {
 
       url += "&show=comments,ent,entname,crmod";
 
-      //url = url.substring(0, url.length - 1);
       window.open(url);
     },
 
@@ -1363,7 +1354,6 @@ var navMap = (function() {
 
       url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod";
 
-      //url = url.substring(0, url.length - 1);
       window.open(url);
     },
 

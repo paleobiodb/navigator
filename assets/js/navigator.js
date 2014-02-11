@@ -241,8 +241,7 @@ var paleo_nav = (function() {
       });
 
       $('input#universalAutocompleteInput').keypress(function (e) {
-        if (e.which == 13) {
-          console.log($('input#universalAutocompleteInput').data().ttView);
+        if (e.which === 13) {
           var selectedValue = $('input#universalAutocompleteInput').data().ttView.dropdownView.getFirstSuggestion();
 
           switch (selectedValue.dataset) {
@@ -338,12 +337,9 @@ var paleo_nav = (function() {
         var poster = d3.xhr("http://teststrata.geology.wisc.edu/larkin/app-state");
 
         poster.post(state, function(error, response) {
-          if (error) {
-            console.log(error);
-          } else {
-            $("#url").val("http://paleobiodb.org/navigator/#/" + response.id);
-            $("#url").select();
-          }
+          var id = $.parseJSON(response.response).id;
+          $("#url").val("http://paleobiodb.org/navigator/#/" + id);
+          $("#url").select();
         });
       });
       // Handler for the simple taxa search box
@@ -451,7 +447,7 @@ var paleo_nav = (function() {
     },
 
     "prelaunch": function() {
-      
+
       var location = window.location,
           state = location.hash.substr(2);
 
