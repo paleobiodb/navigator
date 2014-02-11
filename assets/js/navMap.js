@@ -1413,9 +1413,11 @@ var navMap = (function() {
             params.zoom = parseInt(params.zoom);
             params.center[0] = parseFloat(params.center[0]);
             params.center[1] = parseFloat(params.center[1]);
-            params.taxaFilter.forEach(function(d) {
-              d.id = parseInt(d.id);
-            });
+            if (params.taxaFilter.length > 0) {
+              params.taxaFilter.forEach(function(d) {
+                d.id = parseInt(d.id);
+              });
+            }
             params.timeFilter.mid = parseInt(params.timeFilter.mid);
             params.timeFilter.oid = parseInt(params.timeFilter.oid);
 
