@@ -1298,7 +1298,7 @@ var navMap = (function() {
           sw = bounds._southWest,
           ne = bounds._northEast;
 
-      if (parseInt(d3.select("#map").style("height")) < 1) {
+      if (d3.select("#reconstructMap").style("display") === "block") {
         sw.lng = -180,
         ne.lng = 180,
         sw.lat = -90,
@@ -1330,7 +1330,7 @@ var navMap = (function() {
           sw = bounds._southWest,
           ne = bounds._northEast;
 
-      if (parseInt(d3.select("#map").style("height")) < 1) {
+      if (d3.select("#reconstructMap").style("display") === "block") {
         sw.lng = -180,
         ne.lng = 180,
         sw.lat = -90,
@@ -1424,6 +1424,10 @@ var navMap = (function() {
             params.timeFilter.mid = parseInt(params.timeFilter.mid);
             params.timeFilter.oid = parseInt(params.timeFilter.oid);
 
+            
+            params.currentReconstruction.mid = parseInt(params.currentReconstruction.mid);
+            params.currentReconstruction.id = parseInt(params.currentReconstruction.id);
+            
             if (params.zoom && params.zoom > 2) {
               navMap.goTo(params.center, params.zoom);
             }
@@ -1468,7 +1472,7 @@ var navMap = (function() {
           zoom = map.getZoom(),
           reconstruct = d3.select("#reconstructMap").style("display");
 
-      var params = {"timeScale": timeScale.currentInterval.nam, "taxaFilter": [], "timeFilter": filters.selectedInterval, "stratFilter": {"name": filters.stratigraphy.name, "rank": filters.stratigraphy.rank}, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
+      var params = {"timeScale": timeScale.currentInterval.name, "taxaFilter": [], "timeFilter": filters.selectedInterval, "stratFilter": {"name": filters.stratigraphy.name, "rank": filters.stratigraphy.rank}, "authFilter": filters.personFilter, "zoom": zoom, "center": [center.lat, center.lng], "reconstruct": reconstruct, "currentReconstruction": reconstructMap.currentReconstruction};
 
       if(filters.taxa.length > 0) {
         filters.taxa.forEach(function(d) {

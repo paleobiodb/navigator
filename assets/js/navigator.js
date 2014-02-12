@@ -558,8 +558,8 @@ var paleo_nav = (function() {
         .off("tap")
         .css("color", "#ccc");
 
-      $(".save").on("click", function() { return false; });
-      $(".icon-save").css("color", "#ccc");
+      //$(".save").on("click", function() { return false; });
+      //$(".icon-save").css("color", "#ccc");
 
       if (navMap.filters.exist.selectedInterval) {
         reconstructMap.rotate(navMap.filters.selectedInterval);

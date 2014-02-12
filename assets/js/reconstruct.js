@@ -65,7 +65,8 @@ var reconstructMap = (function() {
     },
     "rotate": function(interval) {
       // If nothing has changed since the last reconstruct, do nothing
-      if (interval.nam === reconstructMap.currentReconstruction.name && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person && navMap.filters.stratigraphy.name === reconstructMap.currentReconstruction.stratigraphy) {
+      var name = (interval.nam) ? interval.nam : interval.name;
+      if (name === reconstructMap.currentReconstruction.name && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person && navMap.filters.stratigraphy.name === reconstructMap.currentReconstruction.stratigraphy) {
 
         var taxaChange = 0;
 
@@ -92,7 +93,7 @@ var reconstructMap = (function() {
         }
       }
 
-      navMap.filterByTime(interval.nam);
+      navMap.filterByTime(name);
 
       reconstructing = true;
       reconstructMap.reset();
@@ -105,8 +106,8 @@ var reconstructMap = (function() {
       //} 
 
       // Update UI components with the current reconstruction info
-      d3.select('#interval').text(interval.nam);
-      d3.select("#rotationInterval").html(interval.nam);
+      d3.select('#interval').text(name);
+      d3.select("#rotationInterval").html(name);
 
       d3.select('#age').text("(" + interval.mid + " Ma)");
       d3.select("#rotationYear").html(interval.mid + " Ma");
@@ -127,7 +128,7 @@ var reconstructMap = (function() {
           .append("g")
           .attr("id", "reconstructContent");
 
-      var filename = interval.nam.split(' ').join('_');
+      var filename = name.split(' ').join('_');
 
       // Load the unrotated level2 bins associated with the selected interval
       d3.json("build/js/collections/" + filename + ".json", function(error, response) {
@@ -141,7 +142,7 @@ var reconstructMap = (function() {
             .attr("class", "plates")
             .attr("d", path);
 
-          timeScale.highlight(interval.nam);
+          timeScale.highlight(name);
 
           // Switch to reconstruct map now
           if(parseInt(d3.select("#map").style("height")) > 1) {
@@ -237,7 +238,9 @@ var reconstructMap = (function() {
         .data(data)
       .enter().append("circle")
         .attr("class", "collection")
-        .style("fill", interval.col)
+        .style("fill", function() {
+          return (interval.col) ? interval.col : interval.color;
+        })
         .attr("r", function(d) { return scale(d.properties.nco)*0.7;})
         .attr("cx", function(d) {
           var coords = projection(d.geometry.coordinates);
@@ -269,7 +272,7 @@ var reconstructMap = (function() {
       paleo_nav.hideLoading();
 
       // Update currentReconstruction
-      reconstructMap.currentReconstruction = {"name": interval.nam, "color":interval.col, "mid": interval.mid, "id": interval.oid, "taxa": [], "person": "", "stratigraphy": ""};
+      reconstructMap.currentReconstruction = {"name": (interval.nam) ? interval.nam : interval.name, "color":interval.col, "mid": interval.mid, "id": interval.oid, "taxa": [], "person": "", "stratigraphy": ""};
 
       if (navMap.filters.exist.taxon) {
         navMap.filters.taxa.forEach(function(d) {
