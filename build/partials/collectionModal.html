@@ -17,7 +17,7 @@
       </tr>
       {{#strat}}<tr>
         <td><strong>Stratigraphy</strong></td>
-        <td>{{#sgr}}{{sgr}} Grp.{{/sgr}}{{#sfm}}{{#sgr}} - {{/sgr}}{{sfm}} Fm.{{#smb}} - {{/smb}}{{/sfm}}{{#smb}} {{smb}} Mbr.{{/smb}}</td>
+        <td>{{#sgr}}<a href="#" data-rank="Gr" data-name="{{sgr}}" class="filterByStrat">{{sgr}}</a> Grp.{{/sgr}}{{#sfm}}{{#sgr}} - {{/sgr}}<a href="#" data-rank="Fm" data-name="{{sfm}}" class="filterByStrat">{{sfm}}</a> Fm.{{#smb}} - {{/smb}}{{/sfm}}{{#smb}} <a href="#" data-rank="Mb" data-name="{{smb}}" class="filterByStrat">{{smb}}</a> Mbr.{{/smb}}</td>
       </tr>{{/strat}}
       <tr>
         <td><strong>Interval(s)</strong></td>

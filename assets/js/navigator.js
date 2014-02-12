@@ -346,6 +346,7 @@ var paleo_nav = (function() {
         request.success(function(result) {
           $("#url").val("http://paleobiodb.org/navigator/#/" + result.id);
           $("#url").select();
+          $("#url").focus();
         });
 
       });

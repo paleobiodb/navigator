@@ -812,6 +812,11 @@ var navMap = (function() {
               break;
           }
 
+          $(".filterByStrat").click(function(event) {
+            event.preventDefault();
+            navMap.filterByStratigraphy({"name": $(this).attr("data-name"), "type": $(this).attr("data-rank")});
+          });
+
           $("#collectionBox").modal();
 
           $(".occurrenceTab").on("show.bs.tab", function(d) {
