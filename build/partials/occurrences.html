@@ -1,10 +1,15 @@
 <table class="table">
   <tr>
-    <td style="border-top:0;"><strong>Taxon name</strong></td>
+    <td style="border-top:0;"><strong>Phylum <i class="icon icon-angle-right"></i> Class <i class="icon icon-angle-right"></i> Family <i class="icon icon-angle-right"></i> Genus</strong></td>
   </tr>
   {{#records}}
   <tr>
-    <td class="occurrenceTabRow {{itallics}}"><a href="#" class="filterByOccurrence" data-name="{{tna}}">{{tna}}</a></td>
+    <td class="occurrenceTabRow">
+      {{#phl}}<a href="#" class="filterByOccurrence" data-name="{{phl}}">{{phl}}</a> <i class="icon icon-angle-right"></i>{{/phl}}
+      {{#cll}}<a href="#" class="filterByOccurrence" data-name="{{cll}}">{{cll}}</a> <i class="icon icon-angle-right"></i>{{/cll}}
+      {{#fml}}<a href="#" class="filterByOccurrence" data-name="{{fml}}">{{fml}}</a>  <i class="icon icon-angle-right"></i>{{/fml}}
+      <a href="#" class="filterByOccurrence {{itallics}}" data-name="{{tna}}">{{tna}}</a>
+    </td>
   </tr>
   {{/records}}
 </table>

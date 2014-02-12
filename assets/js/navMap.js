@@ -817,7 +817,7 @@ var navMap = (function() {
           $(".occurrenceTab").on("show.bs.tab", function(d) {
             var id = d.target.id;
             id = id.replace("occToggle", "");
-            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id, function(err, data) {
+            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo", function(err, data) {
               data.records.forEach(function(d) {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
                 d.itallics = (d.rnk < 6) ? "itallics" : ""; 
@@ -866,7 +866,7 @@ var navMap = (function() {
         $(".occurrenceTab").on("show.bs.tab", function(d) {
             var id = d.target.id;
             id = id.replace("occToggle", "");
-            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id, function(err, data) {
+            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo", function(err, data) {
               data.records.forEach(function(d) {
                 d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
                 d.itallics = (d.rnk < 6) ? "itallics" : ""; 
