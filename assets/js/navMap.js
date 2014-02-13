@@ -1551,9 +1551,6 @@ var navMap = (function() {
             if (params.zoom && params.zoom > 2) {
               navMap.goTo(params.center, params.zoom);
             }
-            if (params.timeScale != "Phanerozoic") {
-              timeScale.goTo(params.timeScale);
-            }
             if (params.taxaFilter) {
               if (params.taxaFilter.length > 0) {
                 params.taxaFilter.forEach(function(d) {
@@ -1561,7 +1558,6 @@ var navMap = (function() {
                 });
               }
             }
-  
             if (typeof(params.stratFilter) === "object" ) {
               if (params.stratFilter.name != "") {
                 navMap.filterByStratigraphy(params.stratFilter);
@@ -1579,6 +1575,9 @@ var navMap = (function() {
               reconstructMap.rotate(params.currentReconstruction);
               paleo_nav.toggleReconstructMap();
               navMap.checkFilters();
+            }
+            if (params.timeScale != "Phanerozoic") {
+              setTimeout(timeScale.goTo(params.timeScale), 200);
             }
 
             paleo_nav.launch();
