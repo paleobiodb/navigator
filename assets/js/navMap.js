@@ -787,8 +787,27 @@ var navMap = (function() {
         d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
         d.itallics = (d.rnk < 6) ? "itallics" : "";
         d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
-        d.display_name1 = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.idt;
-        d.display_name2 = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.ids;
+        d.url = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.idt;
+        if (d.idt) {
+          if (d.tna === (d.idt + " " + d.ids)) {
+            var genusRes = (d.rst) ? d.rst + " " : "",
+                speciesRes = (d.rss) ? " " + d.rss + " " : "";
+            d.genusRes = genusRes;
+            d.display_name1 = d.idt + speciesRes + d.ids;
+            d.display_name2 = "";
+          } else {
+            var genusRes = (d.rst) ? d.rst + " " : "",
+                speciesRes = (d.rss) ? " " + d.rss + " " : "";
+            d.genusRes = genusRes;
+            d.display_name1 = d.idt;
+            d.display_name2 = speciesRes + d.ids;
+          }
+        } else {
+          d.display_name1 = d.tna;
+          d.display_name2 = "";
+        }
+        //d.display_name1 = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.idt;
+        //d.display_name2 = (d.tna === (d.idt + " " + d.ids)) ? "" : d.ids;
 
         // Find unique phyla
         var phyla = [];
@@ -980,6 +999,11 @@ var navMap = (function() {
             $(".nationalParks, .federalLands").css("display", "none");
             break;
         }
+
+        $(".filterByStrat").click(function(event) {
+          event.preventDefault();
+          navMap.filterByStratigraphy({"name": $(this).attr("data-name"), "type": $(this).attr("data-rank")});
+        });
 
         $("#collectionModal").modal();
       });
@@ -1351,7 +1375,7 @@ var navMap = (function() {
     "filterByPerson": function(person, norefresh) {
       if (person) {
         filters.exist.personFilter = true;
-        filters.personFilter.id = person.oid;
+        filters.personFilter.id = (person.oid) ? person.oid : person.id;
         filters.personFilter.name = (person.name) ? person.name : person.nam;
         navMap.updateFilterList("personFilter");
         d3.select(".userToggler").style("display", "none");
@@ -1370,7 +1394,7 @@ var navMap = (function() {
       if (rock) {
         filters.exist.stratigraphy = true;
         filters.stratigraphy.name = rock.name;
-        filters.stratigraphy.rank = rock.type;
+        filters.stratigraphy.rank = (rock.type) ? rock.type : rock.rank;
         navMap.updateFilterList("stratigraphy");
         navMap.refresh("reset");
       }
@@ -1514,6 +1538,8 @@ var navMap = (function() {
             
             params.currentReconstruction.mid = parseInt(params.currentReconstruction.mid);
             params.currentReconstruction.id = parseInt(params.currentReconstruction.id);
+
+            params.authFilter.id = parseInt(params.authFilter.id);
             
             if (params.zoom && params.zoom > 2) {
               navMap.goTo(params.center, params.zoom);
