@@ -1524,7 +1524,9 @@ var navMap = (function() {
         // If there is a preserved state hash
         if (state.length > 1) {
           d3.json("http://phylum.geology.wisc.edu/larkin/app-state?id=" + state, function(error, result) {
-
+            if (error) {
+              return paleo_nav.launch();
+            }
             var params = result[0].data;
 
             params.zoom = parseInt(params.zoom);
