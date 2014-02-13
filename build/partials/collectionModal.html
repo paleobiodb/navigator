@@ -15,15 +15,15 @@
         <td><strong>Occurrences</strong></td>
         <td>{{noc}}</td>
       </tr>
-      {{#strat}}<tr>
-        <td><strong>Stratigraphy</strong></td>
-        <td>{{#sgr}}<a href="#" data-rank="Gr" data-name="{{sgr}}" class="filterByStrat">{{sgr}}</a> Grp.{{/sgr}}{{#sfm}}{{#sgr}} - {{/sgr}}<a href="#" data-rank="Fm" data-name="{{sfm}}" class="filterByStrat">{{sfm}}</a> Fm.{{#smb}} - {{/smb}}{{/sfm}}{{#smb}} <a href="#" data-rank="Mb" data-name="{{smb}}" class="filterByStrat">{{smb}}</a> Mbr.{{/smb}}</td>
-      </tr>{{/strat}}
       <tr>
         <td><strong>Interval(s)</strong></td>
         <td>{{intervals}}</td>
       </tr>
       {{#lt1}}<tr>
+      {{#strat}}<tr>
+        <td><strong>Stratigraphy</strong></td>
+        <td>{{#sgr}}<a href="#" data-rank="Gr" data-name="{{sgr}}" class="filterByStrat">{{sgr}}</a> Grp.{{/sgr}}{{#sfm}}{{#sgr}} - {{/sgr}}<a href="#" data-rank="Fm" data-name="{{sfm}}" class="filterByStrat">{{sfm}}</a> Fm.{{#smb}} - {{/smb}}{{/sfm}}{{#smb}} <a href="#" data-rank="Mb" data-name="{{smb}}" class="filterByStrat">{{smb}}</a> Mbr.{{/smb}}</td>
+      </tr>{{/strat}}
         <td><strong>Lithology</strong></td>
         <td>{{lt1}}{{#lt2}}, {{lt2}}{{/lt2}}</td>
       </tr>{{/lt1}}
@@ -35,14 +35,14 @@
         <td><strong>Location</strong><br><small>(latitude, longitude)</small></td>
         <td>{{lat}}, {{lng}}</td>
       </tr>
-      {{#ath}}<tr>
-        <td><strong>Authorizer</strong></td>
-        <td>{{ath}}</td>
-      </tr>{{/ath}}
       <tr>
         <td><strong>Reference</strong></td>
         <td>{{#ref}}{{{ref}}}<br><br>{{/ref}}</td>
       </tr>
+      {{#ath}}<tr>
+        <td><strong>Authorizer</strong></td>
+        <td>{{ath}}</td>
+      </tr>{{/ath}}
     </table>
   </div>
   <div class="tab-pane" id="occurrences{{oid}}"></div>

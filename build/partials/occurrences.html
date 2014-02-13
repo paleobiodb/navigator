@@ -2,14 +2,34 @@
   <tr>
     <td style="border-top:0;"><strong>Phylum <i class="icon icon-angle-right"></i> Class <i class="icon icon-angle-right"></i> Family <i class="icon icon-angle-right"></i> Genus</strong></td>
   </tr>
-  {{#records}}
+  {{#phyla}}
   <tr>
     <td class="occurrenceTabRow">
-      {{#phl}}<a href="#" class="filterByOccurrence" data-name="{{phl}}">{{phl}}</a> <i class="icon icon-angle-right"></i>{{/phl}}
-      {{#cll}}<a href="#" class="filterByOccurrence" data-name="{{cll}}">{{cll}}</a> <i class="icon icon-angle-right"></i>{{/cll}}
-      {{#fml}}<a href="#" class="filterByOccurrence" data-name="{{fml}}">{{fml}}</a>  <i class="icon icon-angle-right"></i>{{/fml}}
-      <a href="#" class="filterByOccurrence {{itallics}}" data-name="{{tna}}">{{tna}}</a>
+      <ul class="list-no-bullet">
+        {{#unranked}}<li class="phylum">{{phylum}}</li>{{/unranked}}
+        {{^unranked}}<li><a href="#" class="filterByOccurrence phylum" data-name="{{phylum}}">{{phylum}}</a></li>{{/unranked}}
+        {{#classes}}
+        <ul class="list-no-bullet">
+          <li><a href="#" class="filterByOccurrence class" data-name="{{nameClass}}">{{nameClass}}</a></li>
+          {{#families}}
+          <ul class="list-no-bullet">
+            <li><a href="#" class="filterByOccurrence family" data-name="{{family}}">{{family}}</a></li>
+            {{#genera}}
+            <ul class="list-no-bullet">
+              <li>{{#old_name}}"{{old_name}}" - {{/old_name}} <a href="#" class="filterByOccurrence genus {{itallics}}" data-name="{{display_name1}}">{{display_name1}}</a>{{#display_name2}} {{display_name2}}{{/display_name2}}</li>
+            </ul>
+            {{/genera}}
+          </ul>
+          {{/families}}
+        </ul>
+        {{/classes}}
+      </ul>
     </td>
   </tr>
-  {{/records}}
+  {{/phyla}}
+  {{#error}}
+  <tr>
+    <td>{{error}}</td>
+  </tr>
+  {{/error}}
 </table>

@@ -766,6 +766,22 @@ br {
   float:right;
   margin:3px;
 }
+
+.list-no-bullet {
+  list-style-type:none;
+}
+
+.phylum {
+  font-size: 1.6em;
+}
+
+.class {
+  font-size: 1.4em;
+}
+
+.family {
+  font-size: 1.2em;
+}
 @media(max-width: 1050px) {
   .examples>button> img {
     height: 60px;

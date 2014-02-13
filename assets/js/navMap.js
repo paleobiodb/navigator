@@ -361,7 +361,7 @@ var navMap = (function() {
         }
 
       } else {
-        var url = paleo_nav.baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=time';
+        var url = paleo_nav.baseUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999&show=ref,time,strat,geo,lith,entname,prot&markrefs';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           navMap.drawCollections(data, 3, zoom);
@@ -736,9 +736,6 @@ var navMap = (function() {
           }
         });
 
-        //collections = (d.nco) ? d.nco : collections;
-        //occurrences = (d.noc) ? d.noc : occurrences;
-
         var interval = (d.cxi) ? timeScale.interval_hash[d.cxi].nam : "Unknown";
 
         if (Object.keys(formations).length > 10) {
@@ -782,6 +779,76 @@ var navMap = (function() {
       });
     },
 
+    "buildTaxonHierarchy": function(data) {
+      var occurrenceTree = {"phyla": []};
+
+      data.records.forEach(function(d) {
+        // Some preproccessing
+        d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
+        d.itallics = (d.rnk < 6) ? "itallics" : "";
+        d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
+        d.display_name1 = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.idt;
+        d.display_name2 = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.ids;
+
+        // Find unique phyla
+        var phyla = [];
+        for (var i = 0; i < occurrenceTree.phyla.length; i++) {
+          phyla.push(occurrenceTree.phyla[i].phylum);
+        }
+
+        if (phyla.indexOf(d.phl) < 0) {
+          var newPhylum = {"phylum": d.phl, "classes": []};
+          occurrenceTree.phyla.push(newPhylum);
+        }
+        
+        // Find unique phylum/class combinations
+        var phyla_classes = [];
+        for (var i = 0; i < occurrenceTree.phyla.length; i++) {
+          for (var j = 0; j < occurrenceTree.phyla[i].classes.length; j++) {
+            phyla_classes.push(occurrenceTree.phyla[i].phylum + "-" + occurrenceTree.phyla[i].classes[j].nameClass);
+          }
+        }
+
+        if (phyla_classes.indexOf(d.phl + "-" + d.cll) < 0) {
+          var newClass = {"nameClass": d.cll, "families": []},
+              phylumIndex = navMap.getIndex(occurrenceTree.phyla, d.phl, "phylum");
+          occurrenceTree.phyla[phylumIndex]["classes"].push(newClass);
+        }
+
+        // Find unique phylum/class/family combinations
+        var phyla_class_family = [];
+        for (var i = 0; i < occurrenceTree.phyla.length; i++) {
+          for (var j = 0; j < occurrenceTree.phyla[i].classes.length; j++) {
+            for (var k = 0; k < occurrenceTree.phyla[i].classes[j].families.length; k++) {
+              phyla_class_family.push(occurrenceTree.phyla[i].phylum + "-" + occurrenceTree.phyla[i].classes[j].nameClass + "-" + occurrenceTree.phyla[i].classes[j].families[k].family);
+            }
+          }
+        }
+
+        if (phyla_class_family.indexOf(d.phl + "-" + d.cll + "-" + d.fml) < 0) {
+          var newFamily = {"family": d.fml, "genera": []},
+              phylumIndex = navMap.getIndex(occurrenceTree.phyla, d.phl, "phylum"),
+              classIndex = navMap.getIndex(occurrenceTree.phyla[phylumIndex].classes, d.cll, "nameClass");
+          occurrenceTree.phyla[phylumIndex].classes[classIndex]["families"].push(newFamily);
+        }
+
+        // Place genera into the right phylum/class/family
+        var phylumIndex = navMap.getIndex(occurrenceTree.phyla, d.phl, "phylum"),
+            classIndex = navMap.getIndex(occurrenceTree.phyla[phylumIndex].classes, d.cll, "nameClass"),
+            familyIndex = navMap.getIndex(occurrenceTree.phyla[phylumIndex].classes[classIndex].families, d.fml, "family");
+        occurrenceTree.phyla[phylumIndex].classes[classIndex].families[familyIndex].genera.push(d);
+      });
+
+      occurrenceTree.phyla.forEach(function(d) {
+        if (typeof(d.phylum) === "undefined") {
+          d.phylum = "Unranked taxa";
+          d.unranked = true;
+        }
+      });
+
+      return occurrenceTree;
+    },
+
     "openCollectionModal": function(d) {
       d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
 
@@ -822,20 +889,26 @@ var navMap = (function() {
           $(".occurrenceTab").on("show.bs.tab", function(d) {
             var id = d.target.id;
             id = id.replace("occToggle", "");
-            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo", function(err, data) {
-              data.records.forEach(function(d) {
-                d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
-                d.itallics = (d.rnk < 6) ? "itallics" : ""; 
-              });
-              d3.text("build/partials/occurrences.html", function(error, template) {
-                var output = Mustache.render(template, data);
-                $("#occurrences" + id).html(output);
+            
+            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
+              if (data.records.length > 0) {
+                var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
-                $(".filterByOccurrence").click(function(event) {
-                  event.preventDefault();
-                  navMap.filterByTaxon($(this).attr("data-name"));
+                d3.text("build/partials/occurrences.html", function(error, template) {
+                  var output = Mustache.render(template, taxonHierarchy);
+                  $("#occurrences" + id).html(output);
+
+                  $(".filterByOccurrence").click(function(event) {
+                    event.preventDefault();
+                    navMap.filterByTaxon($(this).attr("data-name"));
+                  });
                 });
-              });
+              } else {
+                d3.text("build/partials/occurrences.html", function(error, template) {
+                  var output = Mustache.render(template, {"error": "No occurrences found for this collection"});
+                  $("#occurrences" + id).html(output);
+                });
+              }
             });
           });
         });
@@ -863,7 +936,7 @@ var navMap = (function() {
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
           var id = d.target.id;
           id = id.replace("collapse", "");
-          d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+          d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
             $("#ref" + id).html(data.records[0].ref);
           });
         });
@@ -871,20 +944,25 @@ var navMap = (function() {
         $(".occurrenceTab").on("show.bs.tab", function(d) {
             var id = d.target.id;
             id = id.replace("occToggle", "");
-            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo", function(err, data) {
-              data.records.forEach(function(d) {
-                d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
-                d.itallics = (d.rnk < 6) ? "itallics" : ""; 
-              });
-              d3.text("build/partials/occurrences.html", function(error, template) {
-                var output = Mustache.render(template, data);
-                $("#occurrences" + id).html(output);
+            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
+              if (data.records.length > 0) {
+                var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
-                $(".filterByOccurrence").click(function(event) {
-                  event.preventDefault();
-                  navMap.filterByTaxon($(this).attr("data-name"));
+                d3.text("build/partials/occurrences.html", function(error, template) {
+                  var output = Mustache.render(template, taxonHierarchy);
+                  $("#occurrences" + id).html(output);
+
+                  $(".filterByOccurrence").click(function(event) {
+                    event.preventDefault();
+                    navMap.filterByTaxon($(this).attr("data-name"));
+                  });
                 });
-              });
+              } else {
+                d3.text("build/partials/occurrences.html", function(error, template) {
+                  var output = Mustache.render(template, {"error": "No occurrences found for this collection"});
+                  $("#occurrences" + id).html(output);
+                });
+              }
             });
           });
 
@@ -1325,7 +1403,7 @@ var navMap = (function() {
       url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';
       url = navMap.parseURL(url);
 
-      url += "&show=comments,ent,entname,crmod";
+      url += "&show=comments,ent,entname,crmod&showsource";
 
       window.open(url);
     },
@@ -1357,7 +1435,7 @@ var navMap = (function() {
       url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
 
       window.open(url);
     },
@@ -1377,21 +1455,26 @@ var navMap = (function() {
         if (params.zoom && params.zoom > 2) {
           navMap.goTo(params.center, params.zoom);
         }
-        if (params.timeScale != "Phanerozoic") {
+        if (params.timeScale && params.timeScale != "Phanerozoic") {
           timeScale.goTo(params.timeScale);
         }
-        if (params.taxaFilter.length > 0) {
-          params.taxaFilter.forEach(function(d) {
-            navMap.filterByTaxon(d.nam);
-          });
+        if (params.taxaFilter) {
+          if (params.taxaFilter.length > 0) {
+            params.taxaFilter.forEach(function(d) {
+              navMap.filterByTaxon(d.name);
+            });
+          }
         }
+
         if (typeof(params.stratFilter) === "object" ) {
           if (params.stratFilter.name != "") {
             navMap.filterByStratigraphy(params.stratFilter);
           }
         }
         if (typeof(params.timeFilter) === "object") {
-          navMap.filterByTime(params.timeFilter.nam);
+          if (params.timeFilter.nam != "") {
+            navMap.filterByTime(params.timeFilter.nam);
+          }
         }
         if (params.authFilter.id > 0) {
           navMap.filterByPerson(params.authFilter);
@@ -1428,7 +1511,6 @@ var navMap = (function() {
   
             params.timeFilter.mid = parseInt(params.timeFilter.mid);
             params.timeFilter.oid = parseInt(params.timeFilter.oid);
-
             
             params.currentReconstruction.mid = parseInt(params.currentReconstruction.mid);
             params.currentReconstruction.id = parseInt(params.currentReconstruction.id);
@@ -1453,7 +1535,9 @@ var navMap = (function() {
               }
             }
             if (typeof(params.timeFilter) === "object") {
-              navMap.filterByTime(params.timeFilter.nam);
+              if (params.timeFilter.nam != "") {
+                navMap.filterByTime(params.timeFilter.nam);
+              }
             }
             if (params.authFilter.id > 0) {
               navMap.filterByPerson(params.authFilter);

@@ -345,8 +345,11 @@ var paleo_nav = (function() {
 
         request.success(function(result) {
           $("#url").val("http://paleobiodb.org/navigator/#/" + result.id);
-          $("#url").select();
-          $("#url").focus();
+          // For some reason this won't work without a small timeout
+          setTimeout(function() {
+            $("#url").focus();
+            $("#url").select();
+          }, 100);
         });
 
       });
