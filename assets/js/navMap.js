@@ -1551,7 +1551,7 @@ var navMap = (function() {
             if (params.zoom && params.zoom > 2) {
               navMap.goTo(params.center, params.zoom);
             }
-            if (params.timeScale && params.timeScale != "Phanerozoic") {
+            if (params.timeScale != "Phanerozoic") {
               timeScale.goTo(params.timeScale);
             }
             if (params.taxaFilter) {
