@@ -110,7 +110,7 @@ var timeScale = (function() {
         .attr("transform", "translate(0,125)");
 
       // Load the time scale data
-      d3.json("http://teststrata.geology.wisc.edu/larkin/time_scale", function(error, result) {
+      d3.json("http://phylum.geology.wisc.edu/larkin/time_scale", function(error, result) {
 
         for(var i=0; i < result.length; i++) {
           var r = result[i];

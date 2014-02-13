@@ -256,6 +256,11 @@ var navMap = (function() {
         ne = bounds._northEast,
         zoom = map.getZoom();
 
+      sw.lat = sw.lat.toFixed(4);
+      sw.lng = sw.lng.toFixed(4);
+      ne.lat = ne.lat.toFixed(4);
+      ne.lng = ne.lng.toFixed(4);
+
       if(!reset) {
 
         // Check if new points are needed from the server
@@ -1518,7 +1523,7 @@ var navMap = (function() {
 
         // If there is a preserved state hash
         if (state.length > 1) {
-          d3.json("http://teststrata.geology.wisc.edu/larkin/app-state?id=" + state, function(error, result) {
+          d3.json("http://phylum.geology.wisc.edu/larkin/app-state?id=" + state, function(error, result) {
 
             var params = result[0].data;
 

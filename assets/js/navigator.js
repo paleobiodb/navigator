@@ -147,7 +147,7 @@ var paleo_nav = (function() {
         {
           name: 'time',
           prefetch: {
-            url: 'http://teststrata.geology.wisc.edu/larkin/time_scale'
+            url: 'http://phylum.geology.wisc.edu/larkin/time_scale'
           },
           valueKey: 'name',
           header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
@@ -188,7 +188,7 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: 'http://teststrata.geology.wisc.edu/larkin/stratigraphy_autocomplete?name=%QUERY'
+            url: 'http://phylum.geology.wisc.edu/larkin/stratigraphy_autocomplete?name=%QUERY'
           },
           valueKey: 'display_name'
         }
@@ -333,7 +333,7 @@ var paleo_nav = (function() {
       $("#fetchURL").on("click", function() {
 
         var request = $.ajax({
-          url: "http://teststrata.geology.wisc.edu/larkin/app-state",
+          url: "http://phylum.geology.wisc.edu/larkin/app-state",
           async: false,
           type: "POST",
           data: {
