@@ -309,7 +309,9 @@ var timeScale = (function() {
             return d.name === parent;
           }).attr("x", 430);
 
-          paleo_nav.prelaunch();
+          if (d3.select("#graphicRow").style("visibility") === "hidden") {
+            paleo_nav.prelaunch();
+          }
         }
     }, // End time.labelLevels
 
@@ -404,7 +406,7 @@ var timeScale = (function() {
     },
 
     // Zooms the graph to a given time interval
-    "goTo": function(d) {
+    "goTo": function(d, first) {
       if (typeof d === "string") {
         var d = d3.selectAll('rect').filter(function(e) {
           return e.name === d;

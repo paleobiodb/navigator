@@ -1577,7 +1577,7 @@ var navMap = (function() {
               navMap.checkFilters();
             }
             if (params.timeScale != "Phanerozoic") {
-              setTimeout(timeScale.goTo(params.timeScale), 200);
+              timeScale.goTo(params.timeScale);
             }
 
             paleo_nav.launch();
