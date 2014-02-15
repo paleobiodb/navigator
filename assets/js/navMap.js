@@ -54,6 +54,8 @@ var navMap = (function() {
             setTimeout(navMap.resizeSvgMap, 400);
           }
         }
+
+        navMap.refresh();
       }
       // Called every time the map is panned, zoomed, or resized
       map.on("moveend", function(event) {
@@ -66,7 +68,6 @@ var navMap = (function() {
 
           mapSelection(map.getZoom());
 
-          navMap.refresh();
         }
       });
 
