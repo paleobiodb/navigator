@@ -1487,13 +1487,12 @@ var navMap = (function() {
         if (params.timeScale && params.timeScale != "Phanerozoic") {
           timeScale.goTo(params.timeScale);
         }
-        if (params.taxaFilter) {
-          if (params.taxaFilter.length > 0) {
-            params.taxaFilter.forEach(function(d) {
-              navMap.filterByTaxon(d.name);
-            });
-          }
-        }
+
+        if (params.taxaFilter.length > 0) {
+          params.taxaFilter.forEach(function(d) {
+            navMap.filterByTaxon((d.name) ? d.name : d.nam);
+          });
+        } 
 
         if (typeof(params.stratFilter) === "object" ) {
           if (params.stratFilter.name != "") {

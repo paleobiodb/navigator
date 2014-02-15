@@ -438,6 +438,7 @@ var paleo_nav = (function() {
             "taxon": "Plantae", 
             "person": ""
           },
+          "taxaFilter": [],
           "reconstruct": "block",
           "taxaFilter": [{
             "id": 151418,
