@@ -1,6 +1,16 @@
 body {
   font-family: 'Open-sans', sans-serif;
 }
+
+i, text, .navbar-text, .navbar-brand, .filters, #interval, #age {
+  /* via http://stackoverflow.com/questions/69430/is-there-a-way-to-make-text-unselectable-on-an-html-page */
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .row {
   margin-left: 0;
   margin-right: 0;
@@ -183,6 +193,15 @@ nav {
 .helpModalTimescaleLabel > p{
   font-size: 1em;
   margin:0;
+}
+
+.stackedCollectionTitle {
+  display:inline;
+}
+
+.collectionExpand {
+  float:right;
+  color: #bbb;
 }
 
 .navbar-default .navbar-link {

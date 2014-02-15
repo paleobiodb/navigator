@@ -45,6 +45,16 @@ var navMap = (function() {
 
       stamenLabels = new L.TileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: attrib});
 
+      function mapSelection(zoom) {
+      // If viewing the projected map...
+        if (zoom < 3) {
+          if (window.innerWidth > 700) {
+            d3.select("#map").style("height", 0);
+            d3.select("#svgMap").style("display", "block");
+            setTimeout(navMap.resizeSvgMap, 400);
+          }
+        }
+      }
       // Called every time the map is panned, zoomed, or resized
       map.on("moveend", function(event) {
         // event.hard = true when map is adjusted programatically
@@ -54,14 +64,7 @@ var navMap = (function() {
         } else {
           d3.select(".info").style("display", "none");
 
-          // If viewing the projected map...
-          if (map.getZoom() < 3) {
-            if (window.innerWidth > 700) {
-              d3.select("#map").style("height", 0);
-              d3.select("#svgMap").style("display", "block");
-              setTimeout(navMap.resizeSvgMap, 400);
-            }
-          }
+          mapSelection(map.getZoom());
 
           navMap.refresh();
         }
@@ -71,6 +74,8 @@ var navMap = (function() {
         d3.select(".leaflet-zoom-hide").style("visibility", "hidden");
         // See if labels should be applied or not
         navMap.selectBaseMap(map.getZoom());
+
+        mapSelection(map.getZoom());
       });
 
       // Get map ready for an SVG layer
@@ -172,13 +177,14 @@ var navMap = (function() {
       }
     },
 
+    // TODO: This needs to be cleaned up
     "selectBaseMap": function(zoom) {
       if (zoom < 5) {
         if (map.hasLayer(stamenLabels)) {
           map.removeLayer(stamenLabels);
           map.addLayer(stamen);
         }
-      } else if (zoom > 4 && zoom < 8) {
+      } else if (zoom > 4 && zoom < 7) {
         if (map.hasLayer(stamenLabels)) {
           map.removeLayer(stamenLabels);
           map.addLayer(stamen);
@@ -954,7 +960,7 @@ var navMap = (function() {
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) {
         var output = Mustache.render(template, data);
 
-        d3.select("#binID").html("Collections at [" + (Math.round(data.lat * 10000) / 10000) + ", " + (Math.round(data.lng * 10000) / 10000) + "]");
+        d3.select("#binID").html("Fossil Collections at [" + (Math.round(data.lat * 10000) / 10000) + ", " + (Math.round(data.lng * 10000) / 10000) + "]");
         d3.select("#accordion").html(output);
 
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
