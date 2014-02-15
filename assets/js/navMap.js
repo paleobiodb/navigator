@@ -987,7 +987,7 @@ var navMap = (function() {
                   $(".filterByOccurrence").click(function(event) {
                     event.preventDefault();
                     navMap.filterByTaxon($(this).attr("data-name"));
-                    $("#collectionBox").modal("hide");
+                    $("#collectionModal").modal("hide");
                   });
                 });
               } else {
@@ -1017,7 +1017,7 @@ var navMap = (function() {
         $(".filterByStrat").click(function(event) {
           event.preventDefault();
           navMap.filterByStratigraphy({"name": $(this).attr("data-name"), "type": $(this).attr("data-rank")});
-          $("#collectionBox").modal("hide");
+          $("#collectionModal").modal("hide");
         });
 
         $("#collectionModal").modal();
