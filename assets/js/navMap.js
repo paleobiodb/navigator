@@ -138,8 +138,9 @@ var navMap = (function() {
     },
 
     "changeMaps": function(mouse) {
-      var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-      var translate = [window.innerWidth / 2, (window.innerHeight - timeHeight - 70) / 2];
+      var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6,
+          translate = [window.innerWidth / 2, (window.innerHeight - timeHeight - 70) / 2];
+
       var mercator = d3.geo.mercator()
         .scale(165)
         .precision(.1)
@@ -1377,13 +1378,45 @@ var navMap = (function() {
       navMap.updateFilterList("selectedInterval");
     },
 
-    "filterByTaxon": function(name) {
+    "filterByTaxon": function(name, preventRefresh) {
       if (!name) {
         var name = $("#taxaInput").val();
       }
       
-      taxaBrowser.goToTaxon(name);
+      if (!preventRefresh) {
+        taxaBrowser.goToTaxon(name);
+      }
+      
+      d3.json(paleo_nav.baseUrl + '/data1.1/taxa/list.json?name=' + name, function(err, data) {
+        if (err) {
+          alert("Error retrieving from list.json - ", err);
+        } else {
+          if ( data.records.length > 0 ) {
+            var taxon = {"id": data.records[0].oid, "name": data.records[0].nam};
 
+            // Check if we have already applied this taxon filter
+            for (var i = 0; i < navMap.filters.taxa.length; i++) {
+              if (navMap.filters.taxa[i].name === taxon.name) {
+                // If so, ignore the request to add another taxon filter
+                return;
+              }
+            }
+
+            navMap.filters.taxa.push(taxon);
+            navMap.filters.exist.taxon = true;
+
+            navMap.updateFilterList("taxon", data.records[0].oid);
+
+            if (d3.select("#reconstructMap").style("display") === "block") {
+              reconstructMap.rotate(navMap.filters.selectedInterval);
+            } else {
+              navMap.refresh("reset");
+            }
+          } else {
+            alert("No taxa with this name found");
+          }
+        }
+      });
     },
 
     "filterByPerson": function(person, norefresh) {

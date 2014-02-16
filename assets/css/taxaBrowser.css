@@ -16,6 +16,10 @@ a:hover {
   margin: 0 auto;
   padding: 3px;
 }
+.icon-plus-sign-alt {
+  margin-left: 12px;
+  font-size: 0.7em;
+}
 .taxonTitle {
   display: inline;
   font-weight: bold;

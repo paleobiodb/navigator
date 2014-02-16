@@ -1,6 +1,6 @@
 // Adapted from an Angular.js implementation by Michael McClennen
 var taxaBrowser = (function(){
-
+  var section_list = [];
   return {
     "init": function() {
       // Handler for the taxa search box
@@ -24,26 +24,11 @@ var taxaBrowser = (function(){
             alert("Error retrieving from list.json - ", err);
           } else {
             if ( data.records.length > 0 ) {
-              // Update the map filters
-              var taxon = {"id": data.records[0].oid, "name": data.records[0].nam};
-
-              // Check if we have already applied this taxon filter
-              for (var i = 0; i < navMap.filters.taxa.length; i++) {
-                if (navMap.filters.taxa[i].name === taxon.name) {
-                  // If so, ignore the request to add another taxon filter
-                  return;
-                }
-              }
-
-              navMap.filters.taxa.push(taxon);
-              navMap.filters.exist.taxon = true;
-
-              navMap.updateFilterList("taxon", data.records[0].oid);
               paleo_nav.untoggleTaxa();
               
               // Update the selected taxon in the taxa browser
               d3.select(".taxonTitle")
-                .html(data.records[0].nam + " (" + taxaBrowser.rankMap(data.records[0].rnk) + ")")
+                .html(data.records[0].nam + " (" + taxaBrowser.rankMap(data.records[0].rnk) + ")" + "<i class='icon icon-plus-sign-alt'></i>")
                 .attr("id", function() { return data.records[0].nam });
 
               // Get the rest of the details
@@ -53,11 +38,6 @@ var taxaBrowser = (function(){
               $("#taxonInput").val("");
               $("#taxaInput").val("");
               
-              if (d3.select("#reconstructMap").style("display") == "block") {
-                reconstructMap.rotate(navMap.filters.selectedInterval);
-              } else {
-                navMap.refresh("reset");
-              }
             } else {
               // TODO: Don't use a damn alert!
                 return alert("No taxa with this name found");
@@ -142,15 +122,15 @@ var taxaBrowser = (function(){
          })
         .attr("class", function(d, i) {
           // If the current data point being bound is the last one...
-          if (i == parent_list.length - 1) {
+          if (i === parent_list.length - 1) {
             // If extint, add that class
-            if (d.ext == 0) {
+            if (d.ext === 0) {
               return "immediateParent extinct parents";
             } else {
               return "immediateParent parents";
             }
           // If the current data point isn't the last one and it's extinct
-          } else if (d.ext == 0) {
+          } else if (d.ext === 0) {
             return "extinct parents";
           // Otherwise, assume it's a normal parent
           } else {
@@ -163,10 +143,10 @@ var taxaBrowser = (function(){
     },
 
     "computeChildList": function(taxon) {
-      var section_list = [];
+      section_list = [];
         
-      if (taxon.chl && taxon.rnk > 5 && (taxon.chl.length == 0 || !taxon.gns || taxon.chl.length != taxon.gnc)) {
-          section_list.push({ section: "immediate subtaxa", size: taxon.chl.length, 
+      if (taxon.chl && taxon.rnk > 5 && (taxon.chl.length === 0 || !taxon.gns || taxon.chl.length != taxon.gnc)) {
+          section_list.push({ section: "immediate subtaxa", size: taxon.chl.length, rank: "immediate", 
             offset: 0, order: 'size.desc', taxa: taxon.chl });
       }
       
@@ -233,11 +213,11 @@ var taxaBrowser = (function(){
     "getSubtaxa": function(taxon, rank, offset, limit) {
       var lim_str = '';
         
-      if (typeof offset == "number") {
+      if (typeof offset === "number") {
           lim_str += '&offset=' + offset;
       }
       
-      if (typeof limit == "number") {
+      if (typeof limit === "number") {
           lim_str += '&limit=' + limit;
       }
       
@@ -336,13 +316,43 @@ var taxaBrowser = (function(){
         d.preventDefault();
         /* When clicked, get all subtaxa given the focal taxon and 
         the rank of the item clicked (i.e. was order, family, etc selected?)*/
-        taxaBrowser.getSubtaxa(taxon, d.target.id.substr(1));
+        if (d.target.id.substr(1) != "immediate") {
+          taxaBrowser.getSubtaxa(taxon, d.target.id.substr(1));
+        } else {
+          d3.select("#subtaxa").selectAll("li").remove();
+          d3.select("#subtaxa").selectAll("br").remove();
+
+          function compare(a,b) {
+            if (a.siz > b.siz)
+               return -1;
+            if (a.siz < b.siz)
+              return 1;
+            return 0;
+          }
+
+          // Find object in section list where rank = 'immediate'
+          var index = navMap.getIndex(section_list, "immediate", "rank");
+          section_list[index].taxa.sort(compare);
+
+          section_list[index].taxa.forEach(function(d) {
+            var taxaClass = (d.ext === 0) ? "extinct childTaxa" : "childTaxa";
+
+            $("#subtaxa").append("<li><a href='#' class='" + taxaClass + "' id='" + d.nam + "'>" + d.nam + " (" + d.siz + ") " + "</a></li>");
+          });
+          $("#subtaxa").append("<br>");
+
+          taxaBrowser.reattachHandlers(taxon);
+
+          // Open up the modal that shows all subtaxa
+          $("#subtaxaModal").modal();
+        }
+        
       });
 
       $(".taxonTitle").off("click");
       $(".taxonTitle").click(function(d) {
         d.preventDefault();
-        taxaBrowser.goToTaxon(d.target.id);
+        navMap.filterByTaxon(d.target.id, true);
       });
 
     },
