@@ -31,6 +31,11 @@ var taxaBrowser = (function(){
                 .html(data.records[0].nam + " (" + taxaBrowser.rankMap(data.records[0].rnk) + ")" + "<i class='icon icon-plus-sign-alt'></i>")
                 .attr("id", function() { return data.records[0].nam });
 
+              $(".taxonTitle").off("click");
+              $(".taxonTitle").click(function(d) {
+                d.preventDefault();
+                navMap.filterByTaxon(d.target.id, true);
+              });
               // Get the rest of the details
               taxaBrowser.getTaxonDetails(data.records[0]);
 
@@ -347,12 +352,6 @@ var taxaBrowser = (function(){
           $("#subtaxaModal").modal();
         }
         
-      });
-
-      $(".taxonTitle").off("click");
-      $(".taxonTitle").click(function(d) {
-        d.preventDefault();
-        navMap.filterByTaxon(d.target.id, true);
       });
 
     },
