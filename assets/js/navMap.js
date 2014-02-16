@@ -1383,10 +1383,6 @@ var navMap = (function() {
         var name = $("#taxaInput").val();
       }
       
-      if (!preventRefresh) {
-        taxaBrowser.goToTaxon(name);
-      }
-      
       d3.json(paleo_nav.baseUrl + '/data1.1/taxa/list.json?name=' + name, function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
@@ -1400,6 +1396,10 @@ var navMap = (function() {
                 // If so, ignore the request to add another taxon filter
                 return;
               }
+            }
+            
+            if (!preventRefresh) {
+              taxaBrowser.goToTaxon(name);
             }
 
             navMap.filters.taxa.push(taxon);
