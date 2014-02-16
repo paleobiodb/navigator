@@ -138,11 +138,12 @@ var navMap = (function() {
     },
 
     "changeMaps": function(mouse) {
-
+      var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+      var translate = [window.innerWidth / 2, (window.innerHeight - timeHeight - 70) / 2];
       var mercator = d3.geo.mercator()
         .scale(165)
         .precision(.1)
-        .translate([width / 2, height / 2]);
+        .translate(translate);
 
       var coords = mouse,
         projected = mercator.invert(coords);
@@ -818,8 +819,6 @@ var navMap = (function() {
           d.display_name1 = d.tna;
           d.display_name2 = "";
         }
-        //d.display_name1 = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.idt;
-        //d.display_name2 = (d.tna === (d.idt + " " + d.ids)) ? "" : d.ids;
 
         // Find unique phyla
         var phyla = [];
