@@ -57,17 +57,17 @@ var taxaBrowser = (function(){
       d3.json(paleo_nav.baseUrl + '/data1.1/taxa/single.json?id=' + taxon.oid + '&show=attr,nav,size', function(err, data ) {
         if (err) {
           // This should never be true, unless something goes horrifically wrong
-          alert("Error retrieving from single.json - ", err);
+          return alert("Error retrieving from single.json - ", err);
         } else if (data.records.length > 0) {
           // Update the selected taxon's att...?
           d3.select(".taxonAttr").html(data.records[0].att);
-          
+
           // Compute the parents and children of the selected taxon
           taxaBrowser.computeParentList(data.records[0]);
           taxaBrowser.computeChildList(data.records[0]);
         } else {
-            // This should also never happen
-            return alert("No taxon details found - browser");
+          // This should also never happen
+          return alert("No taxon details found - browser");
         }
       });
     },
@@ -77,37 +77,37 @@ var taxaBrowser = (function(){
           last_oid = 0;
       
       if (taxon.kgt && taxon.kgn && taxon.kgn != taxon.gid) {
-          taxon.kgt.rnk = 'kingdom*';
-          parent_list.push(taxon.kgt);
-          last_oid = taxon.kgn;
+        taxon.kgt.rnk = 'kingdom';
+        parent_list.push(taxon.kgt);
+        last_oid = taxon.kgn;
       }
       
       if (taxon.phl && taxon.phn && taxon.phn != taxon.gid) {
-          taxon.pht.rnk = 'phylum*';
-          parent_list.push(taxon.pht);
-          last_oid = taxon.phn;
+        taxon.pht.rnk = 'phylum';
+        parent_list.push(taxon.pht);
+        last_oid = taxon.phn;
       }
       
       if (taxon.cll && taxon.cln && taxon.cln != taxon.gid) {
-          taxon.clt.rnk = 'class*';
-          parent_list.push(taxon.clt);
-          last_oid = taxon.cln;
+        taxon.clt.rnk = 'class';
+        parent_list.push(taxon.clt);
+        last_oid = taxon.cln;
       }
       
       if (taxon.odl && taxon.odn && taxon.odn != taxon.gid) {
-          taxon.odt.rnk = 'order*';
-          parent_list.push(taxon.odt);
-          last_oid = taxon.odn;
+        taxon.odt.rnk = 'order';
+        parent_list.push(taxon.odt);
+        last_oid = taxon.odn;
       }
       
       if (taxon.fml && taxon.fmn && taxon.fmn != taxon.gid) {
-          taxon.fmt.rnk = 'family*';
-          parent_list.push(taxon.fmt);
-          last_oid = taxon.fmn;
+        taxon.fmt.rnk = 'family';
+        parent_list.push(taxon.fmt);
+        last_oid = taxon.fmn;
       }
       
       if (taxon.prt && taxon.par != last_oid) {
-          parent_list.push(taxon.prt);
+        parent_list.push(taxon.prt);
       }
 
       var tbody = d3.select("#focalTaxonParents");

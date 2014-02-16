@@ -805,7 +805,7 @@ var navMap = (function() {
         if (d.idt) {
           if (d.tna === (d.idt + " " + d.ids)) {
             var genusRes = (d.rst) ? d.rst + " " : "",
-                speciesRes = (d.rss) ? " " + d.rss + " " : "";
+                speciesRes = (d.rss) ? " " + d.rss + " " : " ";
             d.genusRes = genusRes;
             d.display_name1 = d.idt + speciesRes + d.ids;
             d.display_name2 = "";
@@ -869,13 +869,39 @@ var navMap = (function() {
             familyIndex = navMap.getIndex(occurrenceTree.phyla[phylumIndex].classes[classIndex].families, d.fml, "family");
         occurrenceTree.phyla[phylumIndex].classes[classIndex].families[familyIndex].genera.push(d);
       });
+      
+      for (var i = 0; i < occurrenceTree.phyla.length; i++) {
+        var undefinedClassIndex;
+        for (var j = 0; j < occurrenceTree.phyla[i].classes.length; j++) {
+          var undefinedFamilyIndex;
+          for (var k = 0; k < occurrenceTree.phyla[i].classes[j].families.length; k++) {
+            if (typeof(occurrenceTree.phyla[i].classes[j].families[k].family) === "undefined") {
+              undefinedFamilyIndex = k;
+              occurrenceTree.phyla[i].classes[j].families[k].family = "Miscellaneous " + occurrenceTree.phyla[i].classes[j].nameClass;
+              occurrenceTree.phyla[i].classes[j].families[k].noFamily = true;
+            }
+          }
 
-      occurrenceTree.phyla.forEach(function(d) {
-        if (typeof(d.phylum) === "undefined") {
-          d.phylum = "Unranked taxa";
-          d.unranked = true;
+          if (typeof(undefinedFamilyIndex) != "undefined") {
+            occurrenceTree.phyla[i].classes[j].families.push(occurrenceTree.phyla[i].classes[j].families.splice(undefinedFamilyIndex, 1)[0]);
+          }
+          
+          if (typeof(occurrenceTree.phyla[i].classes[j].nameClass) === "undefined") {
+            undefinedFamilyIndex = j;
+            occurrenceTree.phyla[i].classes[j].nameClass = "Miscellaneous " + occurrenceTree.phyla[i].phylum;
+            occurrenceTree.phyla[i].classes[j].noClass = true;
+          }
         }
-      });
+
+        if (typeof(undefinedClassIndex) != "undefined") {
+          occurrenceTree.phyla[i].classes.push(occurrenceTree.phyla[i].classes.splice(undefinedClassIndex, 1)[0]);
+        }
+
+        if (typeof(occurrenceTree.phyla[i].phylum) === "undefined") {
+          occurrenceTree.phyla[i].phylum = "Unranked taxa";
+          occurrenceTree.phyla[i].unranked = true;
+        }
+      }
 
       return occurrenceTree;
     },
@@ -1398,15 +1424,17 @@ var navMap = (function() {
               }
             }
             
+            // Update the taxon browser unless it's explicitly blocked
             if (!preventRefresh) {
               taxaBrowser.goToTaxon(name);
             }
 
+            // Add map filter for this taxon
             navMap.filters.taxa.push(taxon);
             navMap.filters.exist.taxon = true;
-
             navMap.updateFilterList("taxon", data.records[0].oid);
 
+            // Refresh either the reconstruction map or the regular one
             if (d3.select("#reconstructMap").style("display") === "block") {
               reconstructMap.rotate(navMap.filters.selectedInterval);
             } else {
@@ -1421,13 +1449,13 @@ var navMap = (function() {
 
     "filterByPerson": function(person, norefresh) {
       if (person) {
+        // Update map filters
         filters.exist.personFilter = true;
         filters.personFilter.id = (person.oid) ? person.oid : person.id;
         filters.personFilter.name = (person.name) ? person.name : person.nam;
         navMap.updateFilterList("personFilter");
-        d3.select(".userToggler").style("display", "none");
-        d3.select(".userFilter").style("color", "");
 
+        // Refresh either the reconstruction map or the regular one
         if (d3.select("#reconstructMap").style("display") === "block") {
           reconstructMap.rotate(filters.selectedInterval);
         } else {
@@ -1520,6 +1548,9 @@ var navMap = (function() {
       but eventually an array will indicate a preserved URL state, whereas
       an object will indicate another type of preserved state, i.e. something
       like the example map states
+    */
+    /*
+      TODO: Clean this up! Lots of redundant code
     */
       if (typeof state === "object") {
         var params = state;
@@ -1625,7 +1656,6 @@ var navMap = (function() {
           });
         }
       }
-
     },
 
     "getUrl": function() {

@@ -10,10 +10,20 @@
         {{^unranked}}<li><a href="#" class="filterByOccurrence phylum" data-name="{{phylum}}">{{phylum}}</a></li>{{/unranked}}
         {{#classes}}
         <ul class="list-no-bullet">
+          {{#noClass}}
+          <li class="class">{{nameClass}}</li>
+          {{/noClass}}
+          {{^noClass}}
           <li><a href="#" class="filterByOccurrence class" data-name="{{nameClass}}">{{nameClass}}</a></li>
+          {{/noClass}}
+          
           {{#families}}
           <ul class="list-no-bullet">
-            <li><a href="#" class="filterByOccurrence family" data-name="{{family}}">{{family}}</a></li>
+            {{#noFamily}}
+            <li class="family">{{family}}</li>
+            {{/noFamily}}
+            {{^noFamily}}
+            <li><a href="#" class="filterByOccurrence family" data-name="{{family}}">{{family}}</a></li>{{/noFamily}}
             {{#genera}}
             <ul class="list-no-bullet">
               <li>{{#old_name}}"{{old_name}}" - {{/old_name}} {{#genusRes}}{{genusRes}}{{/genusRes}} <a href="#" class="filterByOccurrence genus {{itallics}}" data-name="{{url}}">{{display_name1}}</a>{{#display_name2}} {{display_name2}}{{/display_name2}}</li>

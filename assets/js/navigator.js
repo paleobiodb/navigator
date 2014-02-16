@@ -142,6 +142,17 @@ var paleo_nav = (function() {
         taxaBrowser.goToTaxon(data.nam);
       });
 
+      // If the user hits enter instead of selecting a taxon from the dropdown menu
+      $('input#taxonInput').keypress(function(e) {
+        if (e.which === 13) {
+          var selectedValue = $('input#taxonInput').data().ttView.dropdownView.getFirstSuggestion();
+          taxaBrowser.goToTaxon(selectedValue.datum.nam);
+
+          document.activeElement.blur();
+          $("input#taxonInput").blur();
+          $("input#taxonInput").typeahead("setQuery", "");
+        }
+      });
 
       var universalAutocomplete = $("#universalAutocompleteInput").typeahead([
         {
