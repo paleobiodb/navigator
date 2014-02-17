@@ -31,7 +31,7 @@ var navMap = (function() {
       map = new L.Map('map', {
         center: new L.LatLng(7, 0),
         zoom: 2,
-        maxZoom:10,
+        maxZoom:11,
         minZoom: 2,
         zoomControl: false,
         inertiaDeceleration: 6000,
@@ -131,6 +131,7 @@ var navMap = (function() {
       //TODO: Yeaaaah...
         reconstructMap.resize();
         timeScale.resize();
+        setTimeout(navMap.resize, 1000);
 
         callback();
       });
@@ -877,7 +878,7 @@ var navMap = (function() {
           for (var k = 0; k < occurrenceTree.phyla[i].classes[j].families.length; k++) {
             if (typeof(occurrenceTree.phyla[i].classes[j].families[k].family) === "undefined") {
               undefinedFamilyIndex = k;
-              occurrenceTree.phyla[i].classes[j].families[k].family = "Miscellaneous " + occurrenceTree.phyla[i].classes[j].nameClass;
+              occurrenceTree.phyla[i].classes[j].families[k].family = "Miscellaneous " + (typeof(occurrenceTree.phyla[i].classes[j].nameClass) === "undefined") ? "Miscellaneous unranked taxa" : occurrenceTree.phyla[i].classes[j].nameClass;
               occurrenceTree.phyla[i].classes[j].families[k].noFamily = true;
             }
           }
@@ -888,7 +889,7 @@ var navMap = (function() {
           
           if (typeof(occurrenceTree.phyla[i].classes[j].nameClass) === "undefined") {
             undefinedFamilyIndex = j;
-            occurrenceTree.phyla[i].classes[j].nameClass = "Miscellaneous " + occurrenceTree.phyla[i].phylum;
+            occurrenceTree.phyla[i].classes[j].nameClass = "Miscellaneous " + (typeof(occurrenceTree.phyla[i].phylum) === "undefined") ? "Miscellaneous unranked taxa" : occurrenceTree.phyla[i].phylum;
             occurrenceTree.phyla[i].classes[j].noClass = true;
           }
         }
@@ -1221,9 +1222,13 @@ var navMap = (function() {
       if (window.innerWidth < 700) {
         d3.select("#svgMap").style("display", "none");
         d3.select("#map").style("height", function() {
-          return (window.innerHeight - 70) + "px";
+          return (window.innerHeight - 55) + "px";
         });
         map.invalidateSize();
+        $("#downloadDataTab").removeClass("active");
+        $("#downloadData").removeClass("active");
+        $("#urlTab").addClass("active");
+        $("#getURL").addClass("active");
       } else if (parseInt(d3.select("#map").style("height")) > 1) { 
         d3.select("#map")
           .style("height", function(d) {
@@ -1243,9 +1248,9 @@ var navMap = (function() {
         .style("height", function(d) {
           if (d3.select(".timeScale").style("visibility") === "hidden") {
             if (window.innerWidth < 468) {
-              return (window.innerHeight - 102) + "px";
+              return (window.innerHeight - 77) + "px";
             } else if (window.innerWidth < 648) {
-              return (window.innerHeight - 85) + "px";
+              return (window.innerHeight - 66) + "px";
             } else {
               return (window.innerHeight - 56) + "px";
             }
@@ -1258,10 +1263,11 @@ var navMap = (function() {
       d3.select(".filters")
         .style("bottom", function() {
           if (window.innerWidth < 468) {
-            return (window.innerHeight - 102) + "px";
+            return "83px";
+          } else {
+            var height = parseInt(d3.select("#time").select("svg").style("height"));
+            return (height + 15) + "px";
           }
-          var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 20) + "px";
         });
 
       d3.selectAll(".helpModalTimescaleLabel")
@@ -1409,7 +1415,7 @@ var navMap = (function() {
         var name = $("#taxaInput").val();
       }
       
-      d3.json(paleo_nav.baseUrl + '/data1.1/taxa/list.json?name=' + name, function(err, data) {
+      d3.json(paleo_nav.baseUrl + '/data1.1/taxa/list.json?name=' + name + '&status=all', function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
         } else {

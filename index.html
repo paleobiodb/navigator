@@ -43,13 +43,8 @@
           <a class="navbar-brand" href="/navigator"><t class="brand-small">PBDB</t> Navigator <t class="brand-small">Beta</t></a>
         </div>
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="navbar-text about"><a data-toggle="modal" href="#aboutModal" class="navbar-link">About</a></li>
-            <li class="navbar-text help"><a data-toggle="modal" href="#helpModal" class="navbar-link">Help</a></li>
-          </ul>
           <ul class="nav navbar-nav navbar-right">
-             <div>
-              
+             <li>
               <div class="universalSearch col-sm-4">
                 <form class="form-search universalSearchForm">
                   <div class="input-group">
@@ -60,8 +55,13 @@
                   </div>
                 </form>
               </div>
-              
-            </div>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="navbar-text about"><a data-toggle="modal" href="#aboutModal" class="navbar-link">About</a></li>
+            <li class="navbar-text help"><a data-toggle="modal" href="#helpModal" class="navbar-link">Help</a></li>
+            <li class="navbar-text" id="taxaBrowserNavbar"><a href="#" class="navbar-link">Taxa Browser</a></li>
+            <li class="navbar-text" id="getUrlNavbar"><a data-toggle="modal" href="#saveBox" class="navbar-link">Get URL</a></li>
           </ul>
         </div>
       </div> <!-- end navbar -->
@@ -185,8 +185,8 @@
           <div class="modal-header" id="downloadModalHeader">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <ul class="nav nav-tabs">
-              <li class="active downloadTab"><a href="#downloadData" data-toggle="tab"><i class="icon-save"></i> Download Data</a></li>
-              <li class="downloadTab"><a href="#getURL" data-toggle="tab" id="fetchURL"><i class="icon-link"></i>Get URL</a></li>
+              <li class="active downloadTab" id="downloadDataTab"><a href="#downloadData" data-toggle="tab"><i class="icon-save"></i> Download Data</a></li>
+              <li class="downloadTab" id="urlTab"><a href="#getURL" data-toggle="tab" id="fetchURL"><i class="icon-link"></i>Get URL</a></li>
             </ul>
           </div>
           <div class="modal-body">

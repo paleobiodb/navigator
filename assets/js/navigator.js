@@ -107,12 +107,25 @@ var paleo_nav = (function() {
       });
 
       // Controls the "hide" and "show" taxa browser links
+      var mobileTaxaBrowserLink = $("#taxaBrowserNavbar").hammer();
+      mobileTaxaBrowserLink.on("tap", function(event) {
+        event.preventDefault();
+        $(".navbar-collapse").collapse("hide");
+        var display = d3.select("#taxaBrowser").style("display");
+        if (display === "block") {
+          paleo_nav.closeTaxaBrowser();
+        } else {
+          paleo_nav.openTaxaBrowser();
+        }
+        $
+      });
+
       var taxaBrowserToggleButton = $(".taxaBrowserToggle").hammer();
 
       taxaBrowserToggleButton.on("tap", function(event) {
         event.preventDefault();
         var display = d3.select("#taxaBrowser").style("display");
-        if (display == "block") {
+        if (display === "block") {
           paleo_nav.closeTaxaBrowser();
         } else {
           paleo_nav.openTaxaBrowser();
@@ -206,6 +219,7 @@ var paleo_nav = (function() {
       ]);
 
       universalAutocomplete.on('typeahead:selected', function(evt, data, dataset) {
+        $(".navbar-collapse").collapse("hide");
         switch (dataset) {
           case 'contribs':
             navMap.filterByPerson(data);
@@ -279,6 +293,8 @@ var paleo_nav = (function() {
           document.activeElement.blur();
           $("#universalAutocompleteInput").blur();
           $("#universalAutocompleteInput").typeahead("setQuery", "");
+          $(".navbar-collapse").collapse("hide");
+
         }
       });
 
@@ -291,6 +307,27 @@ var paleo_nav = (function() {
 
       // Fired when the "save" modal is opened
       $("#saveBox").on('show.bs.modal', function() {
+        if ($("#urlTab").hasClass("active")) {
+          var request = $.ajax({
+            url: "http://phylum.geology.wisc.edu/larkin/app-state",
+            async: false,
+            type: "POST",
+            data: {
+              state: navMap.getUrl()
+            },
+            ContentType: "application/x-www-form-urlencoded",
+            dataType: "json"
+          });
+
+          request.success(function(result) {
+            $("#url").val("http://paleobiodb.org/navigator/#/" + result.id);
+            // For some reason this won't work without a small timeout
+            setTimeout(function() {
+              $("#url").focus();
+              $("#url").select();
+            }, 100);
+          });
+        }
         var count = 0;
         for (var key in navMap.filters.exist) {
           if (navMap.filters.exist.hasOwnProperty(key)) {
@@ -377,6 +414,8 @@ var paleo_nav = (function() {
       $("#goToApp").on("click", function() {
         $("#helpModal").modal('hide');
       });
+
+
 
       // Handlers for the example map states
       $("#trilobita").on("click", function(event) {
@@ -485,7 +524,7 @@ var paleo_nav = (function() {
       d3.select("#graphicRow").style("visibility", "visible");
       d3.select("#waiting").style("display", "none");
       navMap.resizeSvgMap();
-      navMap.resize();
+      setTimeout(navMap.resize, 500);
 
       if (!localStorage.pbdb) {
         if (window.innerWidth > 700) {

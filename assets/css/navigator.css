@@ -224,6 +224,12 @@ color: rgb(245,245,245);
   height:400px;
   width:100%;
 }
+.leaflet-bottom.leaflet-right {
+  z-index: 0;
+}
+.leaflet-control-attribution {
+  line-height: 1em;
+}
 #svgMap > svg {
   min-height: 329px;
 }
@@ -658,14 +664,11 @@ br {
   right: 0;
   top: 0.5em;
   z-index: 5;
-  min-width: 251px;
+  min-width: 400px;
   max-width: 430px;
   margin-left: 60px;
 }
 .universalSearchForm {
- /* box-shadow: 1px 2px 5px #000;
-  -moz-box-shadow: 1px 2px 5px #000;
-  -webkit-box-shadow: 1px 2px 5px #000;*/
   border-radius:5px;
   -moz-border-radius:5px;
   -webkit-border-radius:5px;
@@ -718,11 +721,19 @@ br {
   margin-left:15px;
 }
 
+.navbar-right {
+  height:40px;
+}
+
 #waiting {
   color: #777;
   position: absolute;
-  top: 30%;
-  left: 40%;
+  width:330px;
+  top:36%;
+  bottom:0;
+  left:0;
+  right:0;
+  margin:auto;
 }
 
 .dataSource {
@@ -788,6 +799,11 @@ br {
 
 .list-no-bullet {
   list-style-type:none;
+  margin-left:-20px;
+}
+
+.occurrenceContainer {
+  margin-left:-20px;
 }
 
 .phylum {
@@ -800,6 +816,13 @@ br {
 
 .family {
   font-size: 1.2em;
+}
+
+#taxaBrowserNavbar {
+  display: none;
+}
+#getUrlNavbar {
+  display: none;
 }
 @media(max-width: 1050px) {
   .examples>button> img {
@@ -837,10 +860,7 @@ br {
   }
 }
 @media(max-width: 700px) {
-  .save {
-    display: none;
-  }
-  .rotate {
+  .mapCtrl {
     display: none;
   }
   .timeScale {
@@ -849,10 +869,22 @@ br {
   .navbar-text.help {
     display: none;
   }
-  .navbar-text.about {
+  .navbar-text {
+    font-size: 1.3em;
     float:right;
     margin-right:10px;
-    font-size: 1.3em;
+  }
+  #taxaBrowserNavbar {
+    display: block;
+  }
+  #getUrlNavbar {
+    display: block;
+  }
+  #downloadDataTab {
+    display: none;
+  }
+  #downloadData {
+    display: none;
   }
 }
 @media screen and (max-width: 580px) {
@@ -865,7 +897,6 @@ br {
     position: relative;
     padding-bottom: 15px;
     float:right;
-    margin-right:10px;
   }
   .pull-right {
     clear:right;
