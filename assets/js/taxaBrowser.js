@@ -34,7 +34,7 @@ var taxaBrowser = (function(){
               $(".taxonTitle").off("click");
               $(".taxonTitle").click(function(d) {
                 d.preventDefault();
-                navMap.filterByTaxon(d.target.id, true);
+                navMap.filterByTaxon($(".taxonTitle").attr("id"), true);
               });
               // Get the rest of the details
               taxaBrowser.getTaxonDetails(data.records[0]);

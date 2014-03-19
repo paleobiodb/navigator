@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      Leave blank if application is on the same server */  
-  var baseUrl = "http://paleobiodb.org";
+  var baseUrl = "";
 
   return {
     "init": function() {
@@ -249,15 +249,19 @@ var paleo_nav = (function() {
       });
 
       $("#universalAutocompleteInput").on("focus", function() {
-        $(".navbar-collapse").css("height", window.innerHeight - 50 + "px");
-        $(".navbar-collapse").css("max-height", window.innerHeight - 50 + "px");
-        $(".tt-dropdown-menu").css("width", $("#universalAutocompleteInput").width() + "px");
+        if (window.innerWidth < 700) {
+          $(".navbar-collapse").css("height", window.innerHeight - 50 + "px");
+          $(".navbar-collapse").css("max-height", window.innerHeight - 50 + "px");
+          $(".tt-dropdown-menu").css("width", $("#universalAutocompleteInput").width() + "px");
+        }
       });
 
       $("#universalAutocompleteInput").on("blur", function() {
         window.scrollTo(0,0);
-        $(".navbar-collapse").css("height", "auto");
-        $(".navbar-collapse").css("max-height", "340px");
+        if (window.innerWidth < 700) {
+          $(".navbar-collapse").css("height", "auto");
+          $(".navbar-collapse").css("max-height", "340px");
+        }
       });
 
       $("#universalSearchButton").click(function(event) {
