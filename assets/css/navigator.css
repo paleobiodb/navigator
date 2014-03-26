@@ -797,6 +797,10 @@ br {
   margin:3px;
 }
 
+#licenseDownload {
+  font-size: 0.8em;
+}
+
 .list-no-bullet {
   list-style-type:none;
   margin-left:-20px;
