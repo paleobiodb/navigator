@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
-     Leave blank if application is on the same server */  
-  var baseUrl = "";
+     If developing locally default to paleobiodb.org, otherwise use localhost */  
+  var baseUrl = (window.location.hostname === "localhost") ? "http://paleobiodb.org" : "";
 
   return {
     "init": function() {
@@ -380,10 +380,12 @@ var paleo_nav = (function() {
       $("#saveBox").on('hide.bs.modal', function() {
         $("#filterList").html('');
         $("#downloadCount").html("");
+
+        $("#appUrl").val("");
+        $("#apiUrl").val("");
       });
 
-      $("#fetchURL").on("click", function() {
-
+      $("#getAppUrl").on("click", function() {
         var request = $.ajax({
           url: "http://phylum.geology.wisc.edu/larkin/app-state",
           async: false,
@@ -396,15 +398,27 @@ var paleo_nav = (function() {
         });
 
         request.success(function(result) {
-          $("#url").val("http://paleobiodb.org/navigator/#/" + result.id);
+          $("#appUrl").val("http://paleobiodb.org/navigator/#/" + result.id);
           // For some reason this won't work without a small timeout
           setTimeout(function() {
-            $("#url").focus();
-            $("#url").select();
+            $("#appUrl").focus();
+            $("#appUrl").select();
           }, 100);
         });
+      });
+
+      $("#getApiUrl").on("click", function() {
+        var url = navMap.getApiUrl();
+
+        $("#apiUrl").val(url);
+        // For some reason this won't work without a small timeout
+        setTimeout(function() {
+          $("#apiUrl").focus();
+          $("#apiUrl").select();
+        }, 100);
 
       });
+
       // Handler for the simple taxa search box
       $("#taxaForm").submit(function() {
         navMap.filterByTaxon();

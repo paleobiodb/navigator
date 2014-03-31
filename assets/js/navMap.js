@@ -1545,6 +1545,28 @@ var navMap = (function() {
       window.open(url);
     },
 
+    "getApiUrl": function() {
+      var bounds = map.getBounds(),
+          sw = bounds._southWest,
+          ne = bounds._northEast;
+
+      if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
+        sw.lng = -180,
+        ne.lng = 180,
+        sw.lat = -90,
+        ne.lat = 90;
+      }
+
+      var url = 'http://paleobiodb.org/data1.1/occs/list.json';
+
+      url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=99999999';
+      url = navMap.parseURL(url);
+
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
+
+      return url;
+    },
+
     "restoreState": function(state) {
     /*TODO: should probably change this check to something like 
       Array.isArray(state) to check if it's an array, and

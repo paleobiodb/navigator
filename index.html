@@ -243,12 +243,27 @@
               </div>
               <div class="tab-pane" id="getURL">
                 <div class="row">
-                  <div class="col-sm-8">
+                  <div class="col-sm-10">
                     <div class="form-group">
-                      <label for="url">Application state URL:</label>
-                      <input type="text" class="form-control" id="url">
+                      <label for="appUrl">Application state URL:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="appUrl">
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" type="button" id="getAppUrl">Get URL</button>
+                        </span>
+                      </div>
+                      <p class="help-block">Provides a sharable link that preserves all aspects of the application state</p>
                     </div>
-                    <p>Provides a sharable link that preserves all aspects of the application state</p>
+                    <div class="form-group">
+                      <label for="apiUrl">Data URL:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="apiUrl">
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" type="button" id="getApiUrl">Get URL</button>
+                        </span>
+                      </div>
+                      <p class="help-block">The API data URL for taxonomic occurrence data. For use with external services and scripts, such as R or Python. See the <a href="/data1.1">data service documentation</a> for additional information.</p>
+                    </div>
                   </div>
                 </div>
               </div>
