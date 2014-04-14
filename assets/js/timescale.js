@@ -364,9 +364,6 @@ var timeScale = (function() {
   }
 
   function mapFilter(d) {
-    //var timeFilterCheck = document.getElementById('viewByTimeBox').checked,
-    var reconstructCheck = document.getElementById('reconstructBox').checked;
-
     // If the interval clicked on is already the selected filter, ignore
     if (d.id === navMap.filters.selectedInterval.oid) {
       return;
@@ -382,7 +379,7 @@ var timeScale = (function() {
 
     navMap.updateFilterList("selectedInterval");
 
-    if (reconstructCheck) {
+    if (reconstructMap.visible) {
       var requestYear = parseInt((d.early_age + d.late_age) / 2);
       if (d.depth < 3) {
         return alert("Please select a period or finer interval");

@@ -40,11 +40,6 @@ var reconstructMap = (function() {
         .attr("class", "fill")
         .attr("xlink:href", "#sphere");
 
-      //attach window resize listener to the window
-      /*d3.select(window).on("resize", reconstructMap.resize);
-      reconstructMap.resize();*/
-      // Moved to navigator.js:~155
-
       $("#mapSwitch").on("click", function(event) {
         event.preventDefault();
         paleo_nav.closeReconstructMap();
@@ -380,8 +375,10 @@ var reconstructMap = (function() {
             return "scale(" + window.innerHeight/800 + ")translate(" + ((width - box.width)/2) + ",0)";
           } else {
             var svgHeight = ((window.innerHeight * 0.70) - 70),
-                mapHeight = (width/970 ) * 500;
-            return "scale(" + width/970 + ")translate(0," + (svgHeight - mapHeight)/2 + ")";
+                mapHeight = (width/970 ) * 500,
+                translate = (((svgHeight - mapHeight)/2) > 0) ? (svgHeight - mapHeight)/2 : 0;
+
+            return "scale(" + width/970 + ")translate(0," + translate + ")";
           }
         });
 
@@ -413,6 +410,7 @@ var reconstructMap = (function() {
     },
 
     "currentReconstruction": currentReconstruction,
-    "reconstructing": reconstructing
+    "reconstructing": reconstructing,
+    "visible": false
   }
 })();

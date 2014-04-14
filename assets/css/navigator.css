@@ -152,6 +152,15 @@ nav {
 .exampleRow {
   margin-left: 80px;
 }
+#exampleRowOne {
+  margin-bottom:15px;
+}
+#exampleRowOne > div {
+  text-align:center;
+}
+#exampleRowOne > div > h3 {
+  font-family:'Raleway';
+}
 .examples > button {
   box-shadow: 0 5px 15px rgba(245,245,245,.5);
   -webkit-box-shadow: 0 5px 15px rgba(245,245,245,.5);
@@ -571,6 +580,9 @@ td:first-child {
   -moz-border-radius:3px;
   -webkit-border-radius:3px;
 }
+.gplatesRotationInterval {
+  border-top:0;
+}
 .plates {
   fill: #fff;
   stroke:#777;
@@ -622,6 +634,17 @@ td:first-child {
 }
 .taxonTitle {
   color:#000;
+}
+#collapseTaxaBrowser {
+  font-size:0.8em;
+  color:#777;
+}
+#collapseTaxaBrowser:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+#collapseTaxaBrowser > i {
+  margin-right:5px;
 }
 .examples {
   text-align: center;

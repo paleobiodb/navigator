@@ -78,7 +78,7 @@ var navMap = (function() {
           if (window.innerWidth > 700) {
             d3.select("#map").style("height", 0);
             d3.select("#svgMap").style("display", "block");
-            setTimeout(navMap.resizeSvgMap, 400);
+            //setTimeout(navMap.resizeSvgMap, 400);
           }
         }
 
@@ -512,7 +512,7 @@ var navMap = (function() {
         })
         .on("mouseover", function(d) {
           d3.select(".info")
-            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+            .html("<strong>" + d.nco + " collections</strong><br>" + d.noc + " occurrences")
             .style("display", "block");
           timeScale.highlight(this);
         })
@@ -542,14 +542,14 @@ var navMap = (function() {
         .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
-            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+            .html("<strong>" + d.nco + " collections</strong><br>" + d.noc + " occurrences")
             .style("display", "block");
           timeScale.highlight(this);
         })
         .on("click", function(d) {
           if (level === 2) {
             d3.select(".info")
-              .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+              .html("<strong>" + d.nco + " collections</strong><br>" + d.noc + " occurrences")
               .style("display", "block");
             timeScale.highlight(this);
             navMap.openBinModal(d);
@@ -562,14 +562,14 @@ var navMap = (function() {
         .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .on("mouseover", function(d) {
           d3.select(".info")
-            .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+            .html("<strong>" + d.nco + " collections</strong><br>" + d.noc + " occurrences")
             .style("display", "block");
           timeScale.highlight(this);
         })
         .on("click", function(d) {
           if (level === 2) {
             d3.select(".info")
-              .html("Number of collections: " + d.nco + "<br>Number of occurrences: " + d.noc)
+              .html("<strong>" + d.nco + " collections</strong><br>" + d.noc + " occurrences")
               .style("display", "block");
             timeScale.highlight(this);
             navMap.openBinModal(d);
@@ -1245,8 +1245,10 @@ var navMap = (function() {
             return "scale(" + window.innerHeight/800 + ")translate(" + ((width - box.width)/2) + ",0)";
           } else {
             var svgHeight = ((window.innerHeight * 0.70) - 70),
-                mapHeight = (width/970 ) * 500;
-            return "scale(" + width/970 + ")translate(0," + (svgHeight - mapHeight)/2 + ")";
+                mapHeight = (width/970 ) * 500,
+                translate = (((svgHeight - mapHeight)/2) > 0) ? (svgHeight - mapHeight)/2 : 0;
+
+            return "scale(" + width/970 + ")translate(0," + translate + ")";
           }
 
         });
@@ -1459,7 +1461,7 @@ var navMap = (function() {
 
     "filterByTaxon": function(name, preventRefresh) {
       if (!name) {
-        var name = $("#taxaInput").val();
+        var name = $("#taxonInput").val();
       }
       
       d3.json(paleo_nav.baseUrl + '/data1.1/taxa/list.json?name=' + name + '&status=all', function(err, data) {

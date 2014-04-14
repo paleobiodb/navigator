@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xml:lang="en" xmlns= "http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <title>PBDB Navigator</title>
 
@@ -13,11 +13,11 @@
     <link rel="apple-touch-icon" sizes="120x120" href="build/img/touch-icon-iphone-retina.png">
     <link rel="apple-touch-icon" sizes="152x152" href="build/img/touch-icon-ipad-retina.png">
 
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css"/>
-    <link href="http://fonts.googleapis.com/css?family=Raleway:200" rel="stylesheet" type="text/css">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" type="text/css"/>
-    <link href="build/css/navigator.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" type="text/css"/>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans" type="text/css"/>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway:200" type="text/css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" type="text/css"/>
+    <link rel="stylesheet" href="build/css/navigator.min.css" type="text/css"/>
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -102,7 +102,7 @@
               </table>
             </div>
           </div>
-          <a class="taxaBrowserToggle" href="#" style="font-size:0.8em;color:#777;"><i class="icon-double-angle-left" style="margin-right:5px;"></i>Collapse taxa browser</a>
+          <p class="taxaBrowserToggle" id="collapseTaxaBrowser"><i class="icon-double-angle-left"></i>Collapse taxa browser</p>
         </div>
 
       	<div class="col-sm-12" id="graphics">
@@ -114,10 +114,6 @@
             <div id="taxon" class="filter"></div>
             <div id="stratFilter" class="filter"></div>
           </div>
-          <div id="mapControlCover">
-            <div id="controlCover1"></div>
-            <div id="controlCover2"></div>
-          </div>
           <div id="mapControls">
             <div class="customControl buttons leaflet-control">
               <div class="zoom-in mapCtrl" title="Zoom in"><i class="icon-plus ctrlButton"></i></div>
@@ -125,30 +121,8 @@
               <div class="rotate mapCtrl" title="Toggle paleogeography"><div id="rotateIcon"></div></div>
               <div class="taxa mapCtrl" title="Toggle taxa browser"><i class="icon-bug icon-2x ctrlButton"></i></div>
               <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="icon-save icon-2x ctrlButton"></i></a></div>
-              
             </div>
 
-            <div class="customControl timeToggler leaflet-control">
-              <form action="">
-                <input id="viewByTimeBox" type="checkbox" value="1"/>Filter by time
-              </form>
-            </div>
-            <div class="customControl reconstructToggler leaflet-control">
-              <form action="">
-                <input id="reconstructBox" type="checkbox" value="1"/>Rotate view by interval
-              </form>
-            </div>
-            <div class="customControl taxaToggler leaflet-control">
-              <form id="taxaForm">
-                <input type="text" id="taxaInput" class="form-control" placeholder="Enter a taxon" size="22"/>
-              </form>
-              <a href="#" class="taxaBrowserToggle" style="color:#777;">Expand taxa browser<i class="icon-double-angle-right" style="margin-left:5px;"></i></a>
-            </div>
-            <div class="customControl userToggler leaflet-control">
-              <form>
-                <input type="text" id="personInput" class="form-control" placeholder="Enter an authorizer" size="22"/>
-              </form>
-            </div>
             <div id="infoContainer">
               <div class="info leaflet-control"></div>
             </div>
@@ -305,8 +279,8 @@
             <h4>Current rotation:</h4>
             <table class="table">
               <tr>
-                <td style="border-top:0;"><strong>Rotation interval</strong></td>
-                <td id="rotationInterval" style="border-top:0;"></td>
+                <td class="gplatesRotationInterval"><strong>Rotation interval</strong></td>
+                <td id="rotationInterval" class="gplatesRotationInterval"></td>
               </tr>
               <tr>
                 <td><strong>Rotation year</strong></td>
@@ -452,9 +426,9 @@
             <div class="helpModalTitle">
               <h2>Welcome to PBDB Navigator Beta!</h2>
             </div>
-             <div class="row exampleRow" style="margin-bottom:15px;">
-              <div class="col-sm-12" style="text-align:center;">
-                <h3 style="font-family:'Raleway';">Get started with an example</h3>
+            <div class="row exampleRow" id="exampleRowOne">
+              <div class="col-sm-12">
+                <h3>Get started with an example</h3>
               </div>
             </div>
 

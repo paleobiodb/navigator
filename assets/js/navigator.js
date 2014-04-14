@@ -42,46 +42,14 @@ var paleo_nav = (function() {
         map.zoomOut();
       });
 
-      // Handler for the time filter UI button
-      var timeButton = $(".time").hammer();
-
-      timeButton.on("tap", function(event) {
-        event.preventDefault();
-        var checked = document.getElementById("viewByTimeBox").checked;
-        if (checked == true) {
-          document.getElementById("viewByTimeBox").checked = false;
-          d3.select(".time")
-            .style("color", "#000");
-
-          d3.select(".info")
-            .html("")
-            .style("display", "none");
-
-          if (document.getElementById("reconstructBox").checked) {
-            document.getElementById("reconstructBox").checked = false;
-            d3.select(".rotate")
-              .style("color", "#000");
-          }
-
-        } else {
-          document.getElementById("viewByTimeBox").checked = true;
-          d3.select(".time")
-            .style("color", "#ff992c");
-
-          d3.select(".info")
-            .html("Click a time interval to filter map")
-            .style("display", "block");
-        }
-      });
-
       // Handler for the rotation/reconstruct UI button
       var rotateButton = $(".rotate").hammer();
 
       rotateButton.on("tap", function(event) {
         event.preventDefault();
-        var rotateChecked = document.getElementById("reconstructBox").checked;
+
         // If toggled, untoggle
-        if (rotateChecked === true) {
+        if (reconstructMap.visible) {
           paleo_nav.closeReconstructMap();
 
         // If not toggled, toggle
@@ -124,6 +92,7 @@ var paleo_nav = (function() {
 
       taxaBrowserToggleButton.on("tap", function(event) {
         event.preventDefault();
+        event.stopPropagation();
         var display = d3.select("#taxaBrowser").style("display");
         if (display === "block") {
           paleo_nav.closeTaxaBrowser();
@@ -592,17 +561,11 @@ var paleo_nav = (function() {
     },
 
     "toggleReconstructMap": function() {
-      var timeChecked = document.getElementById("viewByTimeBox").checked;
-      
-      if (timeChecked == false) {
-        document.getElementById("viewByTimeBox").checked = true;
-
-      }
       paleo_nav.untoggleTaxa();
       paleo_nav.untoggleUser();
       paleo_nav.closeTaxaBrowser();
 
-      document.getElementById("reconstructBox").checked = true;
+      reconstructMap.visible = true;
 
       d3.select(".rotate")
         .style("box-shadow", "inset 3px 0 0 #ff992c")
@@ -621,8 +584,6 @@ var paleo_nav = (function() {
 
       reconstructMap.resize();
 
-      //d3.select("#mapControlCover").style("display", "block");
-
       $(".zoom-in").hammer()
         .off("tap")
         .css("color", "#ccc");
@@ -630,9 +591,6 @@ var paleo_nav = (function() {
       $(".zoom-out").hammer()
         .off("tap")
         .css("color", "#ccc");
-
-      //$(".save").on("click", function() { return false; });
-      //$(".icon-save").css("color", "#ccc");
 
       if (navMap.filters.exist.selectedInterval) {
         reconstructMap.rotate(navMap.filters.selectedInterval);
@@ -670,12 +628,11 @@ var paleo_nav = (function() {
     "closeReconstructMap": function() {
       navMap.refresh("reset");
 
-      document.getElementById("reconstructBox").checked = false;
-      document.getElementById("viewByTimeBox").checked = false;
+      reconstructMap.visible = false;
+
 
       d3.select("#reconstructMap").style("display","none");
       timeScale.unhighlight();
-      //d3.select("#mapControlCover").style("display", "none");
 
       $(".zoom-in").hammer()
         .on("tap", function(event) {
