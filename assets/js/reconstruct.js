@@ -2,7 +2,7 @@ var reconstructMap = (function() {
   /* reconstruction is used to inform other components that a map is being reconstructed, and 
          currentReconstruction is used to record the most recent reconstruction */
   var reconstructing = false,
-      currentReconstruction = {"nam":"", "taxa": [], "person": ""},
+      currentReconstruction = {"name":"", "taxa": [], "person": ""},
       rotatedPoints;
 
   var height = 500,

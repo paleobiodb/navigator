@@ -949,7 +949,10 @@ var navMap = (function() {
             var id = d.target.id;
             id = id.replace("occToggle", "");
             
-            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
+            var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident";
+            url = navMap.parseURL(url);
+
+            d3.json(url, function(err, data) {
               if (data.records.length > 0) {
                 var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
