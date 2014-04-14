@@ -26,6 +26,7 @@ var navMap = (function() {
     .projection(projection);
 
 // TODO: rework this so that only necesarry functions are returned
+// TODO: rework so that partials are only loaded once
   return {
     "init": function(callback) {
       // Init the leaflet map
@@ -1005,6 +1006,11 @@ var navMap = (function() {
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
           var id = d.target.id;
           id = id.replace("collapse", "");
+        /* Placeholder for data service fix
+          var url = paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+          url = navMap.parseURL(url);
+          d3.json(url, function(err, data) {
+        */
           d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
             $("#ref" + id).html(data.records[0].ref);
           });
