@@ -25,7 +25,6 @@ var timeScale = (function() {
       currentInterval,
       dragStart, transformStart;
 
-
   /* Distinguish between clicks and doubleclicks via 
      https://gist.github.com/tmcw/4067674 */
 
