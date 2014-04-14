@@ -1,5 +1,5 @@
 // Global variables
-// TODO: rework so that these aren't global
+// TODO: rework so that this isn't global
 var map;
 
 var navMap = (function() {
@@ -25,6 +25,7 @@ var navMap = (function() {
   var path = d3.geo.path()
     .projection(projection);
 
+// TODO: rework this so that only necesarry functions are returned
   return {
     "init": function(callback) {
       // Init the leaflet map
@@ -908,6 +909,12 @@ var navMap = (function() {
     },
 
     "openCollectionModal": function(d) {
+    /* 
+      Placeholder for once the data service allows filters on colls/single.json
+      var url = paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+      url = navMap.parseURL(url);
+      d3.json(url, function(err, data) {
+    */
       d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
 
         data.records.forEach(function(d) {
