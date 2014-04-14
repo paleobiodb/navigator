@@ -10,7 +10,27 @@ var navMap = (function() {
     prevzoom = 3,
     currentRequest;
 
-  var filters = {"selectedInterval": {"nam": "", "mid": "", "oid": ""}, "personFilter": {"id":"", "name": ""}, "taxa": [], "stratigraphy": {"name": "", "rank": ""}, "exist": {"selectedInterval" : false, "personFilter": false, "taxon": false, "stratigraphy": false}};
+  var filters = { "selectedInterval": 
+                  { "nam": "",
+                    "mid": "", 
+                    "oid": ""
+                  }, 
+                  "personFilter": {
+                    "id":"", 
+                    "name": ""
+                  }, 
+                  "taxa": [ ], 
+                  "stratigraphy": {
+                    "name": "", 
+                    "rank": ""
+                  }, 
+                  "exist": {
+                    "selectedInterval" : false, 
+                    "personFilter": false, 
+                    "taxon": false, 
+                    "stratigraphy": false
+                  }
+                };
 
   // Variables used thoughout
   var width = 960,
@@ -25,8 +45,13 @@ var navMap = (function() {
   var path = d3.geo.path()
     .projection(projection);
 
+  // Load the partials once
+  var binModalPartial,
+      collectionModalPartial,
+      occurrencePartial,
+      stackedCollectionPartial;
+
 // TODO: rework this so that only necesarry functions are returned
-// TODO: rework so that partials are only loaded once
   return {
     "init": function(callback) {
       // Init the leaflet map
@@ -136,6 +161,23 @@ var navMap = (function() {
         setTimeout(navMap.resize, 1000);
 
         callback();
+      });
+
+      // Lazily load all the partials once
+      d3.text("build/partials/binModal.html", function(error, template) { 
+        binModalPartial = template;
+      });
+
+      d3.text("build/partials/collectionModal.html", function(error, template) { 
+        collectionModalPartial = template;
+      });
+
+      d3.text("build/partials/occurrences.html", function(error, template) { 
+        occurrencePartial = template;
+      });
+
+      d3.text("build/partials/stackedCollectionModal.html", function(error, template) { 
+        stackedCollectionPartial = template;
       });
 
     },
@@ -665,7 +707,7 @@ var navMap = (function() {
       var points = g.selectAll(".bins")
         .data(data.records);
 
-      existingPoints = points
+      var existingPoints = points
         .attr("id", function(d) { return "p" + d.cxi })
         .style("fill", function(d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
         .on("mouseover", function(d) {
@@ -759,12 +801,11 @@ var navMap = (function() {
           //render template saying how many formations there are
           var formationData = {"binID":id, "formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
 
-          d3.text('build/partials/binModal.html', function(error, template) {
-            var output = Mustache.render(template, formationData);
-            d3.select(".binContent").html(output);
+          var output = Mustache.render(binModalPartial, formationData);
+          d3.select(".binContent").html(output);
 
-            $("#binModal").modal();
-          });
+          $("#binModal").modal();
+
         } else {
           var everything = [];
 
@@ -786,12 +827,10 @@ var navMap = (function() {
           var formationData = {"binID":id, "formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
 
           // render template with the names of the formations and then number of collections in each
-          d3.text('build/partials/binModal.html', function(error, template) {
-            var output = Mustache.render(template, formationData);
-            d3.select(".binContent").html(output);
+          var output = Mustache.render(binModalPartial, formationData);
+          d3.select(".binContent").html(output);
 
-            $("#binModal").modal();
-          });
+          $("#binModal").modal();
         }
       });
     },
@@ -925,124 +964,11 @@ var navMap = (function() {
           d.lng = Math.round(d.lng * 10000) / 10000;
         });
 
-        d3.text("build/partials/collectionModal.html", function(error, template) {
-          var output = Mustache.render(template, data);
-          $("#collectionName").html(data.records[0].nam);
-          $("#collectionModalBody").html(output);
+        var output = Mustache.render(collectionModalPartial, data);
+        $("#collectionName").html(data.records[0].nam);
+        $("#collectionModalBody").html(output);
 
-          switch (data.records[0].ptd) {
-            case "NPS":
-              $(".nationalParks").css("display", "block");
-              $(".general, .federalLands").css("display", "none");
-              break;
-            case "FED":
-              $(".federalLands").css("display", "block");
-              $(".general, .nationalParks").css("display", "none");
-              break;
-            default:
-              $(".general").css("display", "block");
-              $(".nationalParks, .federalLands").css("display", "none");
-              break;
-          }
-
-          $(".filterByStrat").click(function(event) {
-            event.preventDefault();
-            navMap.filterByStratigraphy({"name": $(this).attr("data-name"), "type": $(this).attr("data-rank")});
-            $("#collectionBox").modal("hide");
-          });
-
-          $("#collectionBox").modal();
-
-          $(".occurrenceTab").on("show.bs.tab", function(d) {
-            var id = d.target.id;
-            id = id.replace("occToggle", "");
-            
-            var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident";
-            url = navMap.parseURL(url);
-
-            d3.json(url, function(err, data) {
-              if (data.records.length > 0) {
-                var taxonHierarchy = navMap.buildTaxonHierarchy(data);
-
-                d3.text("build/partials/occurrences.html", function(error, template) {
-                  var output = Mustache.render(template, taxonHierarchy);
-                  $("#occurrences" + id).html(output);
-
-                  $(".filterByOccurrence").click(function(event) {
-                    event.preventDefault();
-                    navMap.filterByTaxon($(this).attr("data-name"));
-                    $("#collectionBox").modal("hide");
-                  });
-                });
-              } else {
-                d3.text("build/partials/occurrences.html", function(error, template) {
-                  var output = Mustache.render(template, {"error": "No occurrences found for this collection"});
-                  $("#occurrences" + id).html(output);
-                });
-              }
-            });
-          });
-        });
-      });
-    },
-
-    "openStackedCollectionModal": function(data) {
-      // Grab the land type of the first collection, as they should all be identical
-      var landType = data.members[0].ptd;
-
-      data.members.forEach(function(d) {
-        d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
-        d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
-        d.lat = Math.round(d.lat * 10000) / 10000;
-        d.lng = Math.round(d.lng * 10000) / 10000;
-      });
-
-      d3.text("build/partials/stackedCollectionModal.html", function(error, template) {
-        var output = Mustache.render(template, data);
-
-        d3.select("#binID").html("Fossil Collections at [" + (Math.round(data.lat * 10000) / 10000) + ", " + (Math.round(data.lng * 10000) / 10000) + "]");
-        d3.select("#accordion").html(output);
-
-        $(".collectionCollapse").on("show.bs.collapse", function(d) {
-          var id = d.target.id;
-          id = id.replace("collapse", "");
-        /* Placeholder for data service fix
-          var url = paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
-          url = navMap.parseURL(url);
-          d3.json(url, function(err, data) {
-        */
-          d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
-            $("#ref" + id).html(data.records[0].ref);
-          });
-        });
-
-        $(".occurrenceTab").on("show.bs.tab", function(d) {
-            var id = d.target.id;
-            id = id.replace("occToggle", "");
-            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
-              if (data.records.length > 0) {
-                var taxonHierarchy = navMap.buildTaxonHierarchy(data);
-
-                d3.text("build/partials/occurrences.html", function(error, template) {
-                  var output = Mustache.render(template, taxonHierarchy);
-                  $("#occurrences" + id).html(output);
-
-                  $(".filterByOccurrence").click(function(event) {
-                    event.preventDefault();
-                    navMap.filterByTaxon($(this).attr("data-name"));
-                    $("#collectionModal").modal("hide");
-                  });
-                });
-              } else {
-                d3.text("build/partials/occurrences.html", function(error, template) {
-                  var output = Mustache.render(template, {"error": "No occurrences found for this collection"});
-                  $("#occurrences" + id).html(output);
-                });
-              }
-            });
-          });
-
-        switch (landType) {
+        switch (data.records[0].ptd) {
           case "NPS":
             $(".nationalParks").css("display", "block");
             $(".general, .federalLands").css("display", "none");
@@ -1060,11 +986,116 @@ var navMap = (function() {
         $(".filterByStrat").click(function(event) {
           event.preventDefault();
           navMap.filterByStratigraphy({"name": $(this).attr("data-name"), "type": $(this).attr("data-rank")});
-          $("#collectionModal").modal("hide");
+          $("#collectionBox").modal("hide");
         });
 
-        $("#collectionModal").modal();
+        $("#collectionBox").modal();
+
+        $(".occurrenceTab").on("show.bs.tab", function(d) {
+          var id = d.target.id;
+          id = id.replace("occToggle", "");
+          
+          var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident";
+          url = navMap.parseURL(url);
+
+          d3.json(url, function(err, data) {
+            if (data.records.length > 0) {
+              var taxonHierarchy = navMap.buildTaxonHierarchy(data);
+
+              var output = Mustache.render(occurrencePartial, taxonHierarchy);
+              $("#occurrences" + id).html(output);
+
+              $(".filterByOccurrence").click(function(event) {
+                event.preventDefault();
+                navMap.filterByTaxon($(this).attr("data-name"));
+                $("#collectionBox").modal("hide");
+              });
+
+            } else {
+              var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
+              $("#occurrences" + id).html(output);
+            }
+          });
+        });
+ 
       });
+    },
+
+    "openStackedCollectionModal": function(data) {
+      // Grab the land type of the first collection, as they should all be identical
+      var landType = data.members[0].ptd;
+
+      data.members.forEach(function(d) {
+        d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
+        d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
+        d.lat = Math.round(d.lat * 10000) / 10000;
+        d.lng = Math.round(d.lng * 10000) / 10000;
+      });
+
+      var output = Mustache.render(stackedCollectionPartial, data);
+
+      d3.select("#binID").html("Fossil Collections at [" + (Math.round(data.lat * 10000) / 10000) + ", " + (Math.round(data.lng * 10000) / 10000) + "]");
+      d3.select("#accordion").html(output);
+
+      $(".collectionCollapse").on("show.bs.collapse", function(d) {
+        var id = d.target.id;
+        id = id.replace("collapse", "");
+      /* Placeholder for data service fix
+        var url = paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+        url = navMap.parseURL(url);
+        d3.json(url, function(err, data) {
+      */
+        d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+          $("#ref" + id).html(data.records[0].ref);
+        });
+      });
+
+      $(".occurrenceTab").on("show.bs.tab", function(d) {
+          var id = d.target.id;
+          id = id.replace("occToggle", "");
+          d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
+            if (data.records.length > 0) {
+              var taxonHierarchy = navMap.buildTaxonHierarchy(data);
+
+              var output = Mustache.render(occurrencePartial, taxonHierarchy);
+              $("#occurrences" + id).html(output);
+
+              $(".filterByOccurrence").click(function(event) {
+                event.preventDefault();
+                navMap.filterByTaxon($(this).attr("data-name"));
+                $("#collectionModal").modal("hide");
+              });
+
+            } else {
+              var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
+              $("#occurrences" + id).html(output);
+            }
+          });
+        });
+
+      switch (landType) {
+        case "NPS":
+          $(".nationalParks").css("display", "block");
+          $(".general, .federalLands").css("display", "none");
+          break;
+        case "FED":
+          $(".federalLands").css("display", "block");
+          $(".general, .nationalParks").css("display", "none");
+          break;
+        default:
+          $(".general").css("display", "block");
+          $(".nationalParks, .federalLands").css("display", "none");
+          break;
+      }
+
+      $(".filterByStrat").click(function(event) {
+        event.preventDefault();
+        navMap.filterByStratigraphy({"name": $(this).attr("data-name"), "type": $(this).attr("data-rank")});
+        $("#collectionModal").modal("hide");
+      });
+
+      $("#collectionModal").modal();
+
     },
 
     "buildWKT": function(data) {
