@@ -300,21 +300,6 @@ color: rgb(245,245,245);
   stroke:#222;
   stroke-width:1px;
 }
-#infoContainer {
-  position: relative;
-}
-.info {
-  background-color: white;
-  padding:10px;
-  display:none;
-  border-top: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  font-size:0.8em;
-  width:16em;
-  bottom:0;
-  position: absolute;
-  z-index: 1;
-}
 .time {
   height:30px;
   width:30px;
@@ -395,6 +380,21 @@ color: rgb(245,245,245);
   float:right;
   letter-spacing: 0.05em;
 }
+#infoContainer {
+  position: absolute;
+  z-index: 2;
+  background-color: rgba(255,255,255,0.95);
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  display: block;
+  left:0;
+  bottom:16px;
+}
+.info {
+  display: none;
+  padding: 10px;
+  font-size: 0.8em;
+}
 .filters {
   position: absolute;
   z-index: 2;
@@ -422,12 +422,7 @@ color: rgb(245,245,245);
   float:left;
   margin-right:5px;
 }
-.info.leaflet-control {
-  margin-left: 0;
-}
-.info.leaflet-control {
-  margin-bottom: 0;
-}
+
 .customControl {
   background-color: rgba(255,255,255,0.97);
   font-weight: bold;

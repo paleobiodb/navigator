@@ -1294,18 +1294,12 @@ var navMap = (function() {
       }
       
       d3.select("#infoContainer")
-        .style("height", function(d) {
-          if (d3.select(".timeScale").style("visibility") === "hidden") {
-            if (window.innerWidth < 468) {
-              return (window.innerHeight - 77) + "px";
-            } else if (window.innerWidth < 648) {
-              return (window.innerHeight - 66) + "px";
-            } else {
-              return (window.innerHeight - 56) + "px";
-            }
+        .style("bottom", function() {
+          if (window.innerWidth < 468) {
+            return "91px";
           } else {
-            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-            return (window.innerHeight - timeHeight - 70) + "px";
+            var height = parseInt(d3.select("#time").select("svg").style("height"));
+            return (height + 4) + "px";
           }
         });
 
