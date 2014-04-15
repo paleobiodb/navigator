@@ -66,7 +66,7 @@ var timeScale = (function() {
     return d3.rebind(cc, event, 'on');
   }
 
-  function init(div) {
+  function init(div, callbackFunc) {
     var width = 960,
         height = 110,
         x = d3.scale.linear().range([0, width - 5]),
@@ -261,6 +261,8 @@ var timeScale = (function() {
           mapFilter(d.target.__data__);
         });
 
+      // Start everything else
+      callbackFunc();
 
       // Position the labels for the first time
       goTo(interval_hash[0]);

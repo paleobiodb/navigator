@@ -7,14 +7,16 @@ var paleo_nav = (function() {
     "init": function() {
 
       // Initialize each of the major application components
-      timeScale.init("time");
-      navMap.init(function(){
-        navMap.resizeSvgMap();
-        navMap.resize();
-        navMap.refresh("reset");
+      timeScale.init("time", function() {
+        navMap.init(function(){
+          navMap.resizeSvgMap();
+          navMap.resize();
+          navMap.refresh("reset");
+        });
+        reconstructMap.init();
+        taxaBrowser.init();
       });
-      reconstructMap.init();
-      taxaBrowser.init();
+        
 
       // Handler for the zoom-in button
       var zoomInButton = $(".zoom-in").hammer();
