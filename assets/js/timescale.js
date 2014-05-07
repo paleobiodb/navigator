@@ -412,7 +412,7 @@ var timeScale = (function() {
     }
 
     // Stores the currently focused time interval for state restoration purposes
-    currentInterval = d;
+    timeScale.currentInterval = d;
 
     // Adjust the bottom scale
     var depth = (d.depth != 'undefined') ? parseInt(d.depth) + 1 : 1;
