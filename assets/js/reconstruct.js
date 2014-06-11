@@ -247,12 +247,12 @@ var reconstructMap = (function() {
         })
         .on("mouseover", function(d) {
           d3.select(".info")
-            .html("Bin ID: " + d.properties.oid + "<br>Number of collections: " + d.properties.nco + "<br>Number of occurrences: " + d.properties.noc)
+            .html("<strong>" + d.properties.nco + " collections</strong><br>" + d.properties.noc + " occurrences")
             .style("display", "block");
         })
         .on("click", function(d) {
           d3.select(".info")
-            .html("Bin ID: " + d.properties.oid + "<br>Number of collections: " + d.properties.nco + "<br>Number of occurrences: " + d.properties.noc)
+            .html("<strong>" + d.properties.nco + " collections</strong><br>" + d.properties.noc + " occurrences")
             .style("display", "block");
           navMap.openBinModal(d);
         })

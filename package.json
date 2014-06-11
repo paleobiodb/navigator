@@ -6,21 +6,21 @@
   "scripts": {
     "start": "python -m SimpleHTTPServer"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/paleobiodb/navigator.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paleobiodb/navigator.git"
   },
   "author": "John J Czaplewski || jczaplewski@wisc.edu",
   "license": "CC0",
-  "devDependencies" : {
-    "grunt" :                   "~0.4.0",
-    "topojson" :                "latest",
-    "grunt-contrib-cssmin":         "*",
-    "grunt-contrib-uglify":         "*",
-    "grunt-contrib-watch":          "*",
-    "grunt-cssc":                   "*",
-    "grunt-htmlhint":               "*",
-    "grunt-shell":                  "*",
-    "matchdep":                     "*"
-  } 
+  "devDependencies": {
+    "grunt": "0.4.x",
+    "grunt-contrib-cssmin": "0.7.x",
+    "grunt-contrib-uglify": "0.2.x",
+    "grunt-contrib-watch": "0.5.x",
+    "grunt-cssc": "0.2.x",
+    "grunt-htmlhint": "0.4.x",
+    "grunt-shell": "0.5.x",
+    "matchdep": "0.3.x",
+    "topojson": "1.4.x"
+  }
 }
