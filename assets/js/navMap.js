@@ -1527,16 +1527,8 @@ var navMap = (function() {
     "downloadRefs": function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
-          ne = bounds._northEast;
-
-      if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        sw.lng = -180,
-        ne.lng = 180,
-        sw.lat = -90,
-        ne.lat = 90;
-      }
-
-      var url = paleo_nav.baseUrl + '/data1.1/occs/refs.';
+          ne = bounds._northEast,
+          url = paleo_nav.baseUrl + '/data1.1/occs/refs.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
@@ -1548,7 +1540,16 @@ var navMap = (function() {
         url += "ris";
       }
 
-      url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+      if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
+        url += "?limit=all";
+      } else {
+        sw.lat = sw.lat.toFixed(4);
+        sw.lng = sw.lng.toFixed(4);
+        ne.lat = ne.lat.toFixed(4);
+        ne.lng = ne.lng.toFixed(4);
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+      }
+      
       url = navMap.parseURL(url);
 
       url += "&show=comments,ent,entname,crmod&showsource";
@@ -1559,16 +1560,8 @@ var navMap = (function() {
     "downloadOccs": function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
-          ne = bounds._northEast;
-
-      if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        sw.lng = -180,
-        ne.lng = 180,
-        sw.lat = -90,
-        ne.lat = 90;
-      }
-
-      var url = paleo_nav.baseUrl + '/data1.1/occs/list.';
+          ne = bounds._northEast,
+          url = paleo_nav.baseUrl + '/data1.1/occs/list.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
@@ -1577,10 +1570,19 @@ var navMap = (function() {
       } else if ($("#json:checked").length > 0) {
         url += "json";
       } else {
-        return alert("RIS format not available for occurences. Please select a different format.");
+        return alert("RIS format not available for occurrences. Please select a different format.");
       }
 
-      url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+      if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
+        url += "?limit=all";
+      } else {
+        sw.lat = sw.lat.toFixed(4);
+        sw.lng = sw.lng.toFixed(4);
+        ne.lat = ne.lat.toFixed(4);
+        ne.lng = ne.lng.toFixed(4);
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+      }
+
       url = navMap.parseURL(url);
 
       url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
@@ -1591,18 +1593,19 @@ var navMap = (function() {
     "getApiUrl": function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
-          ne = bounds._northEast;
+          ne = bounds._northEast,
+          url = 'http://paleobiodb.org/data1.1/occs/list.json';
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        sw.lng = -180,
-        ne.lng = 180,
-        sw.lat = -90,
-        ne.lat = 90;
+        url += "?limit=all";
+      } else {
+        sw.lat = sw.lat.toFixed(4);
+        sw.lng = sw.lng.toFixed(4);
+        ne.lat = ne.lat.toFixed(4);
+        ne.lng = ne.lng.toFixed(4);
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
       }
 
-      var url = 'http://paleobiodb.org/data1.1/occs/list.json';
-
-      url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
       url = navMap.parseURL(url);
 
       url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
