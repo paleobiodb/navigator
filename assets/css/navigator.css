@@ -919,11 +919,19 @@ br {
     position: relative;
     padding-bottom: 15px;
     float:right;
+    width:105%;
+    min-width: 0;
   }
   .pull-right {
     clear:right;
     margin-right: 1em;
     line-height: 0;
+  }
+  .navbar-collapse {
+    overflow: hidden;
+  }
+  .nav > li {
+    clear: both;
   }
   .mugshot > a > img {
     height:105px;
