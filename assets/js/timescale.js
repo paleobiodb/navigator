@@ -108,20 +108,26 @@ var timeScale = (function() {
       .attr("transform", "translate(0,125)");
 
     // Load the time scale data
-    d3.json("http://phylum.geology.wisc.edu/larkin/time_scale", function(error, result) {
-
-      for(var i=0; i < result.length; i++) {
-        var r = result[i];
-        r.children = [];
-        r.pid = r.pid || 0;
-        r.abbr = r.abbr || r.name.charAt(0);  
-        r.mid = parseInt((r.early_age + r.late_age) / 2),
-        r.total = r.early_age - r.late_age;
+    d3.json(paleo_nav.baseUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
+      for(var i = 0; i < result.records.length; i++) {
+        var r = {
+          "id": result.records[i].oid,
+          "pid": result.records[i].pid || 0,
+          "level": result.records[i].lvl,
+          "color": result.records[i].col,
+          "name": result.records[i].nam,
+          "abbr": result.records[i].abr || result.records[i].nam.charAt(0),
+          "early_age": result.records[i].eag,
+          "late_age": result.records[i].lag,
+          "mid": parseInt((result.records[i].eag + result.records[i].lag) / 2),
+          "total": result.records[i].eag - result.records[i].lag,
+          "children": []
+        };
         interval_hash[r.id] = r;
         interval_hash[r.pid].children.push(r);
       }
 
-        // Create a new d3 partition layout
+      // Create a new d3 partition layout
       var partition = d3.layout.partition()
           .sort(function(d) { d3.ascending(d); })
           .value(function(d) { return d.total; });
@@ -287,7 +293,7 @@ var timeScale = (function() {
     if (typeof d.parent !== 'undefined') {
       var depth = d.depth,
           loc = "d.parent";
-      for (var i=0; i<depth;i++) {
+      for (var i = 0; i < depth; i++) {
         var parent = eval(loc).name;
         d3.selectAll('.abbr').filter(function(d) {
           return d.name === parent;

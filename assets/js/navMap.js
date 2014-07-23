@@ -1712,6 +1712,7 @@ var navMap = (function() {
             if (typeof(params.timeFilter) === "object") {
               if (params.timeFilter.nam != "") {
                 navMap.filterByTime(params.timeFilter.nam);
+                navMap.refresh("redraw");
               }
             }
             if (params.authFilter.id > 0) {
