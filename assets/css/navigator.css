@@ -222,7 +222,7 @@ color: rgb(245,245,245);
 }
 #graphicRow {
   width:100%;
-  margin-top: 2.5em;
+  margin-top: 33px;
   visibility: hidden;
 }
 #mapContainer {
@@ -882,6 +882,9 @@ br {
   }
 }
 @media(max-width: 700px) {
+  #graphicRow {
+    margin-top: 30px;
+  }
   .mapCtrl {
     display: none;
   }
@@ -936,5 +939,11 @@ br {
   .mugshot > a > img {
     height:105px;
     border-radius: 120px;
+  }
+  .dataSourceTitle {
+    line-height: 1em;
+  }
+  .dataSource > .text-muted {
+    line-height: 1.2em;
   }
 }

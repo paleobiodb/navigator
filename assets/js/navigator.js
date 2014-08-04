@@ -7,7 +7,17 @@ var paleo_nav = (function() {
     "init": function() {
 
       // Initialize each of the major application components
-      timeScale.init("time", function() {
+      var timeScaleSize;
+      if (window.innerWidth > 1800) {
+        timeScaleSize = 60;
+      } else if (window.innerWidth > 1500) {
+        timeScaleSize = 75;
+      } else if (window.innerWidth > 1000) {
+        timeScaleSize =  95;
+      } else {
+        timeScaleSize = 110;
+      }
+      timeScale.init("time", timeScaleSize, function() {
         navMap.init(function(){
           navMap.resizeSvgMap();
           navMap.resize();

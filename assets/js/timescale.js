@@ -66,9 +66,8 @@ var timeScale = (function() {
     return d3.rebind(cc, event, 'on');
   }
 
-  function init(div, callbackFunc) {
+  function init(div, height, callbackFunc) {
     var width = 960,
-        height = 110,
         x = d3.scale.linear().range([0, width - 5]),
         y = d3.scale.linear().range([0, height]),
         newX = 0.01;
@@ -105,7 +104,7 @@ var timeScale = (function() {
 
     var scale = time.append("g")
       .attr("id", "tickBar")
-      .attr("transform", "translate(0,125)");
+      .attr("transform", "translate(0," + (height + 15) + ")");
 
     // Load the time scale data
     d3.json(paleo_nav.baseUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
@@ -180,9 +179,9 @@ var timeScale = (function() {
 
       hash.append("text")
         .attr("x", 0)
-        .attr("y", 20)
+        .attr("y", function() { return (height/6 * 0.55 + 12) * 1.05 })
         .style("text-anchor", function(d) { return (d.early_age === 0.0117) ? "end" : "middle"; })
-        .style("font-size", "0.85em")
+        .style("font-size", function() { return height/6 * 0.55 })
         .style("fill", "#777")
         .text(function(d) {return d.early_age});
 
@@ -201,15 +200,24 @@ var timeScale = (function() {
 
       now.append("text")
         .attr("x", 0)
-        .attr("y", 20)
+        .attr("y", function() { return (height/6 * 0.55 + 12) * 1.05 })
         .attr("id", "now")
         .style("text-anchor", "end")
-        .style("font-size", "0.85em")
+        .style("font-size", function() { return height/6 * 0.55 })
         .style("fill", "#777")
         .text("0");
 
       var textGroup = time.append("g")
         .attr("id", "textGroup");
+
+      var fontSizeHash = {
+        "0": 0.61,
+        "1": 0.89,
+        "2": 0.72,
+        "3": 0.61,
+        "4": 0.55,
+        "5": 0.55
+      };
 
       var ccFull = clickcancel();
       // Add the full labels
@@ -218,12 +226,13 @@ var timeScale = (function() {
         .enter().append("svg:text")
           .text(function(d) { return d.name; })
           .attr("x", 1)
-          .attr("y", function(d) { return y(d.y) + 15;})
+          .attr("y", function(d) { return y(d.y) + (height * 0.127);})
           .attr("width", function() { return this.getComputedTextLength(); })
           .attr("height", function(d) { return y(d.dy); })
           .attr("class", function(d) { return "fullName level" + ((typeof(d.level) === "undefined") ? 0 : d.level); })
           .attr("id", function(d) { return "l" + d.id; })
           .attr("x", function(d) { return labelX(d); })
+          .style("font-size", function(d) { return ((typeof(d.level) === "undefined") ? height/6 * fontSizeHash[0]  + "px" : height/6 * fontSizeHash[d.level]  + "px")})
           .call(drag)
           .call(ccFull)
           .dblTap(function(d) {
@@ -246,13 +255,14 @@ var timeScale = (function() {
           .data(partition.nodes(data))
         .enter().append("svg:text")
           .attr("x", 1)
-          .attr("y", function(d) { return y(d.y) + 15; })
+          .attr("y", function(d) { return y(d.y) + (height * 0.127);})
           .attr("width", 30)
           .attr("height", function(d) { return y(d.dy); })
           .text(function(d) { return d.abbr || d.name.charAt(0); })
           .attr("class", function(d) { return "abbr level" + ((typeof(d.level) === "undefined") ? 0 : d.level); })
           .attr("id", function(d) { return "a" + d.id; })
           .attr("x", function(d) { return labelAbbrX(d); })
+          .style("font-size", function(d) { return ((typeof(d.level) === "undefined") ? height/6 * fontSizeHash[0]  + "px" : height/6 * fontSizeHash[d.level]  + "px")})
           .call(ccAbbr)
           .dblTap(function(d) {
             setTimeout(goTo(d), 500);
@@ -278,6 +288,7 @@ var timeScale = (function() {
 
       // Open to Phanerozoic 
       goTo(interval_hash[751]);
+
 
     }); // End PaleoDB json callback
 

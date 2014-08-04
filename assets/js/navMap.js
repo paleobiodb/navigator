@@ -74,8 +74,13 @@ var navMap = (function() {
 
       function mapSelection(zoom) {
       // If viewing the projected map...
-        if (zoom < 3) {
+        var newBounds = map.getBounds();
+        if (Math.abs(newBounds._northEast.lng) + Math.abs(newBounds._southWest.lng) > 360) {
+          var changeMaps = true;
+        }
+        if (zoom < 3 || zoom > 3 && changeMaps || prevzoom === 4 && zoom === 3 && changeMaps) {
           if (window.innerWidth > 700) {
+            prevzoom = 2;
             d3.select("#map").style("height", 0);
             d3.select("#svgMap").style("display", "block");
             //setTimeout(navMap.resizeSvgMap, 400);
@@ -206,6 +211,11 @@ var navMap = (function() {
 
       map.setView([parseInt(projected[1]), parseInt(projected[0])], 3, {animate:false});
 
+      var newBounds = map.getBounds();
+      if (Math.abs(newBounds._northEast.lng) + Math.abs(newBounds._southWest.lng) > 360) {
+        map.setZoom(4, {animate: false});
+      }
+
       navMap.refresh("reset");
       map.invalidateSize();
     },
@@ -269,7 +279,9 @@ var navMap = (function() {
 
         var url = paleo_nav.baseUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
 
+        // If filters are applied to the map
         if (filtered) {
+          // If only a tim filter is applied...
           if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
             url += "&level=3";
             url = navMap.parseURL(url);
@@ -288,11 +300,12 @@ var navMap = (function() {
                 return navMap.refreshHammer(timeScale.interval_hash[filters.selectedInterval.oid].data);
               }
             }
-
+          
           } else {
             url += "&level=2";
             url = navMap.parseURL(url);
           }
+        // If there are no filters
         } else {
           url += "&level=1";
           url = navMap.parseURL(url);
@@ -1182,7 +1195,11 @@ var navMap = (function() {
     "multiplier": function(zoom) {
       switch(zoom) {
         case 2:
-          return 0.70;
+          if (navMap.checkFilters()) {
+            return 0.8
+          } else {
+            return 0.70;
+          }
           break; 
         case 3:
           if (navMap.checkFilters()) {
@@ -1241,9 +1258,12 @@ var navMap = (function() {
             }
           }
           var height = ((window.innerHeight * 0.70) - 70);
-          if (width > (box.width + 50)) {
-            return "scale(" + window.innerHeight/800 + ")translate(" + ((width - box.width)/2) + ",0)";
+          console.log("width - ", width, "box.width + 50 - ", (box.width + 70));
+          if (width > (box.width + 70)) {
+            console.log("1");
+            return "scale(" + window.innerHeight/680 + ")translate(" + ((width - box.width)/3) + ",0)";
           } else {
+            console.log("2");
             var svgHeight = ((window.innerHeight * 0.70) - 70),
                 mapHeight = (width/970 ) * 500,
                 translate = (((svgHeight - mapHeight)/2) > 0) ? (svgHeight - mapHeight)/2 : 0;
@@ -1256,10 +1276,10 @@ var navMap = (function() {
       d3.select("#svgMap").select("svg")
         .style("height", function(d) {
           if (d3.select(".timeScale").style("visibility") === "hidden") {
-            return (window.innerHeight - 70) + "px";
+            return (window.innerHeight - 60) + "px";
           } else {
             var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-            return (window.innerHeight - timeHeight - 70) + "px";
+            return (window.innerHeight - timeHeight - 60) + "px";
           }
         })
         .style("width", function(d) {
@@ -1435,7 +1455,7 @@ var navMap = (function() {
       d3.select(".filters")
         .style("bottom", function() {
           var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 20) + "px";
+          return (height + 15) + "px";
         });
     },
 

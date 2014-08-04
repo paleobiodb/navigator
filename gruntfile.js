@@ -86,7 +86,7 @@ module.exports = function(grunt) {
             },
             css: {
                 files: ['assets/css/lib/bootstrapRC2.min.css', 'assets/css/lib/typeahead.css', 'assets/css/timescale.css', 'assets/css/taxaBrowser.css', 'assets/css/navigator.css'],
-                tasks: ['uncss', 'cssmin']
+                tasks: ['cssmin']
             }
         }
     });
