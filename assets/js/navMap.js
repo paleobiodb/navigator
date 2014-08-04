@@ -1258,12 +1258,10 @@ var navMap = (function() {
             }
           }
           var height = ((window.innerHeight * 0.70) - 70);
-          console.log("width - ", width, "box.width + 50 - ", (box.width + 70));
+
           if (width > (box.width + 70)) {
-            console.log("1");
             return "scale(" + window.innerHeight/680 + ")translate(" + ((width - box.width)/3) + ",0)";
           } else {
-            console.log("2");
             var svgHeight = ((window.innerHeight * 0.70) - 70),
                 mapHeight = (width/970 ) * 500,
                 translate = (((svgHeight - mapHeight)/2) > 0) ? (svgHeight - mapHeight)/2 : 0;
