@@ -810,6 +810,13 @@ br {
   padding:20px;
 }
 
+#downloadCount {
+  font-size: 0.6em;
+  font-style: italic;
+  margin: 0;
+  display: none;
+}
+
 .downloadButton {
   float:right;
   margin:3px;

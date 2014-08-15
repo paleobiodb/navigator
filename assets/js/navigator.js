@@ -348,11 +348,21 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var url = baseUrl + '/data1.1/colls/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
+        var url = baseUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);
 
         d3.json(url, function(err, results) {
-          d3.select("#downloadCount").html(results.records_found + " collections found");
+          var size = results.records_found * 0.67;
+          if (size < 1024) {
+            size = size + "KB";
+          } else if (size < 1024000) {
+            size = (size/1024).toFixed(0) + "MB";
+          } else {
+            size = (size/1024000).toFixed(0) + "GB";
+          }
+          d3.select("#downloadCount")
+            .html("About " + size)
+            .style("display", "block");
         });
 
       });
@@ -364,6 +374,8 @@ var paleo_nav = (function() {
 
         $("#appUrl").val("");
         $("#apiUrl").val("");
+        d3.select("#downloadCount")
+            .style("display", "none");
       });
 
       $("#getAppUrl").on("click", function() {
