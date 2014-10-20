@@ -1603,7 +1603,7 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&showsource";
 
       window.open(url);
     },
