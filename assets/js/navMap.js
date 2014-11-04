@@ -184,7 +184,17 @@ var navMap = (function() {
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) { 
         stackedCollectionPartial = template;
       });
-
+      
+      $("#binModal").on("show.bs.modal", function() {
+        $("#collectionCount").show();
+      });
+      
+      $("#binModal").on("hide.bs.modal", function() {
+        $("#collectionLoading").hide();
+        $(".show-more-collections").data("offset", 0);
+        $(".show-more-collections").data("shown-collections", 0);
+        $(".show-more-collections").data("total-collections", 0);
+      });
     },
 
     "changeMaps": function(mouse) {
@@ -766,15 +776,107 @@ var navMap = (function() {
       navMap.redrawPoints(points, clusters);
 
     },
+    
+    "getOffsetCollections": function(cluster, offset) {
+      d3.json(paleo_nav.baseUrl + "/data1.1/colls/list.json?clust_id=" + cluster + "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&offset=" +offset, function(err, data) {
+        
+        data.records.forEach(function(d) {
+          d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
+          d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
+          d.lat = Math.round(d.lat * 10000) / 10000;
+          d.lng = Math.round(d.lng * 10000) / 10000;
+        });
+        
+        var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
+        
+        $("#collectionCount").html("Showing " + offset + " of " + data.records_found + " collections");
+        $("#collectionAccordion").append(output);
+        $(".show-more-collections").data()["shown-collections"] = offset;
+        if (offset >= $(".show-more-collections").data("total-collections")) {
+          $(".show-more-collections").hide();
+        }
+        $("#collectionLoading").hide();
+      });
+    },
 
     "openBinModal": function(d, collections, occurrences, interval) {
       var id = (d.properties) ? d.properties.oid : d.oid,
           url = paleo_nav.baseUrl + "/data1.1/colls/list.json?clust_id=" + id;
 
       url = navMap.parseURL(url);
-      url += "&show=ref,loc,time,strat";
-
+      url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&count";
+      
       d3.json(url, function(err, data) {
+        
+        data.records.forEach(function(d) {
+          d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
+          d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
+          d.lat = Math.round(d.lat * 10000) / 10000;
+          d.lng = Math.round(d.lng * 10000) / 10000;
+        });
+        
+        var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
+        
+        d3.select("#collectionCount").html("Showing " + data.records.length + " of " + data.records_found + " collections");
+        d3.select("#collectionAccordion").html(output);
+        
+        $(".show-more-collections")
+          .data("total-collections", data.records_found)
+          .data("shown-collections", data.records_returned);
+        
+        $(".collectionCollapse").on("show.bs.collapse", function(d) {
+          var id = d.target.id;
+          id = id.replace("collapse", "");
+        /* Placeholder for data service fix
+          var url = paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+          url = navMap.parseURL(url);
+          d3.json(url, function(err, data) {
+        */
+          d3.json(paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+            $("#ref" + id).html(data.records[0].ref);
+          });
+        });
+        
+        $(".occurrenceTab").on("show.bs.tab", function(d) {
+            var id = d.target.id;
+            id = id.replace("occToggle", "");
+            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
+              if (data.records.length > 0) {
+                var taxonHierarchy = navMap.buildTaxonHierarchy(data);
+        
+                var output = Mustache.render(occurrencePartial, taxonHierarchy);
+                $("#occurrences" + id).html(output);
+        
+                $(".filterByOccurrence").click(function(event) {
+                  event.preventDefault();
+                  navMap.filterByTaxon($(this).attr("data-name"));
+                  $("#collectionModal").modal("hide");
+                });
+        
+              } else {
+                var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
+                $("#occurrences" + id).html(output);
+              }
+            });
+          });
+        
+        // Handle showing/hiding "show more collections"
+        if (data.records_found <= data.records_returned) {
+          $(".show-more-collections").hide();
+          $("#collectionCount").hide();
+        } else {
+          $(".show-more-collections")
+            .show()
+            .off("click")
+            .on("click", function() {
+              $("#collectionLoading").show();
+              $(".show-more-collections").data()["offset"] += 20
+              navMap.getOffsetCollections(id, $(".show-more-collections").data()["offset"]);
+            });
+        }
+        
+        $("#binModal").modal();
+  /*
         // Formations counts the number of collections present in each formation, collections and occurrences sum bin totals
         var formations = {},
             collections = 0,
@@ -842,9 +944,9 @@ var navMap = (function() {
           // render template with the names of the formations and then number of collections in each
           var output = Mustache.render(binModalPartial, formationData);
           d3.select(".binContent").html(output);
-
-          $("#binModal").modal();
-        }
+         
+          
+        }*/
       });
     },
 

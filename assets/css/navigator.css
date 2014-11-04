@@ -204,6 +204,14 @@ nav {
   margin:0;
 }
 
+.show-more-collections {
+  text-align: center;
+  padding-top: 22px;
+  cursor: pointer;
+}
+#collectionLoading {
+  display: none;
+}
 .stackedCollectionTitle {
   display:inline;
 }

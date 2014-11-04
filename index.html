@@ -326,8 +326,12 @@
             <h4 class="modal-title" id="binNumber">Summary bin <small>Zoom in to see fossil collections</small></h4>
           </div>
           <div class="modal-body">
-            <table class="table binContent">
-            </table>
+            <h5 id="collectionCount"></h5>
+            <div class="panel-group" id="collectionAccordion"></div>
+            <div class="show-more-collections" data-offset="0" data-total-collections="0" data-shown-collections="0">
+              <i class="icon-spinner icon-spin icon-3x" id="collectionLoading"></i><br>
+              <i class="icon icon-double-angle-down"></i>   Show more collections...   <i class="icon icon-double-angle-down"></i>
+            </div>
           </div>
           <div class="modal-footer warningText">
             <p class="warning"><i class="icon icon-warning-sign icon-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
