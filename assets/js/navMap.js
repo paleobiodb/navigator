@@ -184,13 +184,10 @@ var navMap = (function() {
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) { 
         stackedCollectionPartial = template;
       });
-      
-      $("#binModal").on("show.bs.modal", function() {
-        $("#collectionCount").show();
-      });
-      
+
       $("#binModal").on("hide.bs.modal", function() {
         $("#collectionLoading").hide();
+        $("#collectionCount").show();
         $(".show-more-collections").data("offset", 0);
         $(".show-more-collections").data("shown-collections", 0);
         $(".show-more-collections").data("total-collections", 0);
@@ -795,6 +792,34 @@ var navMap = (function() {
         if (offset >= $(".show-more-collections").data("total-collections")) {
           $(".show-more-collections").hide();
         }
+        
+        $(".occurrenceTab").on("show.bs.tab", function(d) {
+          var id = d.target.id;
+          id = id.replace("occToggle", "");
+          
+          var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id;
+          url = navMap.parseURL(url);
+          url += "&show=phylo,ident";
+          
+          d3.json(url, function(err, data) {
+            if (data.records.length > 0) {
+              var taxonHierarchy = navMap.buildTaxonHierarchy(data);
+        
+              var output = Mustache.render(occurrencePartial, taxonHierarchy);
+              $("#occurrences" + id).html(output);
+        
+              $(".filterByOccurrence").click(function(event) {
+                event.preventDefault();
+                navMap.filterByTaxon($(this).attr("data-name"));
+                $("#collectionModal").modal("hide");
+              });
+        
+            } else {
+              var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
+              $("#occurrences" + id).html(output);
+            }
+          });
+        });
         $("#collectionLoading").hide();
       });
     },
@@ -840,7 +865,12 @@ var navMap = (function() {
         $(".occurrenceTab").on("show.bs.tab", function(d) {
             var id = d.target.id;
             id = id.replace("occToggle", "");
-            d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
+            
+            var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id;
+            url = navMap.parseURL(url);
+            url += "&show=phylo,ident";
+            
+            d3.json(url, function(err, data) {
               if (data.records.length > 0) {
                 var taxonHierarchy = navMap.buildTaxonHierarchy(data);
         
@@ -863,6 +893,7 @@ var navMap = (function() {
         // Handle showing/hiding "show more collections"
         if (data.records_found <= data.records_returned) {
           $(".show-more-collections").hide();
+          console.log("hide it");
           $("#collectionCount").hide();
         } else {
           $(".show-more-collections")
@@ -876,77 +907,6 @@ var navMap = (function() {
         }
         
         $("#binModal").modal();
-  /*
-        // Formations counts the number of collections present in each formation, collections and occurrences sum bin totals
-        var formations = {},
-            collections = 0,
-            occurrences = 0;
-
-        data.records.forEach(function(d, i) {
-          if (d.sfm) {
-            if (formations[d.sfm]) {
-              formations[d.sfm].count += 1;
-              formations[d.sfm].occurrences += (d.properties) ? d.properties.noc : d.noc;
-            } else {
-              formations[d.sfm] = {};
-              formations[d.sfm].count = 1;
-              formations[d.sfm].occurrences = (d.properties) ? d.properties.noc : d.noc;
-            }
-
-            collections += 1;
-            occurrences += (d.properties) ? d.properties.noc : d.noc;
-          } else {
-            if (formations.Unknown) {
-              formations.Unknown.count += 1;
-              formations.Unknown.occurrences += (d.properties) ? d.properties.noc : d.noc;
-            } else {
-              formations.Unknown = {};
-              formations.Unknown.count = 1;
-              formations.Unknown.occurrences = (d.properties) ? d.properties.noc : d.noc;
-            }
-
-            collections += 1;
-            occurrences += (d.properties) ? d.properties.noc : d.noc;
-          }
-        });
-
-        var interval = (d.cxi) ? timeScale.interval_hash[d.cxi].nam : "Unknown";
-
-        if (Object.keys(formations).length > 10) {
-          //render template saying how many formations there are
-          var formationData = {"binID":id, "formationCount": Object.keys(formations).length, "collections": collections, "occurrences": occurrences, "interval": interval};
-
-          var output = Mustache.render(binModalPartial, formationData);
-          d3.select(".binContent").html(output);
-
-          $("#binModal").modal();
-
-        } else {
-          var everything = [];
-
-          Object.keys(formations).forEach(function(d) {
-            var tempFormation = { "name": d, "count": formations[d].count, "occurrences": formations[d].occurrences };
-            everything.push(tempFormation);
-          });
-
-          function compare(a,b) {
-            if (a.count > b.count)
-               return -1;
-            if (a.count < b.count)
-              return 1;
-            return 0;
-          }
-          
-          everything.sort(compare);
-
-          var formationData = {"binID":id, "formations": everything, "collections": collections, "occurrences": occurrences, "interval": interval};
-
-          // render template with the names of the formations and then number of collections in each
-          var output = Mustache.render(binModalPartial, formationData);
-          d3.select(".binContent").html(output);
-         
-          
-        }*/
       });
     },
 
