@@ -298,7 +298,7 @@ var paleo_nav = (function() {
         $(".show-more-collections").data("total-collections", 0);
       });
 
-      $("#saveBox").on('show.bs.modal', function() {
+      $("#saveBox").on('shown.bs.modal', function() {
         diversityPlot.resize();
       });
       // Fired when the "save" modal is opened
