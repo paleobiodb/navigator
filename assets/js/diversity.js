@@ -77,7 +77,7 @@ var diversityPlot = (function() {
 
     // Aaaand....DRAW DRAW DRAW!
     var x = d3.scale.linear()
-      .domain([d3.max(eras, function(d) { return d.eag; }), d3.min(eras, function(d) { return d.eag; }) - 10])
+      .domain([d3.max(eras, function(d) { return d.eag; }), d3.min(eras, function(d) { return d.lag; }) - 1])
       .range([0, width - margin.left - margin.right]);
   
     var y = d3.scale.linear()
