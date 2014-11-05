@@ -324,6 +324,20 @@ var paleo_nav = (function() {
             }, 100);
           });
         }
+
+        var bounds = map.getBounds(),
+            sw = bounds._southWest,
+            ne = bounds._northEast;
+
+        if (parseInt(d3.select("#map").style("height")) < 1) {
+          sw.lng = -180,
+          ne.lng = 180,
+          sw.lat = -90,
+          ne.lat = 90;
+        }
+
+        $("#filterList").append("<li>Map extent - <small>([" + sw.lat.toFixed(0) + ", " + sw.lng.toFixed(0) + "], [" + ne.lat.toFixed(0) + ", " + ne.lng.toFixed(0) + "])</small></li>");
+
         var count = 0;
         for (var key in navMap.filters.exist) {
           if (navMap.filters.exist.hasOwnProperty(key)) {
@@ -344,19 +358,6 @@ var paleo_nav = (function() {
               count += 1;
             }
           }
-        }
-        if (count < 1) {
-          $("#filterList").append("None selected");
-        }
-        var bounds = map.getBounds(),
-            sw = bounds._southWest,
-            ne = bounds._northEast;
-
-        if (parseInt(d3.select("#map").style("height")) < 1) {
-          sw.lng = -180,
-          ne.lng = 180,
-          sw.lat = -90,
-          ne.lat = 90;
         }
 
         //diversityPlot.plot(navMap.parseURL(baseUrl + "/data1.2/diversity.json") + "&count=genera&reso=stage");
