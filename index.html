@@ -166,66 +166,73 @@
             <div class="tab-content" id="downloadModalContent">
               <div class="tab-pane active" id="downloadData">
                 <div class="row">
-                  <div class="col-sm-12">
-                    <h4>Filters:</h4>
-                    <ul id="filterList"></ul>
-                  </div>
-                  <div class="col-sm-12">
-                    <h4>Format:</h4>
-                    <div class="downloadOptions">
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="format" id="csv" checked>
-                          Comma-separated (CSV)
-                        </label>
-                      </div>
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="format" id="tsv">
-                          Tab-separated (TSV)
-                        </label>
-                      </div>
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="format" id="json">
-                          Javascript Object Notation (JSON)
-                        </label>
-                      </div>
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="format" id="ris">
-                          Research Information Systems (RIS <i>References only</i>)
-                        </label>
+                  <div class="col-sm-6">
+                    <div class="col-sm-12">
+                      <h4>Filters:</h4>
+                      <ul id="filterList"></ul>
+                    </div>
+                    
+                    <div class="col-sm-12">
+                      <h4>Format:</h4>
+                      <div class="downloadOptions">
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="csv" checked>
+                            Comma-separated (CSV)
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="tsv">
+                            Tab-separated (TSV)
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="json">
+                            Javascript Object Notation (JSON)
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="ris">
+                            Research Information Systems (RIS <i>References only</i>)
+                          </label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="col-sm-12">
-                    <h4>Type:</h4>
-                    <div class="downloadOptions">
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="downloadType" id="occs" checked>
-                          <p id="occsLabel">Occurrences</p>
-                        </label>
-                      </div>
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="downloadType" id="refs">
-                          References
-                        </label>
-                      </div>
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="downloadType" id="diver">
-                          Diversity
-                        </label>
+                    <div class="col-sm-12">
+                      <h4>Type:</h4>
+                      <div class="downloadOptions">
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="occs" checked>
+                            <p id="occsLabel">Occurrences</p>
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="refs">
+                            References
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="diver">
+                            Diversity
+                          </label>
+                        </div>
                       </div>
                     </div>
+                    <div class="col-sm-12">
+                      <button type="button" class="btn btn-primary downloadButton" onclick="return navMap.download()">Download</button>
+                      <button type="button" class="btn btn-warning downloadButton" data-dismiss="modal">Cancel</button>
+                    </div>
                   </div>
-                  <div class="col-sm-12">
-                    <button type="button" class="btn btn-primary downloadButton" onclick="return navMap.download()">Download</button>
-                    <button type="button" class="btn btn-warning downloadButton" data-dismiss="modal">Cancel</button>
+                  <div class="col-sm-6 diversityContainer">
+                    <div id="diversity"></div>
                   </div>
+                    
                 </div>
 
                 <div class="row">
@@ -530,6 +537,7 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/hammer.js/1.0.5/jquery.hammer.min.js"></script>
     <script>window.Hammer || document.write('<script src="build/js/lib/jquery.hammer.min.js">\x3C/script>')</script>
 
+    <script src="assets/js/diversity.js"></script>
     <script src="build/js/script.min.js"></script>
   </body>
 </html>
