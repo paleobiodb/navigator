@@ -289,6 +289,14 @@ var paleo_nav = (function() {
         navMap.resize();
         reconstructMap.resize();
       });
+      
+      $("#binModal").on("hide.bs.modal", function() {
+        $("#collectionLoading").hide();
+        $("#collectionCount").show();
+        $(".show-more-collections").data("offset", 0);
+        $(".show-more-collections").data("shown-collections", 0);
+        $(".show-more-collections").data("total-collections", 0);
+      });
 
       // Fired when the "save" modal is opened
       $("#saveBox").on('show.bs.modal', function() {
@@ -354,15 +362,14 @@ var paleo_nav = (function() {
         d3.json(url, function(err, results) {
           var size = results.records_found * 0.67;
           if (size < 1024) {
-            size = size + "KB";
+            size = size.toFixed(0) + "KB";
           } else if (size < 1024000) {
             size = (size/1024).toFixed(0) + "MB";
           } else {
             size = (size/1024000).toFixed(0) + "GB";
           }
-          d3.select("#downloadCount")
-            .html("About " + size)
-            .style("display", "block");
+          d3.select("#occsLabel")
+            .html("Occurrences <small><i>(About " + size + ")</i></small>");
         });
 
       });
@@ -370,7 +377,7 @@ var paleo_nav = (function() {
       // Fired when the "save" modal is closed
       $("#saveBox").on('hide.bs.modal', function() {
         $("#filterList").html('');
-        $("#downloadCount").html("");
+        d3.select("#occsLabel").html("Occurrences ");
 
         $("#appUrl").val("");
         $("#apiUrl").val("");

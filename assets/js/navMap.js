@@ -184,14 +184,6 @@ var navMap = (function() {
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) { 
         stackedCollectionPartial = template;
       });
-
-      $("#binModal").on("hide.bs.modal", function() {
-        $("#collectionLoading").hide();
-        $("#collectionCount").show();
-        $(".show-more-collections").data("offset", 0);
-        $(".show-more-collections").data("shown-collections", 0);
-        $(".show-more-collections").data("total-collections", 0);
-      });
     },
 
     "changeMaps": function(mouse) {
@@ -893,7 +885,6 @@ var navMap = (function() {
         // Handle showing/hiding "show more collections"
         if (data.records_found <= data.records_returned) {
           $(".show-more-collections").hide();
-          console.log("hide it");
           $("#collectionCount").hide();
         } else {
           $(".show-more-collections")
@@ -1604,6 +1595,16 @@ var navMap = (function() {
       }
     },
 
+    "download": function() {
+      if ($("#occs:checked").length > 0) {
+        navMap.downloadOccs();
+      } else if ($("#refs:checked").length > 0) {
+        navMap.downloadRefs();
+      } else {
+        navMap.downloadDiversity();
+      }
+    },
+
     "downloadRefs": function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
@@ -1666,6 +1667,39 @@ var navMap = (function() {
       url = navMap.parseURL(url);
 
       url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&showsource";
+
+      window.open(url);
+    },
+
+    "downloadDiversity": function() {
+      var bounds = map.getBounds(),
+          sw = bounds._southWest,
+          ne = bounds._northEast,
+          url = paleo_nav.baseUrl + '/data1.2/occs/diversity.';
+
+      if ($("#tsv:checked").length > 0) {
+        url += "txt";
+      } else if ($("#csv:checked").length > 0) {
+        url += "csv";
+      } else if ($("#json:checked").length > 0) {
+        url += "json";
+      } else {
+        return alert("RIS format not available for occurrences. Please select a different format.");
+      }
+
+      if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
+        url += '?lngmin=-180&lngmax=180&latmin=-90&latmax=90';
+      } else {
+        sw.lat = sw.lat.toFixed(4);
+        sw.lng = sw.lng.toFixed(4);
+        ne.lat = ne.lat.toFixed(4);
+        ne.lng = ne.lng.toFixed(4);
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
+      }
+
+      url = navMap.parseURL(url);
+
+      url += "&count=genera&reso=stage";
 
       window.open(url);
     },

@@ -170,43 +170,64 @@
                     <h4>Filters:</h4>
                     <ul id="filterList"></ul>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-sm-12">
                     <h4>Format:</h4>
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="format" id="csv" checked>
-                        Comma-separated (CSV)
-                      </label>
-                    </div>
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="format" id="tsv">
-                        Tab-separated (TSV)
-                      </label>
-                    </div>
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="format" id="json">
-                        Javascript Object Notation (JSON)
-                      </label>
-                    </div>
-                    <div class="radio">
-                      <label>
-                        <input type="radio" name="format" id="ris">
-                        Research Information Systems (RIS <i>References only</i>)
-                      </label>
+                    <div class="downloadOptions">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="format" id="csv" checked>
+                          Comma-separated (CSV)
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="format" id="tsv">
+                          Tab-separated (TSV)
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="format" id="json">
+                          Javascript Object Notation (JSON)
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="format" id="ris">
+                          Research Information Systems (RIS <i>References only</i>)
+                        </label>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="row" id="downloadOpts">
                   <div class="col-sm-12">
+                    <h4>Type:</h4>
+                    <div class="downloadOptions">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="downloadType" id="occs" checked>
+                          <p id="occsLabel">Occurrences</p>
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="downloadType" id="refs">
+                          References
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="downloadType" id="diver">
+                          Diversity
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-12">
+                    <button type="button" class="btn btn-primary downloadButton" onclick="return navMap.download()">Download</button>
                     <button type="button" class="btn btn-warning downloadButton" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary downloadButton" onclick="return navMap.downloadOccs()">Download Occurrences<p id="downloadCount"></p></button>
-                    <button type="button" class="btn btn-primary downloadButton" onclick="return navMap.downloadRefs()">Download References</button>
                   </div>
                 </div>
+
                 <div class="row">
                   <div class="col-sm-12">
                     <hr>

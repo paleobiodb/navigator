@@ -817,6 +817,9 @@ br {
 #downloadOpts {
   padding:20px;
 }
+.downloadOptions {
+  padding-left: 20px;
+}
 
 #downloadCount {
   font-size: 0.6em;
@@ -826,7 +829,6 @@ br {
 }
 
 .downloadButton {
-  float:right;
   margin:3px;
 }
 
