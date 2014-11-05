@@ -12,7 +12,8 @@ var diversityPlot = (function() {
       })
       .done(function(data) {
         getTimescale(data.records.map(function(d) {
-          d.total = d.dor + d.dex + d.dsg + d.drt;
+          //d.total = d.dor + d.dex + d.dsg + d.drt;
+          d.total = d.dsb;
           return d;
         }));
       });
