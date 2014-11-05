@@ -178,11 +178,9 @@ var diversityPlot = (function() {
       .call(yAxis)
     .append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 30)
-      .attr("x", -130)
-      .attr("dy", "-5em")
+      .attr("dy", "1em")
       .style("text-anchor", "end")
-      .text("Total occurrences");
+      .text("Genera");
     
     // Draw zee line
     var line = d3.svg.line()
@@ -194,8 +192,7 @@ var diversityPlot = (function() {
       .datum(data)
       .attr("class", "line diversityLine")
       .attr("d", line)
-      .attr("transform", "translate(" + padding.left + ",0)")
-    //  .attr("stroke-dasharray", "10, 7");
+      .attr("transform", "translate(" + padding.left + ",0)");
     
     positionLabels();
     resize();
