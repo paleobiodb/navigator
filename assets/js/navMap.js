@@ -915,14 +915,16 @@ var navMap = (function() {
             var genusRes = (d.rst) ? d.rst + " " : "",
                 speciesRes = (d.rss) ? " " + d.rss + " " : " ";
             d.genusRes = genusRes;
-            d.display_name1 = d.idt + speciesRes + d.ids;
-            d.display_name2 = "";
+            d.display_name1 = d.idt + speciesRes;
+            d.display_name2 = d.ids;
+            d.display_name3 = "";
           } else {
             var genusRes = (d.rst) ? d.rst + " " : "",
                 speciesRes = (d.rss) ? " " + d.rss + " " : "";
             d.genusRes = genusRes;
             d.display_name1 = d.idt;
-            d.display_name2 = speciesRes + d.ids;
+            d.display_name2 = speciesRes;
+            d.display_name3 = d.ids;
           }
         } else {
           d.display_name1 = d.tna;
