@@ -30,6 +30,7 @@ nav {
   top:0;
   left:0;
   font-family: 'Raleway', sans-serif;
+  font-weight: 800;
   /*padding:0.1em;*/
 }
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {

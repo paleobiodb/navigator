@@ -181,11 +181,11 @@ var diversityPlot = (function() {
       .attr("transform", "rotate(-90)")
       .attr("dy", "1em")
       .style("text-anchor", "end")
-      .text("Genera");
+      .text("Taxa in period");
     
     // Draw zee line
     var line = d3.svg.line()
-      .interpolate("linear") 
+      .interpolate("basis") 
       .x(function(d) { return periodPos(d.eag) })
       .y(function(d) { return y(d.total); });
     
@@ -194,7 +194,19 @@ var diversityPlot = (function() {
       .attr("class", "line diversityLine")
       .attr("d", line)
       .attr("transform", "translate(" + padding.left + ",0)");
+/*
+    var sampledInBinLine = d3.svg.line()
+      .interpolate("linear") 
+      .x(function(d) { return periodPos(d.eag) })
+      .y(function(d) { return y(d.dsb); });
     
+    svg.append("path")
+      .datum(data)
+      .attr("class", "line diversityLine")
+      .attr("d", sampledInBinLine)
+      .attr("transform", "translate(" + padding.left + ",0)")
+      .attr("stroke-dasharray", "1, 5");
+    */
     positionLabels();
     resize();
   }
