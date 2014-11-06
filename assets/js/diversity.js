@@ -12,7 +12,6 @@ var diversityPlot = (function() {
       })
       .done(function(data) {
         getTimescale(data.records.map(function(d) {
-          //d.total = d.dor + d.dex + d.dsg + d.drt;
           d.total = d.dsb;
           return d;
         }));
@@ -56,6 +55,7 @@ var diversityPlot = (function() {
             return d;
           }
         });
+        // Draw the chart
         draw(data, timescale);
       });
   } // End getTimescale
@@ -64,6 +64,7 @@ var diversityPlot = (function() {
     // Remove any old ones...
     d3.select("#diversity").select("svg").remove();
 
+    // Filter out the periods and eras for drawing purposes
     var periods = timescale.filter(function(d) {
       if (d.lvl === 3) {
         return d;
@@ -76,33 +77,39 @@ var diversityPlot = (function() {
       }
     });
 
-    // Aaaand....DRAW DRAW DRAW!
+    // Define a scale for the x axis
     var x = d3.scale.linear()
       .domain([d3.max(eras, function(d) { return d.eag; }), d3.min(eras, function(d) { return d.lag; }) - 1])
       .range([0, width - margin.left - margin.right]);
-  
+    
+    // Define a scale for the y axis
     var y = d3.scale.linear()
       .domain([0, d3.max(data, function(d) { return d.total; })])
       .range([height - margin.top - margin.bottom, 0]);
-  
+    
+    // Create an x axis
     var xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
       .ticks(5);
-  
+    
+    // Create a Y axis
     var yAxis = d3.svg.axis()
       .scale(y)
       .orient("left")
       .ticks(5);
-      
+    
+    // Define a scale for scaling the periods
     var periodX = d3.scale.linear()
       .domain([0, d3.sum(timescale, function(d) { if (d.lvl === 2) { return d.totalTime; } })])
       .range([0, width - margin.left - margin.right]);
     
+    // Define a scale for positioning the periods
     var periodPos = d3.scale.linear()
       .domain([d3.max(timescale, function(d) { return d.eag }), d3.min(timescale, function(d) { return d.lag })])
       .range([0, width - margin.left - margin.right]);
     
+    // Draw the SVG to hold everything
     var svg = d3.select("#diversity").append("svg")
       .attr("width", width)
       .attr("height", height)
@@ -111,11 +118,13 @@ var diversityPlot = (function() {
       .attr("id", "diversityGraphGroup")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
+    // Draw a group to hold the timescale
     var scale = d3.select("#diversityGraph").select("g")
       .append("g")
       .attr("id", "timeScale")
       .attr("transform", "translate(" + padding.left + "," + (height  - margin.top - margin.bottom + 3) + ")");
 
+    // Draw the periods
     scale.selectAll(".periods")
       .data(periods)
     .enter().append("rect")
@@ -127,6 +136,7 @@ var diversityPlot = (function() {
       .append("svg:title")
       .text(function(d) { return d.nam });
     
+    // Draw period abbreviations
     scale.selectAll(".periodNames")
       .data(periods)
     .enter().append("text")
@@ -136,6 +146,7 @@ var diversityPlot = (function() {
       .attr("class", "timeLabel abbreviation")
       .text(function(d) { return d.abr });
     
+    // Draw the full period names
     scale.selectAll(".periodNames")
       .data(periods)
     .enter().append("text")
@@ -145,6 +156,7 @@ var diversityPlot = (function() {
       .attr("id", function(d) { return "l" + d.oid })
       .text(function(d) { return d.nam });
     
+    // Draw the era(s)
     scale.selectAll(".eras")
       .data(eras)
     .enter().append("rect")
@@ -157,6 +169,7 @@ var diversityPlot = (function() {
       .append("svg:title")
       .text(function(d) { return d.nam });
     
+    // Draw the full era names
     scale.selectAll(".eraNames")
       .data(eras)
     .enter().append("text")
@@ -181,11 +194,14 @@ var diversityPlot = (function() {
       .attr("transform", "rotate(-90)")
       .attr("dy", "1em")
       .style("text-anchor", "end")
-      .text("Taxa in period");
+      .style("letter-spacing", "5px")
+      .style("font-size", "2em")
+      .style("font-weight", 400)
+      .text("Genera sampled in bin");
     
     // Draw zee line
     var line = d3.svg.line()
-      .interpolate("basis") 
+      .interpolate("linear") 
       .x(function(d) { return periodPos(d.eag) })
       .y(function(d) { return y(d.total); });
     
@@ -194,19 +210,7 @@ var diversityPlot = (function() {
       .attr("class", "line diversityLine")
       .attr("d", line)
       .attr("transform", "translate(" + padding.left + ",0)");
-/*
-    var sampledInBinLine = d3.svg.line()
-      .interpolate("linear") 
-      .x(function(d) { return periodPos(d.eag) })
-      .y(function(d) { return y(d.dsb); });
-    
-    svg.append("path")
-      .datum(data)
-      .attr("class", "line diversityLine")
-      .attr("d", sampledInBinLine)
-      .attr("transform", "translate(" + padding.left + ",0)")
-      .attr("stroke-dasharray", "1, 5");
-    */
+
     positionLabels();
     resize();
   }
