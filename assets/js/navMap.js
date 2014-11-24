@@ -1186,7 +1186,7 @@ var navMap = (function() {
                 url += '&interval_id=' + filters.selectedInterval.oid;
                 break;
               case "personFilter":
-                url += '&person_id=' + filters.personFilter.id;
+                url += '&touched_by=' + filters.personFilter.id;
                 break;
               case "taxon":
                 url += '&base_id=';
