@@ -360,9 +360,8 @@ var paleo_nav = (function() {
           }
         }
 
-        //diversityPlot.plot(navMap.parseURL(baseUrl + "/data1.2/diversity.json") + "&count=genera&reso=stage");
-        var diversityURL = navMap.parseURL("http://testpaleodb.geology.wisc.edu/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
-        diversityPlot.plot(diversityURL);
+        //var diversityURL = navMap.parseURL(baseUrl + "/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        //diversityPlot.plot(diversityURL);
 
         var url = baseUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);

@@ -296,5 +296,3 @@ var diversityPlot = (function() {
   }
   
 })();
-
-//diversityPlot.plot("http://testpaleodb.geology.wisc.edu/data1.2/occs/diversity.json?base_name=Trilobita&count=genera&reso=stage");
