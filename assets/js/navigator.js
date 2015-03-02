@@ -193,7 +193,7 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: 'http://phylum.geology.wisc.edu/larkin/stratigraphy_autocomplete?name=%QUERY'
+            url: baseUrl + '/larkin/stratigraphy_autocomplete?name=%QUERY'
           },
           valueKey: 'display_name'
         }
@@ -305,7 +305,7 @@ var paleo_nav = (function() {
       $("#saveBox").on('show.bs.modal', function() {
         if ($("#urlTab").hasClass("active")) {
           var request = $.ajax({
-            url: "http://phylum.geology.wisc.edu/larkin/app-state",
+            url: baseUrl + "/larkin/app-state",
             async: false,
             type: "POST",
             data: {
