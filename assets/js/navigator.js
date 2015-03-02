@@ -152,7 +152,7 @@ var paleo_nav = (function() {
         {
           name: 'time',
           prefetch: {
-            url: 'http://phylum.geology.wisc.edu/larkin/time_scale'
+            url: baseUrl + '/larkin/time_scale'
           },
           valueKey: 'name',
           header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
@@ -397,7 +397,7 @@ var paleo_nav = (function() {
 
       $("#getAppUrl").on("click", function() {
         var request = $.ajax({
-          url: "http://phylum.geology.wisc.edu/larkin/app-state",
+          url: baseUrl + "/larkin/app-state",
           async: false,
           type: "POST",
           data: {
