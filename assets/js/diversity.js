@@ -43,7 +43,7 @@ var diversityPlot = (function() {
     }
     
     // Request timescale data
-    $.ajax("http://paleobiodb.org/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge)
+    $.ajax("https://paleobiodb.org/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge)
       .fail(function(error) {
         console.log(error);
       })

@@ -1,7 +1,7 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      If developing locally default to paleobiodb.org, otherwise use localhost */  
-  var baseUrl = (window.location.hostname === "localhost") ? "http://paleobiodb.org" : "";
+  var baseUrl = (window.location.hostname === "localhost") ? "https://paleobiodb.org" : "";
 
   return {
     "init": function() {

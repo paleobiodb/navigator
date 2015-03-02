@@ -68,9 +68,9 @@ var navMap = (function() {
 
       var attrib = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
 
-      stamen = new L.TileLayer('http://{s}.tile.stamen.com/toner-background/{z}/{x}/{y}.png', {attribution: attrib}).addTo(map);
+      stamen = new L.TileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png', {attribution: attrib}).addTo(map);
 
-      stamenLabels = new L.TileLayer('http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: attrib});
+      stamenLabels = new L.TileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {attribution: attrib});
 
       function mapSelection(zoom) {
       // If viewing the projected map...
@@ -1785,7 +1785,7 @@ var navMap = (function() {
 
         // If there is a preserved state hash
         if (state.length > 1) {
-          d3.json("http://phylum.geology.wisc.edu/larkin/app-state?id=" + state, function(error, result) {
+          d3.json("https://paleobiodb.org/larkin/app-state?id=" + state, function(error, result) {
             if (error) {
               return paleo_nav.launch();
             }
