@@ -906,17 +906,18 @@ var navMap = (function() {
 
       data.records.forEach(function(d) {
         // Some preproccessing
-        d.rank = (d.rnk) ? taxaBrowser.rankMap(d.rnk) : "Unknown";
+        d.rank = (d.mra) ? taxaBrowser.rankMap(d.mra) : (d.rank) ?  taxaBrowser.rankMap(d.rnk) : "Unknown";
         d.itallics = (d.rnk < 6) ? "itallics" : "";
         d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
-        d.url = (d.tna === (d.idt + " " + d.ids)) ? d.tna : d.idt;
+        d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : d.idt; 
+
         if (d.idt) {
-          if (d.tna === (d.idt + " " + d.ids)) {
+          if (d.rank === "species") {
             var genusRes = (d.rst) ? d.rst + " " : "",
                 speciesRes = (d.rss) ? " " + d.rss + " " : " ";
             d.genusRes = genusRes;
-            d.display_name1 = d.idt + speciesRes;
-            d.display_name2 = d.ids;
+            d.display_name1 = d.idt + " " + d.ids;
+            d.display_name2 = "";
             d.display_name3 = "";
           } else {
             var genusRes = (d.rst) ? d.rst + " " : "",
