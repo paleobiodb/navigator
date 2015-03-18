@@ -28,7 +28,7 @@ var taxaBrowser = (function(){
             
             // Update the selected taxon in the taxa browser
             d3.select(".taxonTitle")
-              .html(data.records[0].nam + " (" + rankMap(data.records[0].rnk) + ")" + "<i class='icon icon-plus-sign-alt'></i>")
+              .html(data.records[0].nam + " (" + rankMap(data.records[0].rnk) + ")" + "<i class='fa fa-plus-square'></i>")
               .attr("id", function() { return data.records[0].nam });
 
             $(".taxonTitle").off("click");

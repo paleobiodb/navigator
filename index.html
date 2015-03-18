@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="assets/css/lib/leaflet.css" type="text/css"/>
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" type="text/css"/>
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway:200" type="text/css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" type="text/css"/>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="build/css/navigator.min.css" type="text/css"/>
 
     <script>
@@ -50,7 +50,7 @@
                   <div class="input-group">
                     <input type="text" class="form-control" placeholder="Time, taxa, authorizer, stratigraphy " id="universalAutocompleteInput">
                     <span class="input-group-btn">
-                      <button type="submit" class="btn btn-primary" id="universalSearchButton"><i class="icon icon-search"></i></button>
+                      <button type="submit" class="btn btn-primary" id="universalSearchButton"><i class="fa fa-search"></i></button>
                     </span>
                   </div>
                 </form>
@@ -102,11 +102,11 @@
               </table>
             </div>
           </div>
-          <p class="taxaBrowserToggle" id="collapseTaxaBrowser"><i class="icon-double-angle-left"></i>Collapse taxa browser</p>
+          <p class="taxaBrowserToggle" id="collapseTaxaBrowser"><i class="fa fa-angle-double-left"></i>Collapse taxa browser</p>
         </div>
 
       	<div class="col-sm-12" id="graphics">
-          <i class="icon-spinner icon-spin icon-3x" id="loading"></i>
+          <i class="fa fa-spinner fa-3x fa-spin" id="loading"></i>
           <div id="infoContainer">
             <div class="info leaflet-control"></div>
           </div>
@@ -119,11 +119,11 @@
           </div>
           <div id="mapControls">
             <div class="customControl buttons leaflet-control">
-              <div class="zoom-in mapCtrl" title="Zoom in"><i class="icon-plus ctrlButton"></i></div>
-              <div class="zoom-out mapCtrl" title="Zoom out"><i class="icon-minus ctrlButton"></i></div>
+              <div class="zoom-in mapCtrl" title="Zoom in"><i class="fa fa-plus ctrlButton"></i></div>
+              <div class="zoom-out mapCtrl" title="Zoom out"><i class="fa fa-minus ctrlButton"></i></div>
               <div class="rotate mapCtrl" title="Toggle paleogeography"><div id="rotateIcon"></div></div>
-              <div class="taxa mapCtrl" title="Toggle taxa browser"><i class="icon-bug icon-2x ctrlButton"></i></div>
-              <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="icon-share-alt icon-2x ctrlButton"></i></a></div>
+              <div class="taxa mapCtrl" title="Toggle taxa browser"><i class="fa fa-bug fa-2x ctrlButton"></i></div>
+              <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="fa fa-share fa-2x ctrlButton"></i></a></div>
             </div>
           </div>
 
@@ -140,7 +140,7 @@
                       </a>
                       <h5 id="interval"></h5>
                       <p id="age"></p>
-                      <a id="mapSwitch" href="#"><i class="icon-circle-arrow-left"></i> Back to main map</a>
+                      <a id="mapSwitch" href="#"><i class="fa fa-arrow-circle-left"></i> Back to main map</a>
                     </div>
                   </div>
                 </div>
@@ -158,8 +158,8 @@
           <div class="modal-header" id="downloadModalHeader">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <ul class="nav nav-tabs">
-              <li class="active downloadTab" id="downloadDataTab"><a href="#downloadData" data-toggle="tab"><i class="icon-download-alt"></i> Download Data</a></li>
-              <li class="downloadTab" id="urlTab"><a href="#getURL" data-toggle="tab" id="fetchURL"><i class="icon-link"></i>Get URL</a></li>
+              <li class="active downloadTab" id="downloadDataTab"><a href="#downloadData" data-toggle="tab"><i class="fa fa-download"></i> Download Data</a></li>
+              <li class="downloadTab" id="urlTab"><a href="#getURL" data-toggle="tab" id="fetchURL"><i class="fa fa-link"></i>Get URL</a></li>
             </ul>
           </div>
           <div class="modal-body">
@@ -284,11 +284,11 @@
           </div>
           <div class="modal-body" id="collectionModalBody"></div>
           <div class="modal-footer warningText">
-            <p class="warning general"><i class="icon icon-warning-sign icon-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
+            <p class="warning general"><i class="fa fa-warning fa-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
 
-            <p class="warning nationalParks"><i class="icon icon-warning-sign icon-2x"></i>Removal of natural objects from <a href="http://www.nature.nps.gov/geology/planning/index.cfm" target="_blank">US National Parks and Monuments</a> is strictly prohibited by law.</p>
+            <p class="warning nationalParks"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from <a href="http://www.nature.nps.gov/geology/planning/index.cfm" target="_blank">US National Parks and Monuments</a> is strictly prohibited by law.</p>
 
-            <p class="warning federalLands"><i class="icon icon-warning-sign icon-2x"></i>Removal of natural objects from <a href="http://www.blm.gov/wo/st/en/prog/more/CRM/paleontology/fossil_collecting.html" target="_blank">public lands</a> is regulated by state and federal laws and regulations.</p>
+            <p class="warning federalLands"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from <a href="http://www.blm.gov/wo/st/en/prog/more/CRM/paleontology/fossil_collecting.html" target="_blank">public lands</a> is regulated by state and federal laws and regulations.</p>
           </div>
         </div>
       </div>
@@ -336,11 +336,11 @@
             <div class="panel-group" id="accordion"></div>
           </div>
           <div class="modal-footer warningText">
-            <p class="warning general"><i class="icon icon-warning-sign icon-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
+            <p class="warning general"><i class="fa fa-warning fa-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
 
-            <p class="warning nationalParks"><i class="icon icon-warning-sign icon-2x"></i>Removal of natural objects from <a href="http://www.nature.nps.gov/geology/planning/index.cfm" target="_blank">US National Parks and Monuments</a> is strictly prohibited by law.</p>
+            <p class="warning nationalParks"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from <a href="http://www.nature.nps.gov/geology/planning/index.cfm" target="_blank">US National Parks and Monuments</a> is strictly prohibited by law.</p>
 
-            <p class="warning federalLands"><i class="icon icon-warning-sign icon-2x"></i>Removal of natural objects from public lands is regulated by state and federal laws and regulations.</p>
+            <p class="warning federalLands"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from public lands is regulated by state and federal laws and regulations.</p>
           </div>
         </div>
       </div>
@@ -357,12 +357,12 @@
             <h5 id="collectionCount"></h5>
             <div class="panel-group" id="collectionAccordion"></div>
             <div class="show-more-collections" data-offset="0" data-total-collections="0" data-shown-collections="0">
-              <i class="icon-spinner icon-spin icon-3x" id="collectionLoading"></i><br>
-              <i class="icon icon-double-angle-down"></i>   Show more collections...   <i class="icon icon-double-angle-down"></i>
+              <i class="fa fa-spinner fa-3x fa-spin" id="collectionLoading"></i><br>
+              <i class="fa fa-angle-double-down"></i>   Show more collections...   <i class="fa fa-angle-double-down"></i>
             </div>
           </div>
           <div class="modal-footer warningText">
-            <p class="warning"><i class="icon icon-warning-sign icon-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
+            <p class="warning"><i class="fa fa-warning fa-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
           </div>
         </div>
       </div>
@@ -452,7 +452,7 @@
         <div class="modal-content" id="helpModalContent">
           <div class="modal-body">
             <div class="helpModalClose">
-              <i class="icon icon-remove icon-2x"></i>
+              <i class="fa fa-remove fa-2x"></i>
             </div>
             <div class="helpModalTitle">
               <h2>Welcome to PBDB Navigator Beta!</h2>
@@ -493,26 +493,26 @@
             </div>
             <div class="helpModalControls">
               <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Zoom in</p>
+                <i class="fa fa-angle-left"></i><p>Zoom in</p>
               </div>
               <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Zoom out</p>
+                <i class="fa fa-angle-left"></i><p>Zoom out</p>
               </div>
               <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Paleo view</p>
+                <i class="fa fa-angle-left"></i><p>Paleo view</p>
               </div>
               <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Taxa browser</p>
+                <i class="fa fa-angle-left"></i><p>Taxa browser</p>
               </div>
               <div class="helpModalControlLabel">
-                <i class="icon icon-angle-left"></i><p>Save data</p>
+                <i class="fa fa-angle-left"></i><p>Save data</p>
               </div>
             </div>
             <div class="helpModalTimescaleLabel click">
-              <p>Click/tap a time interval to filter the map</p><i class="icon icon-angle-down"></i>
+              <p>Click/tap a time interval to filter the map</p><i class="fa fa-angle-down"></i>
             </div>
             <div class="helpModalTimescaleLabel dblclick">
-              <p>Double click/tap a time interval to zoom the time scale</p><i class="icon icon-angle-down"></i>
+              <p>Double click/tap a time interval to zoom the time scale</p><i class="fa fa-angle-down"></i>
             </div>
           </div>
         </div>

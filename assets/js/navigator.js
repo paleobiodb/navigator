@@ -583,7 +583,7 @@ var paleo_nav = (function() {
     "openTaxaBrowser": function() {
       d3.select("#graphics").attr("class", "col-sm-9");
       d3.select("#taxaBrowser").style("display", "block");
-      d3.select("#taxaBrowserToggle").html('<i class="icon-double-angle-left" style="margin-right:5px;"></i>Collapse taxa browser');
+      d3.select("#taxaBrowserToggle").html('<i class="fa fa-angle-double-left" style="margin-right:5px;"></i>Collapse taxa browser');
       d3.select(".taxaToggler").style("display", "none");
       timeScale.resize();
       reconstructMap.resize();
@@ -593,7 +593,7 @@ var paleo_nav = (function() {
     "closeTaxaBrowser": function() {
       d3.select("#graphics").attr("class", "col-sm-12");
       d3.select("#taxaBrowser").style("display", "none");
-      d3.select("#taxaBrowserToggle").html('Expand taxa browser<i class="icon-double-angle-right" style="margin-left:5px;"></i>');
+      d3.select("#taxaBrowserToggle").html('Expand taxa browser<i class="fa fa-angle-double-right" style="margin-left:5px;"></i>');
       d3.select(".taxa").style("color", "#000");
       timeScale.resize();
       reconstructMap.resize();
@@ -699,9 +699,6 @@ var paleo_nav = (function() {
           map.zoomOut();
         })
         .css("color", "#000");
-
-      $(".save").off("click");
-      $(".icon-save").css("color", "#000");
 
       // Show the time interval filter remove button
       d3.select("#selectedInterval")

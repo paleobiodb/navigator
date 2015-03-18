@@ -137,7 +137,7 @@ nav {
 .federalLands > i {
   color: #eecd00;
 }
-.icon-warning-sign {
+.fa-warning {
   margin-right: 10px;
 }
 .binID {
@@ -470,10 +470,10 @@ color: rgb(245,245,245);
   right: 0;
   height: 25px;
 }
-.mapCtrl > .icon-minus {
+.mapCtrl > .fa-minus {
   height:16px;
 }
-.mapCtrl > .icon-plus {
+.mapCtrl > .fa-plus {
   height:16px;
 }
 .zoom-in:active {
