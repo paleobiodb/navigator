@@ -123,6 +123,7 @@
               <div class="zoom-out mapCtrl" title="Zoom out"><i class="fa fa-minus ctrlButton"></i></div>
               <div class="rotate mapCtrl" title="Toggle paleogeography"><div id="rotateIcon"></div></div>
               <div class="taxa mapCtrl" title="Toggle taxa browser"><i class="fa fa-bug fa-2x ctrlButton"></i></div>
+              <div class="stats mapCtrl" title="Toggle stats"><a data-toggle="modal" href="#statsBox"><i class="fa fa-line-chart fa-2x ctrlButton"></i></a></div>
               <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="fa fa-share fa-2x ctrlButton"></i></a></div>
             </div>
           </div>
@@ -152,6 +153,29 @@
       </div> <!-- End row -->
     </div>
 
+    <div class="modal fade" id="statsBox" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content statsContent">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            Current view stats
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-12 diversityContainer">
+                <h3>Diversity</h3>
+                <i class="fa fa-spinner fa-3x fa-spin" id="diversityWait"></i>
+                <div id="diversity"></div>
+              </div>
+              <!--<div class="col-sm-6" id="prevalence">
+                <h3>Prevalent taxa</h3>
+              </div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end stats modal -->
+
     <div class="modal fade" id="saveBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -166,7 +190,7 @@
             <div class="tab-content" id="downloadModalContent">
               <div class="tab-pane active" id="downloadData">
                 <div class="row">
-                  <div class="col-sm-6 diversityContainer">
+                  <div class="col-sm-12">
                     <div class="col-sm-12">
                       <h4>Filters:</h4>
                       <ul id="filterList"></ul>
@@ -229,10 +253,6 @@
                       <button type="button" class="btn btn-warning downloadButton" data-dismiss="modal">Cancel</button>
                     </div>
                   </div>
-                  <div class="col-sm-6">
-                    <div id="diversity"></div>
-                  </div>
-                    
                 </div>
 
                 <div class="row">

@@ -2,27 +2,36 @@ var diversityPlot = (function() {
   var margin = {top: 20, right: 20, bottom: 80, left: 40},
       padding = {top: 0, right: 0, bottom: 0, left: 80},
       width = 960,
-      height = 800 - margin.top - margin.bottom;
+      height = 800 - margin.top - margin.bottom,
+      currentRequest;
   
   // Fetch diversity data from PBDB
   function getDiversityData(url) {
-    $.ajax(url)
-      .fail(function(error) {
+    // Abort any pending requests
+    if(typeof(diversityPlot.currentRequest) != 'undefined') {
+      if (Object.keys(diversityPlot.currentRequest).length > 0) {
+        diversityPlot.currentRequest.abort();
+        diversityPlot.currentRequest = {};
+      }
+    }
+
+    diversityPlot.currentRequest = d3.json(url, function(error, data) {
+      if (error) {
         console.log(error);
-      })
-      .done(function(data) {
+      } else {
         getTimescale(data.records.map(function(d) {
           d.total = d.dsb;
           return d;
         }));
-      });
-    }
+      }
+    });
+  }
   
   // Get appropriate timescale
   function getTimescale(data) {
     // Figure out how much timescale we need
-    var maxAge = data[0].eag,
-        minAge = data[data.length - 1].eag;
+    var maxAge = data[data.length - 1].eag,
+        minAge = data[0].lag;
 
     var eras = [
       {"nam": "Paleozoic", "lag": 252.17, "eag": 541},
@@ -43,7 +52,7 @@ var diversityPlot = (function() {
     }
     
     // Request timescale data
-    $.ajax("https://paleobiodb.org/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge)
+    $.ajax("https://paleobiodb.org/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
       .fail(function(error) {
         console.log(error);
       })
@@ -213,6 +222,8 @@ var diversityPlot = (function() {
 
     positionLabels();
     resize();
+
+    $("#diversityWait").css("display", "none");
   }
   
   function positionLabels() {
@@ -292,7 +303,8 @@ var diversityPlot = (function() {
   
   return {
     "plot": getDiversityData,
-    "resize": resize
+    "resize": resize,
+    "currentRequest": currentRequest
   }
   
 })();

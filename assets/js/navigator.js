@@ -298,9 +298,42 @@ var paleo_nav = (function() {
         $(".show-more-collections").data("total-collections", 0);
       });
 
-      $("#saveBox").on('shown.bs.modal', function() {
+      $("#statsBox").on('show.bs.modal', function() {
+        $(".statsContent").height(window.innerHeight - 75);
+        $(".diversityContainer").height(window.innerHeight - 300)
+        $("#diversityWait").css("display", "block");
+        // Remove any old ones...
+        d3.select("#diversity").select("svg").remove();
+
+        // Show waiting
+
+
+        var bounds = map.getBounds(),
+            sw = bounds._southWest,
+            ne = bounds._northEast;
+
+        if (parseInt(d3.select("#map").style("height")) < 1) {
+          sw.lng = -180,
+          ne.lng = 180,
+          sw.lat = -90,
+          ne.lat = 90;
+        }
+
+        var diversityURL = navMap.parseURL("http://testpaleodb.geology.wisc.edu/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        diversityPlot.plot(diversityURL);
         diversityPlot.resize();
       });
+
+      $("#statsBox").on("hide.bs.modal", function() {
+        // Abort any pending requests
+        if(typeof(diversityPlot.currentRequest) != 'undefined') {
+          if (Object.keys(diversityPlot.currentRequest).length > 0) {
+            diversityPlot.currentRequest.abort();
+            diversityPlot.currentRequest = {};
+          }
+        }
+      })
+
       // Fired when the "save" modal is opened
       $("#saveBox").on('show.bs.modal', function() {
         if ($("#urlTab").hasClass("active")) {
@@ -359,9 +392,6 @@ var paleo_nav = (function() {
             }
           }
         }
-
-        //var diversityURL = navMap.parseURL(baseUrl + "/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
-        //diversityPlot.plot(diversityURL);
 
         var url = baseUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);

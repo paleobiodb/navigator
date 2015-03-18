@@ -789,10 +789,8 @@ var navMap = (function() {
           var id = d.target.id;
           id = id.replace("occToggle", "");
           
-          var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id;
-          url = navMap.parseURL(url);
-          url += "&show=phylo,ident";
-          
+          var url = navMap.parseURL(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+
           d3.json(url, function(err, data) {
             if (data.records.length > 0) {
               var taxonHierarchy = navMap.buildTaxonHierarchy(data);
@@ -817,6 +815,7 @@ var navMap = (function() {
     },
 
     "openBinModal": function(d, collections, occurrences, interval) {
+      $("#loading").show();
       var id = (d.properties) ? d.properties.oid : d.oid,
           url = paleo_nav.baseUrl + "/data1.1/colls/list.json?clust_id=" + id;
 
@@ -858,10 +857,8 @@ var navMap = (function() {
             var id = d.target.id;
             id = id.replace("occToggle", "");
             
-            var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id;
-            url = navMap.parseURL(url);
-            url += "&show=phylo,ident";
-            
+            var url = navMap.parseURL(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+
             d3.json(url, function(err, data) {
               if (data.records.length > 0) {
                 var taxonHierarchy = navMap.buildTaxonHierarchy(data);
@@ -898,6 +895,7 @@ var navMap = (function() {
         }
         
         $("#binModal").modal();
+        $("#loading").hide();
       });
     },
 
@@ -1018,6 +1016,7 @@ var navMap = (function() {
     },
 
     "openCollectionModal": function(d) {
+      $("#loading").show();
     /* 
       Placeholder for once the data service allows filters on colls/single.json
       var url = paleo_nav.baseUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
@@ -1064,8 +1063,7 @@ var navMap = (function() {
           var id = d.target.id;
           id = id.replace("occToggle", "");
           
-          var url = paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident";
-          url = navMap.parseURL(url);
+          var url = navMap.parseURL(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
             if (data.records.length > 0) {
@@ -1086,7 +1084,7 @@ var navMap = (function() {
             }
           });
         });
- 
+        $("#loading").hide();
       });
     },
 
@@ -1122,7 +1120,10 @@ var navMap = (function() {
       $(".occurrenceTab").on("show.bs.tab", function(d) {
           var id = d.target.id;
           id = id.replace("occToggle", "");
-          d3.json(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident", function(err, data) {
+
+          var url = navMap.parseURL(paleo_nav.baseUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+
+          d3.json(url, function(err, data) {
             if (data.records.length > 0) {
               var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 

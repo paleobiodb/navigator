@@ -353,6 +353,18 @@ color: rgb(245,245,245);
   vertical-align: middle;
   display:none;
 }
+.stats > a {
+  color:#000;
+}
+.stats > a:hover {
+  color:#000;
+  text-decoration: none;
+}
+#diversityWait {
+  position: absolute;
+  margin-left: 40%;
+  margin-top: 10%;
+}
 .save > a {
   color:#000;
 }
@@ -831,7 +843,7 @@ br {
 
 /* Diversity curve styles */
 #diversity {
-  margin-left: -65px;
+  margin-left: -40px;
 }
 #diversityGraph {
   padding-top: 20px;
