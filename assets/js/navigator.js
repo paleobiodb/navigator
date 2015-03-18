@@ -338,7 +338,7 @@ var paleo_nav = (function() {
 
         var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         diversityPlot.plot(diversityURL);
-        setTimeout(diversityPlot.resize, 100);
+        
       });
 
       $("#statsBox").on("hide.bs.modal", function() {

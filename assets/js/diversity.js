@@ -17,6 +17,7 @@ var diversityPlot = (function() {
 
     diversityPlot.currentRequest = d3.json(url, function(error, data) {
       if (error) {
+        alert("Error retrieving diversity data");
         console.log(error);
       } else {
         getTimescale(data.records.map(function(d) {
@@ -221,7 +222,6 @@ var diversityPlot = (function() {
       .attr("transform", "translate(" + padding.left + ",0)");
 
     positionLabels();
-    resize();
 
     $("#diversityWait").css("display", "none");
   }
@@ -269,6 +269,8 @@ var diversityPlot = (function() {
         d3.select(".abbreviation#l" + id).attr("x", rectX + ((rectWidth - abbreviationWidth)/ 2));
       }
     }
+
+    setTimeout(resize, 100);
   }
   
   function resize() {
