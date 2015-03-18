@@ -160,7 +160,6 @@ var paleo_nav = (function() {
           prefetch: {
             url: baseUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
             filter: function(data) {
-              console.log("here")
               return data.records;
             }
           },
@@ -337,9 +336,9 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         diversityPlot.plot(diversityURL);
-        diversityPlot.resize();
+        setTimeout(diversityPlot.resize, 100);
       });
 
       $("#statsBox").on("hide.bs.modal", function() {

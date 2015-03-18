@@ -275,19 +275,19 @@ var diversityPlot = (function() {
     var containerHeight = $(".diversityContainer").height() - 10,
         containerWidth = $(".diversityContainer").width() ;
       
-      if (containerHeight > containerWidth) {
-        var scale = containerWidth / width;
-        
-        if ((scale * height) > containerHeight) {
-          scale = containerHeight / height;
-        }
-      } else {
-        // width > height
-        var scale = containerHeight / height;
-        if ((scale * width) > containerWidth) {
-          scale = containerWidth / width;
-        }
+    if (containerHeight > containerWidth) {
+      var scale = containerWidth / width;
+      
+      if ((scale * height) > containerHeight) {
+        scale = containerHeight / height;
       }
+    } else {
+      // width > height
+      var scale = containerHeight / height;
+      if ((scale * width) > containerWidth) {
+        scale = containerWidth / width;
+      }
+    }
       
     d3.select("#diversityGraphGroup")
       .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.right + ")");

@@ -234,7 +234,7 @@ var navMap = (function() {
       }
     },
 
-    // TODO: This needs to be cleaned up
+
     "selectBaseMap": function(zoom) {
       if (zoom < 5) {
         if (map.hasLayer(stamenLabels)) {
@@ -651,13 +651,9 @@ var navMap = (function() {
       
       // Create a Leaflet Lat/lng for all clusters
       clusters.forEach(function(d) {
-        //var clusterBottoms = [],
-        //  clusterTops = [],
         var totalOccurrences = [];
 
         d.members.forEach(function(e) {
-          //clusterBottoms.push(e.eag);
-          //clusterTops.push(e.lag);
           totalOccurrences.push(e.noc);
         });
         //d.ageTop = d3.min(clusterTops);
