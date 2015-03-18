@@ -1592,7 +1592,7 @@ var navMap = (function() {
       // rock is = {"name": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
       if (rock) {
         filters.exist.stratigraphy = true;
-        filters.stratigraphy.name = rock.name;
+        filters.stratigraphy.name = rock.nam;
         filters.stratigraphy.rank = (rock.type) ? rock.type : rock.rank;
         navMap.updateFilterList("stratigraphy");
         navMap.refresh("reset");

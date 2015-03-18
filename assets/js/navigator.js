@@ -148,11 +148,21 @@ var paleo_nav = (function() {
         }
       });
 
+      var stratRankMap = {
+        "member": "Mbr",
+        "formation": "Fm",
+        "group": "Gp"
+      };
+
       var universalAutocomplete = $("#universalAutocompleteInput").typeahead([
         {
           name: 'time',
           prefetch: {
-            url: baseUrl + '/larkin/time_scale'
+            url: baseUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
+            filter: function(data) {
+              console.log("here")
+              return data.records;
+            }
           },
           valueKey: 'name',
           header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
@@ -193,7 +203,14 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: baseUrl + '/larkin/stratigraphy_autocomplete?name=%QUERY'
+            url: baseUrl + '/data1.1/strata/auto.json?limit=10&name=%QUERY',
+            filter: function(data) {
+              data.records.forEach(function(d) {
+                d.display_name = d.nam + " " + stratRankMap[d.rnk];
+                d.type = stratRankMap[d.rnk];
+              });
+              return data.records
+            }
           },
           valueKey: 'display_name'
         }
@@ -216,6 +233,7 @@ var paleo_nav = (function() {
             break;
           case 'strat':
             navMap.filterByStratigraphy(data);
+            break;
           default:
             console.log("default");
             break;
@@ -319,7 +337,7 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var diversityURL = navMap.parseURL("http://testpaleodb.geology.wisc.edu/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         diversityPlot.plot(diversityURL);
         diversityPlot.resize();
       });
