@@ -346,7 +346,7 @@ var paleo_nav = (function() {
         var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera_plus&reso=stage");
         diversityPlot.plot(diversityURL);
 
-        var prevalenceURL = navMap.parseURL("http://testpaleodb.geology.wisc.edu/data1.2/occs/prevalence.json?limit=10&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+        var prevalenceURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/prevalence.json?limit=10&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
         d3.json(prevalenceURL, function(error, data) {
           var scale = d3.scale.linear()
             .domain([d3.min(data.records, function(d) {
@@ -392,7 +392,7 @@ var paleo_nav = (function() {
           });
 
           request.success(function(result) {
-            $("#url").val("http://paleobiodb.org/navigator/#/" + result.id);
+            $("#url").val("https://paleobiodb.org/navigator/#/" + result.id);
             // For some reason this won't work without a small timeout
             setTimeout(function() {
               $("#url").focus();
@@ -481,7 +481,7 @@ var paleo_nav = (function() {
         });
 
         request.success(function(result) {
-          $("#appUrl").val("http://paleobiodb.org/navigator/#/" + result.id);
+          $("#appUrl").val("https://paleobiodb.org/navigator/#/" + result.id);
           // For some reason this won't work without a small timeout
           setTimeout(function() {
             $("#appUrl").focus();

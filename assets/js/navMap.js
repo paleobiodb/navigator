@@ -1721,7 +1721,7 @@ var navMap = (function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
           ne = bounds._northEast,
-          url = 'http://paleobiodb.org/data1.1/occs/list.json';
+          url = 'https://paleobiodb.org/data1.1/occs/list.json';
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
         url += "?limit=all";
