@@ -1,5 +1,5 @@
 var diversityPlot = (function() {
-  var margin = {top: 20, right: 20, bottom: 80, left: 40},
+  var margin = {top: 20, right: 20, bottom: 80, left: 80},
       padding = {top: 0, right: 0, bottom: 0, left: 80},
       width = 960,
       height = 800 - margin.top - margin.bottom,
@@ -143,6 +143,7 @@ var diversityPlot = (function() {
       .attr("x", function(d) { return periodPos(d.eag) })
       .attr("id", function(d) { return "r" + d.oid })
       .style("fill", function(d) { return d.col })
+      .style("opacity", 0.83)
       .append("svg:title")
       .text(function(d) { return d.nam });
     
@@ -176,6 +177,7 @@ var diversityPlot = (function() {
       .attr("y", "40")
       .attr("id", function(d) { return "r" + d.oid })
       .style("fill", function(d) { return d.col })
+      .style("opacity", 0.83)
       .append("svg:title")
       .text(function(d) { return d.nam });
     
@@ -274,7 +276,8 @@ var diversityPlot = (function() {
   }
   
   function resize() {
-    var containerHeight = $(".diversityContainer").height() - 10,
+    $(".statsContent").height("auto");
+    var containerHeight = $(".diversityContainer").height() - 100,
         containerWidth = $(".diversityContainer").width() ;
       
     if (containerHeight > containerWidth) {
@@ -293,10 +296,11 @@ var diversityPlot = (function() {
       
     d3.select("#diversityGraphGroup")
       .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.right + ")");
-  
+    
+    var computedWidth = d3.select("#diversityGraphGroup").node().getBBox().width;
     d3.select("#diversityGraph")
       .attr("height", containerHeight + margin.bottom)
-      .attr("width",containerWidth + margin.left + margin.right);
+      .attr("width",computedWidth * scale + margin.left + 20);
     
     positionLabels();
   }

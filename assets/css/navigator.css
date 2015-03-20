@@ -353,6 +353,9 @@ color: rgb(245,245,245);
   vertical-align: middle;
   display:none;
 }
+#statsDialogue {
+  width: 95%;
+}
 .stats > a {
   color:#000;
 }
@@ -364,6 +367,20 @@ color: rgb(245,245,245);
   position: absolute;
   margin-left: 40%;
   margin-top: 10%;
+}
+#prevalence-container {
+  text-align: center;
+}
+.prevalent-taxon {
+  display: inline-block;
+  padding: 8px;
+  text-align: center;
+}
+.prevalent-taxon > p {
+  font-size: 0.7em;
+}
+.prevalent-taxon > img {
+ /* height: 50px;*/
 }
 .save > a {
   color:#000;
@@ -844,6 +861,7 @@ br {
 /* Diversity curve styles */
 #diversity {
   margin-left: -40px;
+  text-align: center;
 }
 #diversityGraph {
   padding-top: 20px;

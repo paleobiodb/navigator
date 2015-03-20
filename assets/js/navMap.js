@@ -8,7 +8,8 @@ var navMap = (function() {
     prevsw = {"lng": 0, "lat": 0},
     prevne = {"lng": 0, "lat": 0},
     prevzoom = 3,
-    currentRequest;
+    currentRequest,
+    totalOccurrences;
 
   var filters = { "selectedInterval": 
                   { "nam": "",
@@ -184,6 +185,8 @@ var navMap = (function() {
       d3.text("build/partials/stackedCollectionModal.html", function(error, template) { 
         stackedCollectionPartial = template;
       });
+
+      
     },
 
     "changeMaps": function(mouse) {
@@ -490,6 +493,8 @@ var navMap = (function() {
     },
 
     "refreshHammer": function(data) {
+      navMap.parseTotalOccurrences(data);
+
       var scale = d3.scale.linear()
         .domain([1, 4240])
         .range([4, 15]);
@@ -541,6 +546,8 @@ var navMap = (function() {
     },
 
     "drawBins": function(data, level, zoom) {
+      navMap.parseTotalOccurrences(data);
+
       d3.selectAll(".clusters").remove();
 
       var g = d3.select("#binHolder");
@@ -601,6 +608,8 @@ var navMap = (function() {
     },
 
     "drawCollections": function(data, level, zoom) {
+      navMap.parseTotalOccurrences(data);
+
       var g = d3.select("#binHolder");
 
       // Many collections share the same coordinates, making it necessary to create clusters of like coordinates
@@ -905,13 +914,17 @@ var navMap = (function() {
         d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
         d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : d.idt; 
 
+        // If it has a genus name...
         if (d.idt) {
+          // If it's a species...
           if (d.rank === "species") {
             var genusRes = (d.rst) ? d.rst + " " : "",
                 speciesRes = (d.rss) ? " " + d.rss + " " : " ";
             d.genusRes = genusRes;
-            d.display_name1 = d.idt + " " + d.ids;
-            d.display_name2 = "";
+            //d.display_name1 = d.idt + " " + d.ids;
+            // d.display_name2 = "";
+            d.display_name1 = d.mna;
+            d.display_name2 = (d.mna != (d.idt + " " + d.ids)) ? ("(" + d.tna + ")") : "";
             d.display_name3 = "";
           } else {
             var genusRes = (d.rst) ? d.rst + " " : "",
@@ -1864,6 +1877,11 @@ var navMap = (function() {
       return params;
     },
 
-    "filters": filters
+    "parseTotalOccurrences" : function(data) {
+      navMap.totalOccurrences = d3.sum(data.records, function(d) { return d.noc });
+    },
+
+    "filters": filters,
+    "totalOccurrences": totalOccurrences
   }
 })();

@@ -2,6 +2,12 @@ var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      If developing locally default to paleobiodb.org, otherwise use localhost */  
   var baseUrl = (window.location.hostname === "localhost") ? "https://paleobiodb.org" : "";
+  
+  var prevalencePartial;
+
+  d3.text("build/partials/prevalent.html", function(error, template) { 
+    prevalencePartial = template;
+  });
 
   return {
     "init": function() {
@@ -321,6 +327,7 @@ var paleo_nav = (function() {
         $("#diversityWait").css("display", "block");
         // Remove any old ones...
         d3.select("#diversity").select("svg").remove();
+        $("#prevalence-container").html("")
 
         // Show waiting
 
@@ -336,8 +343,27 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera_plus&reso=stage");
         diversityPlot.plot(diversityURL);
+
+        var prevalenceURL = navMap.parseURL("http://testpaleodb.geology.wisc.edu/data1.2/occs/prevalence.json?limit=10&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+        d3.json(prevalenceURL, function(error, data) {
+          var scale = d3.scale.linear()
+            .domain([d3.min(data.records, function(d) {
+              return d.noc
+            }), d3.max(data.records, function(d) {
+              return d.noc
+            })])
+            .range([40, 80]);
+
+          data.records.forEach(function(d) {
+            d.height = scale(d.noc);
+            var percentage = parseInt((d.noc/navMap.totalOccurrences)*100);
+            d.percentage = (percentage < 1) ? ("< 1") : percentage;
+          });
+          var rendered = Mustache.render(prevalencePartial, data);
+          $("#prevalence-container").html(rendered);
+        });
         
       });
 
