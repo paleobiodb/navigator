@@ -346,7 +346,7 @@ var paleo_nav = (function() {
         var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera_plus&reso=stage");
         diversityPlot.plot(diversityURL);
 
-        var prevalenceURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/prevalence.json?limit=10&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+        var prevalenceURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
         d3.json(prevalenceURL, function(error, data) {
           var scale = d3.scale.linear()
             .domain([d3.min(data.records, function(d) {
@@ -361,7 +361,14 @@ var paleo_nav = (function() {
             var percentage = parseInt((d.noc/navMap.totalOccurrences)*100);
             d.percentage = (percentage < 1) ? ("< 1") : percentage;
           });
-          var rendered = Mustache.render(prevalencePartial, data);
+
+          var toRender = data.records.filter(function(d, i) {
+            if (i < 11) {
+              return d;
+            }
+          });
+
+          var rendered = Mustache.render(prevalencePartial, {"records":toRender});
           $("#prevalence-container").html(rendered);
         });
         
