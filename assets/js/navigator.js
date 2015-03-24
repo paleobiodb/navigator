@@ -1,7 +1,22 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      If developing locally default to paleobiodb.org, otherwise use localhost */  
-  var baseUrl = (window.location.hostname === "localhost") ? "https://paleobiodb.org" : "";
+  var navUrl = window.location.origin;
+  var dataUrl = window.location.origin;
+  var testUrl = "https://testpaleodb.geology.wisc.edu";
+  var stateUrl = "https://paleobiodb.org";
+  
+  if ( window.location.search.indexOf("local") > -1 )
+  {
+    dataUrl = window.location.origin + ":3000";
+    testUrl = window.location.origin + ":3000";
+  }
+  
+  else if ( window.location.hostname === "localhost" )
+  {
+    navUrl = "https://paleobiodb.org";
+    dataUrl = "https://paleobiodb.org";
+  }
   
   var prevalencePartial;
 
@@ -124,7 +139,7 @@ var paleo_nav = (function() {
       var taxaAutocomplete = $("#taxonInput").typeahead({
         name: 'taxaBrowser',
         remote: {
-          url: baseUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
+          url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
           filter: function(data) {
             data.records.forEach(function(d) {
               d.rank = taxaBrowser.rankMap(d.rnk);
@@ -164,7 +179,7 @@ var paleo_nav = (function() {
         {
           name: 'time',
           prefetch: {
-            url: baseUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
+            url: dataUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
             filter: function(data) {
               return data.records;
             }
@@ -176,7 +191,7 @@ var paleo_nav = (function() {
         {
           name: 'contribs',
           prefetch: {
-            url: baseUrl + '/data1.1/people/list.json?name=%',
+            url: dataUrl + '/data1.1/people/list.json?name=%',
             filter: function(data) {
               return data.records;
             }
@@ -188,7 +203,7 @@ var paleo_nav = (function() {
         {
           name: 'taxa',
           remote: {
-            url: baseUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
+            url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.rank = taxaBrowser.rankMap(d.rnk);
@@ -208,7 +223,7 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: baseUrl + '/data1.1/strata/auto.json?limit=10&name=%QUERY',
+            url: dataUrl + '/data1.1/strata/auto.json?limit=10&name=%QUERY',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.display_name = d.nam + " " + stratRankMap[d.rnk];
@@ -343,10 +358,10 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var diversityURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera_plus&reso=stage");
+        var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         diversityPlot.plot(diversityURL);
 
-        var prevalenceURL = navMap.parseURL("https://testpaleodb.geology.wisc.edu/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+        var prevalenceURL = navMap.parseURL(testUrl + "/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
         d3.json(prevalenceURL, function(error, data) {
           var scale = d3.scale.linear()
             .domain([d3.min(data.records, function(d) {
@@ -388,7 +403,7 @@ var paleo_nav = (function() {
       $("#saveBox").on('show.bs.modal', function() {
         if ($("#urlTab").hasClass("active")) {
           var request = $.ajax({
-            url: baseUrl + "/larkin/app-state",
+            url: stateUrl + "/larkin/app-state",
             async: false,
             type: "POST",
             data: {
@@ -399,7 +414,7 @@ var paleo_nav = (function() {
           });
 
           request.success(function(result) {
-            $("#url").val("https://paleobiodb.org/navigator/#/" + result.id);
+            $("#url").val(stateUrl + "/navigator/#/" + result.id);
             // For some reason this won't work without a small timeout
             setTimeout(function() {
               $("#url").focus();
@@ -443,7 +458,7 @@ var paleo_nav = (function() {
           }
         }
 
-        var url = baseUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
+        var url = dataUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);
 
         d3.json(url, function(err, results) {
@@ -477,7 +492,7 @@ var paleo_nav = (function() {
 
       $("#getAppUrl").on("click", function() {
         var request = $.ajax({
-          url: baseUrl + "/larkin/app-state",
+          url: stateUrl + "/larkin/app-state",
           async: false,
           type: "POST",
           data: {
@@ -488,7 +503,7 @@ var paleo_nav = (function() {
         });
 
         request.success(function(result) {
-          $("#appUrl").val("https://paleobiodb.org/navigator/#/" + result.id);
+          $("#appUrl").val(stateUrl + "/navigator/#/" + result.id);
           // For some reason this won't work without a small timeout
           setTimeout(function() {
             $("#appUrl").focus();
@@ -804,9 +819,11 @@ var paleo_nav = (function() {
       navMap.resize();
       map.invalidateSize();
     },
-
-    "baseUrl": baseUrl
-
+    
+    "navUrl": navUrl,
+    "dataUrl": dataUrl,
+    "testUrl": testUrl,
+    "stateUrl": stateUrl
   }
 
 })();
