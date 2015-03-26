@@ -1,20 +1,15 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
      If developing locally default to paleobiodb.org, otherwise use localhost */  
-  var navUrl = window.location.origin;
-  var dataUrl = window.location.origin;
-  var testUrl = "https://testpaleodb.geology.wisc.edu";
-  var stateUrl = "https://paleobiodb.org";
+  var dataUrl = window.location.origin,
+      testUrl = "https://testpaleodb.geology.wisc.edu",
+      stateUrl = "https://paleobiodb.org";
   
-  if ( window.location.search.indexOf("local") > -1 )
-  {
+  if ( window.location.search.indexOf("local") > -1 ) {
     dataUrl = window.location.origin + ":3000";
     testUrl = window.location.origin + ":3000";
-  }
-  
-  else if ( window.location.hostname === "localhost" )
-  {
-    navUrl = "https://paleobiodb.org";
+    
+  } else if ( window.location.hostname === "localhost" ) {
     dataUrl = "https://paleobiodb.org";
   }
   
@@ -820,7 +815,6 @@ var paleo_nav = (function() {
       map.invalidateSize();
     },
     
-    "navUrl": navUrl,
     "dataUrl": dataUrl,
     "testUrl": testUrl,
     "stateUrl": stateUrl
