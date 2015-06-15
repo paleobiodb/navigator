@@ -366,9 +366,10 @@ var paleo_nav = (function() {
             })])
             .range([40, 80]);
 
+          var total = data.records.map(function(d) { return d.noc }).reduce(function(a, b) { return a + b }, 0);
           data.records.forEach(function(d) {
             d.height = scale(d.noc);
-            var percentage = parseInt((d.noc/navMap.totalOccurrences)*100);
+            var percentage = parseInt((d.noc/total)*100);
             d.percentage = (percentage < 1) ? ("< 1") : percentage;
           });
 
