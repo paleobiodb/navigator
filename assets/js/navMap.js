@@ -101,6 +101,7 @@ var navMap = (function() {
 
           mapSelection(map.getZoom());
 
+          paleo_nav.getPrevalence();
         }
       });
 
@@ -260,6 +261,8 @@ var navMap = (function() {
     },
 
     "refresh": function(reset) {
+      $(".prevalence-summary").html("");
+
       paleo_nav.showLoading();
 
       if ((prevzoom - map.getZoom()) != 0) {
@@ -1330,7 +1333,7 @@ var navMap = (function() {
           } else {
             var svgHeight = ((window.innerHeight * 0.70) - 70),
                 mapHeight = (width/970 ) * 500,
-                translate = (((svgHeight - mapHeight)/2) > 0) ? (svgHeight - mapHeight)/2 : 0;
+                translate = (((svgHeight - mapHeight)/2) > 0) ? (svgHeight - mapHeight)/2 : 40;
 
             return "scale(" + width/970 + ")translate(0," + translate + ")";
           }
@@ -1407,6 +1410,7 @@ var navMap = (function() {
     },
 
     "refreshFilterHandlers": function() {
+
       d3.selectAll(".removeFilter").on("click", function() {
         var parent = d3.select(this).node().parentNode;
         parent = d3.select(parent);
@@ -1467,12 +1471,12 @@ var navMap = (function() {
         } else {
           navMap.refresh("reset");
         }
-
+        paleo_nav.getPrevalence();
       });
     },
 
     "updateFilterList": function(type, id) {
-
+      paleo_nav.getPrevalence();
       switch(type) {
         case "selectedInterval":
           d3.select("#selectedInterval")

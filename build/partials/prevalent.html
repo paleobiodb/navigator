@@ -1,6 +1,6 @@
 {{#records}}
-<div class="prevalent-taxon">
-  <img src="https://testpaleodb.geology.wisc.edu/data1.2/taxa/thumb.png?id={{img}}" title="{{nam}} ({{noc}} occurrences)" style="height: {{height}}px;"/>
+<div class="prevalent-taxon" data-name="{{nam}}">
+  <img src="{{data_url}}/data1.2/taxa/thumb.png?id={{img}}" title="{{nam}} ({{noc}} occurrences)" style="height: {{height}}px;"/>
   <p>{{nam}}<br>{{percentage}}%</p>
 </div>
 {{/records}}

@@ -277,7 +277,7 @@ var diversityPlot = (function() {
   
   function resize() {
     $(".statsContent").height("auto");
-    var containerHeight = $(".diversityContainer").height() - 100,
+    var containerHeight = $(".diversityContainer").height() - 50,
         containerWidth = $(".diversityContainer").width() ;
       
     if (containerHeight > containerWidth) {

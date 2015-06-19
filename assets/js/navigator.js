@@ -9,14 +9,19 @@ var paleo_nav = (function() {
     dataUrl = window.location.origin + ":3000";
     testUrl = window.location.origin + ":3000";
     
+  } else if (window.location.search.indexOf("test") > -1) {
+    dataUrl = "https://testpaleodb.geology.wisc.edu";
   } else if ( window.location.hostname === "localhost" ) {
     dataUrl = "https://paleobiodb.org";
   }
   
-  var prevalencePartial;
+  var prevalencePartial, prevalenceSummaryPartial;
 
   d3.text("build/partials/prevalent.html", function(error, template) { 
     prevalencePartial = template;
+  });
+  d3.text("build/partials/prevalent_summary.html", function(error, template) { 
+    prevalenceSummaryPartial = template;
   });
 
   return {
@@ -355,33 +360,6 @@ var paleo_nav = (function() {
 
         var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         diversityPlot.plot(diversityURL);
-
-        var prevalenceURL = navMap.parseURL(testUrl + "/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
-        d3.json(prevalenceURL, function(error, data) {
-          var scale = d3.scale.linear()
-            .domain([d3.min(data.records, function(d) {
-              return d.noc
-            }), d3.max(data.records, function(d) {
-              return d.noc
-            })])
-            .range([40, 80]);
-
-          var total = data.records.map(function(d) { return d.noc }).reduce(function(a, b) { return a + b }, 0);
-          data.records.forEach(function(d) {
-            d.height = scale(d.noc);
-            var percentage = parseInt((d.noc/total)*100);
-            d.percentage = (percentage < 1) ? ("< 1") : percentage;
-          });
-
-          var toRender = data.records.filter(function(d, i) {
-            if (i < 11) {
-              return d;
-            }
-          });
-
-          var rendered = Mustache.render(prevalencePartial, {"records":toRender});
-          $("#prevalence-container").html(rendered);
-        });
         
       });
 
@@ -627,6 +605,74 @@ var paleo_nav = (function() {
       
     },
 
+    "getPrevalence": function() {
+      if(typeof(currentPrevRequest) != 'undefined') {
+        if (Object.keys(currentPrevRequest).length > 0) {
+          currentPrevRequest.abort();
+          currentPrevRequest = {};
+        }
+      }
+
+      var bounds = map.getBounds(),
+          sw = bounds._southWest,
+          ne = bounds._northEast;
+
+      if (parseInt(d3.select("#map").style("height")) < 1) {
+        sw.lng = -180,
+        ne.lng = 180,
+        sw.lat = -90,
+        ne.lat = 90;
+      }
+
+      var prevalenceURL = navMap.parseURL(testUrl + "/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+      prevalenceURL = prevalenceURL.replace("touched_by", "occ_touched_by");
+      currentPrevRequest = d3.json(prevalenceURL, function(error, data) {
+        var scale = d3.scale.linear()
+          .domain([d3.min(data.records, function(d) {
+            return d.noc
+          }), d3.max(data.records, function(d) {
+            return d.noc
+          })])
+          .range([40, 80]);
+
+        var total = data.records.map(function(d) { return d.noc }).reduce(function(a, b) { return a + b }, 0);
+        data.records.forEach(function(d) {
+          d.data_url = paleo_nav.dataUrl;
+          d.height = scale(d.noc);
+          var percentage = parseInt((d.noc/total)*100);
+          d.percentage = (percentage < 1) ? ("< 1") : percentage;
+        });
+
+        var toRender = data.records.filter(function(d, i) {
+          if (i < 11) {
+            return d;
+          }
+        });
+
+        var toDisplay = data.records.filter(function(d, i) {
+          if (window.innerWidth > 700) {
+            if (i < parseInt((window.innerWidth - 100)/85)) {
+              return d;
+            }
+          } else {
+            if (i < parseInt((window.innerWidth - 50)/85)) {
+              return d;
+            }
+          } 
+        });
+
+        var summaryRendered = Mustache.render(prevalenceSummaryPartial, {"records": toDisplay});
+        $(".prevalence-summary").html(summaryRendered);
+
+        var rendered = Mustache.render(prevalencePartial, {"records":toRender});
+        $(".prevalence-container").html(rendered);
+
+        $(".prevalent-taxon").click(function(d) {
+          navMap.filterByTaxon($(this).data("name"));
+        });
+      });
+    },
+
     "prelaunch": function() {
 
       var location = window.location,
@@ -644,6 +690,7 @@ var paleo_nav = (function() {
       d3.select("#waiting").style("display", "none");
       navMap.resizeSvgMap();
       setTimeout(navMap.resize, 500);
+      this.getPrevalence();
 
       if (!localStorage.pbdb) {
         if (window.innerWidth > 700) {
