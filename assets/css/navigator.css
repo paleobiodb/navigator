@@ -371,7 +371,7 @@ color: rgb(245,245,245);
 .prevalence-row {
   position: absolute;
   z-index: 10;
-  background-color: rgba(255,255,255,0.9);
+  background-color: rgba(255,255,255,0.95);
   right: 0;
   width: auto;
   border-left: 1px solid #ccc;
@@ -438,7 +438,7 @@ color: rgb(245,245,245);
   position: absolute;
   z-index: 2;
   background-color: rgba(255,255,255,0.95);
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #ddd;
   border-left: 1px solid #ccc;
   display: block;
   right: 0;
