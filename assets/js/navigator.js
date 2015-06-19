@@ -651,11 +651,12 @@ var paleo_nav = (function() {
 
         var toDisplay = data.records.filter(function(d, i) {
           if (window.innerWidth > 700) {
-            if (i < parseInt((window.innerWidth - 100)/85)) {
+            var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height"));
+            if (i < Math.floor((height/95))) {
               return d;
             }
           } else {
-            if (i < parseInt((window.innerWidth - 50)/85)) {
+            if (i < Math.floor((window.innerHeight)/95)) {
               return d;
             }
           } 
@@ -668,7 +669,8 @@ var paleo_nav = (function() {
         $(".prevalence-container").html(rendered);
 
         $(".prevalent-taxon").click(function(d) {
-          navMap.filterByTaxon($(this).data("name"));
+          var name = $(this).data("name").replace(" (other)", "").replace(" (unclassified)", "");
+          navMap.filterByTaxon(name);
         });
       });
     },

@@ -97,7 +97,7 @@ var navMap = (function() {
         if (event.hard || parseInt(d3.select("#map").style("height")) < 2) {
           return;
         } else {
-          d3.select(".info").style("display", "none");
+          //d3.select(".info").style("display", "none");
 
           mapSelection(map.getZoom());
 
@@ -208,7 +208,7 @@ var navMap = (function() {
           return (window.innerHeight - 70) + "px";
         } else {
           var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-          return (window.innerHeight - timeHeight - 70) + "px";
+          return (window.innerHeight - timeHeight - 56) + "px";
         }
       });
 
@@ -514,7 +514,7 @@ var navMap = (function() {
         .on("mouseout", function() {
           d3.select(".info")
             .html("")
-            .style("display", "none");
+            //.style("display", "none");
           timeScale.unhighlight()
         });
 
@@ -537,7 +537,7 @@ var navMap = (function() {
           timeScale.highlight(this);
         })
         .on("click", function(d) {
-          d3.event.stopPropagation();
+          navMap.changeMaps(d3.mouse(this));
         });
       
       bins.exit().remove();
@@ -600,7 +600,7 @@ var navMap = (function() {
         .on("mouseout", function() {
           d3.select(".info")
             .html("")
-            .style("display", "none");
+           // .style("display", "none");
           timeScale.unhighlight()
         });
 
@@ -1372,7 +1372,7 @@ var navMap = (function() {
               return (window.innerHeight - 70) + "px";
             } else {
               var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-              return (window.innerHeight - timeHeight - 70) + "px";
+              return (window.innerHeight - timeHeight - 54) + "px";
             }
           });
         map.invalidateSize();
@@ -1386,18 +1386,21 @@ var navMap = (function() {
             return "91px";
           } else {
             var height = parseInt(d3.select("#time").select("svg").style("height"));
-            return (height + 4) + "px";
+            return (height + 15) + "px";
           }
+        });
+
+      d3.select(".prevalence-summary, .prevalence-row")
+        .style("height", function() {
+          var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height")) - 122;
+          return (height) + "px";
+          
         });
 
       d3.select(".filters")
         .style("bottom", function() {
-          if (window.innerWidth < 468) {
-            return "83px";
-          } else {
-            var height = parseInt(d3.select("#time").select("svg").style("height"));
-            return (height + 15) + "px";
-          }
+          var height = parseInt(d3.select("#time").select("svg").style("height"));
+          return (height + 4) + "px";
         });
 
       d3.selectAll(".helpModalTimescaleLabel")
@@ -1523,7 +1526,7 @@ var navMap = (function() {
       d3.select(".filters")
         .style("bottom", function() {
           var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 15) + "px";
+          return (height + 4) + "px";
         });
     },
 
