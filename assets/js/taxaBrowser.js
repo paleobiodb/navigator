@@ -19,7 +19,7 @@ var taxaBrowser = (function(){
     // If there is a taxon to search for...
     if (name.length > 0) {
       // Ask the API for the taxon oid
-      d3.json(paleo_nav.dataUrl + '/data1.1/taxa/list.json?name=' + name, function(err, data) {
+      d3.json(paleo_nav.dataUrl + '/data1.1/taxa/list.json?status=all&name=' + name, function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
         } else {
@@ -45,7 +45,7 @@ var taxaBrowser = (function(){
             
           } else {
             // TODO: Don't use a damn alert!
-              return alert("No taxa with this name found");
+            return alert("No taxa with this name found");
           }
         }
       });

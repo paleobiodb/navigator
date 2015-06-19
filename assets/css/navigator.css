@@ -617,10 +617,15 @@ td:first-child {
   border-top:0;
 }
 .plates {
-  fill: #fff;
-  stroke:#777;
-  stroke-width:.75px;
+  fill: #ffffff;
+  stroke: none;
+  stroke-width: 0.05em;
   opacity:1;
+}
+.coastlines {
+  fill: none;
+  stroke: #dddddd;
+  stroke-width: 0.75px;
 }
 
 #loading {

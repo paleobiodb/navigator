@@ -129,15 +129,25 @@ var reconstructMap = (function() {
       d3.json("build/js/collections/" + filename + ".json", function(error, response) {
 
         // Load the rotated plates
-        d3.json("build/js/plates/" + filename + ".json", function(er, topoPlates) {
+        d3.json("build/js/coastlines/" + filename + ".json", function(er, plates) {
+
           // Add the rotated plates to the map
           svg.selectAll(".plateLines")
-            .data(topojson.feature(topoPlates, topoPlates.objects[filename]).features)
+            .data(topojson.feature(plates, plates.objects[filename]).features)
           .enter().append("path")
             .attr("class", "plates")
             .attr("d", path);
 
           timeScale.highlight(name);
+
+          // Load the coastlines
+          d3.json("build/js/coastlines/" + filename + ".json", function(er, coastlines) {
+            svg.selectAll(".coastlines")
+              .data(topojson.feature(coastlines, coastlines.objects[filename]).features)
+            .enter().append("path")
+              .attr("class", "coastlines")
+              .attr("d", path);
+          });
 
           // Switch to reconstruct map now
           if(parseInt(d3.select("#map").style("height")) > 1) {
