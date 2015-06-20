@@ -375,6 +375,7 @@ color: rgb(245,245,245);
   right: 0;
   width: auto;
   border-left: 1px solid #ccc;
+  padding: 5px;
 }
 .prevalence-container, .prevalence-summary {
   text-align: center;
@@ -393,7 +394,7 @@ color: rgb(245,245,245);
   font-size: 0.7em;
 }
 .prevalent-summary-taxon {
-  padding: 2px 8px;
+  padding: 2px 2px;
 }
 .prevalent-summary-taxon > img {
   height: 35px;
@@ -1011,6 +1012,12 @@ br {
     margin-top: 30px;
   }
   .mapCtrl {
+    display: none;
+  }
+  .prevalence-row {
+    display: none;
+  }
+  #infoContainer {
     display: none;
   }
   #loading {

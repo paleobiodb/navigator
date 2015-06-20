@@ -50,11 +50,21 @@ var reconstructMap = (function() {
         var group = d3.select("#reconstructGroup")
           .append("g")
           .attr("id", "reconstructContent");
+
         group.selectAll(".plateLines")
           .data(topojson.feature(topoPlates, topoPlates.objects["Holocene"]).features)
         .enter().append("path")
           .attr("class", "plates")
           .attr("d", path);
+
+        // Load the coastlines
+        d3.json("build/js/coastlines/Holocene.json", function(er, coastlines) {
+          group.selectAll(".coastlines")
+            .data(topojson.feature(coastlines, coastlines.objects["Holocene"]).features)
+          .enter().append("path")
+            .attr("class", "coastlines")
+            .attr("d", path);
+        });
       });
     
     },

@@ -1392,7 +1392,7 @@ var navMap = (function() {
 
       d3.select(".prevalence-summary, .prevalence-row")
         .style("height", function() {
-          var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height")) - 122;
+          var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height")) - 121;
           return (height) + "px";
           
         });

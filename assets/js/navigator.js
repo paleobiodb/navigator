@@ -606,6 +606,8 @@ var paleo_nav = (function() {
     },
 
     "getPrevalence": function() {
+      $(".prevalence-summary").html("");
+
       if(typeof(currentPrevRequest) != 'undefined') {
         if (Object.keys(currentPrevRequest).length > 0) {
           currentPrevRequest.abort();
@@ -652,11 +654,11 @@ var paleo_nav = (function() {
         var toDisplay = data.records.filter(function(d, i) {
           if (window.innerWidth > 700) {
             var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height"));
-            if (i < Math.floor((height/95))) {
+            if (i < Math.floor((height/92))) {
               return d;
             }
           } else {
-            if (i < Math.floor((window.innerHeight)/95)) {
+            if (i < Math.floor((window.innerHeight)/92)) {
               return d;
             }
           } 
@@ -747,6 +749,8 @@ var paleo_nav = (function() {
       paleo_nav.closeTaxaBrowser();
 
       reconstructMap.visible = true;
+
+      d3.select(".prevalence-row").style("display", "none");
 
       d3.select(".rotate")
         .style("box-shadow", "inset 3px 0 0 #ff992c")
@@ -839,6 +843,9 @@ var paleo_nav = (function() {
           map.zoomOut();
         })
         .css("color", "#000");
+
+      d3.select(".prevalence-row").style("display", "block");
+      paleo_nav.getPrevalence();
 
       // Show the time interval filter remove button
       d3.select("#selectedInterval")
