@@ -191,6 +191,8 @@ var navMap = (function() {
     },
 
     "changeMaps": function(mouse) {
+      paleo_nav.getPrevalence();
+
       var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6,
           translate = [window.innerWidth / 2, (window.innerHeight - timeHeight - 70) / 2];
 
@@ -261,8 +263,6 @@ var navMap = (function() {
     },
 
     "refresh": function(reset) {
-      $(".prevalence-summary").html("");
-
       paleo_nav.showLoading();
 
       if ((prevzoom - map.getZoom()) != 0) {
@@ -1027,7 +1027,7 @@ var navMap = (function() {
           occurrenceTree.phyla[i].unranked = true;
         }
       }
-
+      console.log(occurrenceTree)
       return occurrenceTree;
     },
 
