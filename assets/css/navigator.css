@@ -180,6 +180,13 @@ nav {
   left: 3em;
   line-height: 45px;
 }
+.helpModalControls.right {
+  right: 84px;
+  left: inherit;
+}
+.helpModalControls.right > .helpModalControlLabel > i {
+  margin-left: 5px;
+}
 .helpModalControlLabel {
   color: #ddd;
 }
@@ -536,8 +543,6 @@ color: rgb(245,245,245);
 }
 .collection {
   fill: #EFEE69;
-  stroke: #777;
-  stroke-width:0.03em;
   opacity:0.7;
 }
 .collection:hover {

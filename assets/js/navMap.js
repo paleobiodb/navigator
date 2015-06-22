@@ -698,6 +698,7 @@ var navMap = (function() {
           navMap.openStackedCollectionModal(d);
         })
         .on("mouseout", function(d) {
+          d3.select(".info").html("");
           timeScale.unhighlight();
         });
       
@@ -712,6 +713,7 @@ var navMap = (function() {
           timeScale.highlight(this);
         })
         .on("mouseout", function(d) {
+          d3.select(".info").html("");
           timeScale.unhighlight();
         })
         .on("click", function(d) {
