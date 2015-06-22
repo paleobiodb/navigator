@@ -334,7 +334,6 @@ var navMap = (function() {
       ne.lng = ne.lng.toFixed(4);
 
       if(!reset) {
-
         // Check if new points are needed from the server
         // If the new bounding box is a subset of the old one...
         if (prevne.lat > ne.lat && prevne.lng > ne.lng && prevsw.lat < sw.lat && prevsw.lng < sw.lng) {
@@ -399,7 +398,6 @@ var navMap = (function() {
       }
 
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
-
       if (zoom < 5 && filtered === false) {
         var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
 
@@ -1485,12 +1483,14 @@ var navMap = (function() {
             break;
         }
 
+        paleo_nav.getPrevalence();
+
         if (d3.select("#reconstructMap").style("display") === "block") {
           reconstructMap.rotate(filters.selectedInterval);
         } else {
           navMap.refresh("reset");
         }
-        paleo_nav.getPrevalence();
+        
       });
     },
 

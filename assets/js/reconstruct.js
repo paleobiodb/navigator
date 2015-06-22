@@ -98,7 +98,7 @@ var reconstructMap = (function() {
         }
       }
 
-      navMap.filterByTime(name);
+      //navMap.filterByTime(name);
 
       reconstructing = true;
       reconstructMap.reset();

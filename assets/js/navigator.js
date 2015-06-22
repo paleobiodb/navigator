@@ -346,7 +346,6 @@ var paleo_nav = (function() {
 
         // Show waiting
 
-
         var bounds = map.getBounds(),
             sw = bounds._southWest,
             ne = bounds._northEast;
@@ -606,7 +605,7 @@ var paleo_nav = (function() {
       
     },
 
-    "getPrevalence": function() {
+    "getPrevalence": function(line) {
       $(".prevalence-summary").html("");
 
       if(typeof(currentPrevRequest) != 'undefined') {
