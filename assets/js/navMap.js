@@ -575,6 +575,8 @@ var navMap = (function() {
               .style("display", "block");
             timeScale.highlight(this);
             navMap.openBinModal(d);
+          } else if (level === 1) {
+            map.setView([d.lat, d.lng], 5);
           }
         });
 
@@ -595,6 +597,8 @@ var navMap = (function() {
               .style("display", "block");
             timeScale.highlight(this);
             navMap.openBinModal(d);
+          } else if (level === 1) {
+            map.setView([d.lat, d.lng], 5);
           }
         })
         .on("mouseout", function() {
@@ -917,7 +921,7 @@ var navMap = (function() {
         d.rank = (d.mra) ? taxaBrowser.rankMap(d.mra) : (d.rank) ?  taxaBrowser.rankMap(d.rnk) : "Unknown";
         d.itallics = (d.rnk < 6) ? "itallics" : "";
         d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
-        d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : d.idt; 
+        d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : (d.tid > 0) ? d.idt : ""; 
 
         // If it has a genus name...
         if (d.idt) {
@@ -1399,11 +1403,21 @@ var navMap = (function() {
           
         });
 
-      d3.select(".filters")
-        .style("bottom", function() {
-          var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 4) + "px";
-        });
+      if (window.innerHeight > 600) {
+        d3.select(".filters")
+          .style("left", 0)
+          .style("top", "inherit")
+          .style("bottom", function() {
+            var height = parseInt(d3.select("#time").select("svg").style("height"));
+            return (height + 4) + "px";
+          });
+      } else {
+        d3.select(".filters")
+          .style("left", "49px")
+          .style("top", 0)
+          .style("bottom", "inherit")
+      }
+        
 
       d3.selectAll(".helpModalTimescaleLabel")
         .style("top", function() {
@@ -1525,11 +1539,20 @@ var navMap = (function() {
           break;
       }
       
-      d3.select(".filters")
-        .style("bottom", function() {
-          var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 4) + "px";
-        });
+      if (window.innerHeight > 600) {
+        d3.select(".filters")
+          .style("left", 0)
+          .style("top", "inherit")
+          .style("bottom", function() {
+            var height = parseInt(d3.select("#time").select("svg").style("height"));
+            return (height + 4) + "px";
+          });
+      } else {
+        d3.select(".filters")
+          .style("left", "49px")
+          .style("top", 0)
+          .style("bottom", "inherit")
+      }
     },
 
     "filterByTime": function(time) {
@@ -1697,7 +1720,7 @@ var navMap = (function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
           ne = bounds._northEast,
-          url = paleo_nav.dataUrl + '/data1.2/occs/diversity.';
+          url = paleo_nav.dataUrl + '/data1.2/occs/quickdiv.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";

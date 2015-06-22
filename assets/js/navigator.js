@@ -359,6 +359,7 @@ var paleo_nav = (function() {
         }
 
         var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        $(".diversityDownload").attr("href", diversityURL);
         diversityPlot.plot(diversityURL);
         
       });
@@ -750,7 +751,7 @@ var paleo_nav = (function() {
 
       reconstructMap.visible = true;
 
-      d3.select(".prevalence-row").style("display", "none");
+     // d3.select(".prevalence-row").style("display", "none");
 
       d3.select(".rotate")
         .style("box-shadow", "inset 3px 0 0 #ff992c")

@@ -139,7 +139,7 @@ var reconstructMap = (function() {
       d3.json("build/js/collections/" + filename + ".json", function(error, response) {
 
         // Load the rotated plates
-        d3.json("build/js/coastlines/" + filename + ".json", function(er, plates) {
+        d3.json("build/js/plates/" + filename + ".json", function(er, plates) {
 
           // Add the rotated plates to the map
           svg.selectAll(".plateLines")

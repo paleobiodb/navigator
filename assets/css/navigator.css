@@ -469,7 +469,6 @@ color: rgb(245,245,245);
   text-align: center;
   display: none;
   left:0;
-  bottom:16px;
 }
 .filters > p {
   display: inline;
@@ -621,6 +620,7 @@ td:first-child {
 }
 #reconstructMapRefContainerContainer {
   float:right;
+  margin-right: 75px;
 }
 #reconstructMapRefContainer {
    position: relative;
@@ -976,6 +976,13 @@ br {
 }
 #getUrlNavbar {
   display: none;
+}
+@media (max-width: 1050px) and (min-height: 600px) {
+  .filter {
+    left: 49px;
+    top: 0;
+    bottom: inherit;
+  }
 }
 @media(max-width: 1050px) {
   .examples>button> img {
