@@ -338,7 +338,7 @@ var paleo_nav = (function() {
 
       $("#statsBox").on('show.bs.modal', function() {
         $(".statsContent").height(window.innerHeight - 75);
-        $(".diversityContainer").height(window.innerHeight - 300)
+        $(".diversityContainer").height(window.innerHeight - 380)
         $("#diversityWait").css("display", "block");
         // Remove any old ones...
         d3.select("#diversity").select("svg").remove();
@@ -639,6 +639,7 @@ var paleo_nav = (function() {
 
         var total = data.records.map(function(d) { return d.noc }).reduce(function(a, b) { return a + b }, 0);
         data.records.forEach(function(d) {
+          d.display_name = d.nam.replace(" (other)", "*").replace(" (unclassified)", "*").trim();
           d.data_url = paleo_nav.dataUrl;
           d.height = scale(d.noc);
           var percentage = parseInt((d.noc/total)*100);
@@ -654,11 +655,11 @@ var paleo_nav = (function() {
         var toDisplay = data.records.filter(function(d, i) {
           if (window.innerWidth > 700) {
             var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height"));
-            if (i < Math.floor((height/92))) {
+            if (i < Math.floor((height/80))) {
               return d;
             }
           } else {
-            if (i < Math.floor((window.innerHeight)/92)) {
+            if (i < Math.floor((window.innerHeight)/80)) {
               return d;
             }
           } 
