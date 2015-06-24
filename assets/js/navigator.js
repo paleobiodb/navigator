@@ -639,7 +639,8 @@ var paleo_nav = (function() {
 
         var total = data.records.map(function(d) { return d.noc }).reduce(function(a, b) { return a + b }, 0);
         data.records.forEach(function(d) {
-          d.display_name = d.nam.replace(" (other)", "*").replace(" (unclassified)", "*").trim();
+          var split_name = d.nam.split(" ");
+          d.display_name = split_name[0] + ((split_name.length > 1) ? "*" : "");
           d.data_url = paleo_nav.dataUrl;
           d.height = scale(d.noc);
           var percentage = parseInt((d.noc/total)*100);
