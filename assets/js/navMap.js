@@ -52,6 +52,11 @@ var navMap = (function() {
       occurrencePartial,
       stackedCollectionPartial;
 
+  /* via http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript */
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
 // TODO: rework this so that only necesarry functions are returned
   return {
     "init": function(callback) {
@@ -97,8 +102,6 @@ var navMap = (function() {
         if (event.hard || parseInt(d3.select("#map").style("height")) < 2) {
           return;
         } else {
-          //d3.select(".info").style("display", "none");
-
           mapSelection(map.getZoom());
 
           paleo_nav.getPrevalence();
@@ -494,7 +497,7 @@ var navMap = (function() {
     },
 
     "refreshHammer": function(data) {
-      navMap.parseTotalOccurrences(data);
+      navMap.summarize(data);
 
       var scale = d3.scale.linear()
         .domain([1, 4240])
@@ -510,9 +513,7 @@ var navMap = (function() {
         .attr("id", function(d) { return "p" + d.cxi; })
         .attr("class", "bins")
         .on("mouseout", function() {
-          d3.select(".info")
-            .html("")
-            //.style("display", "none");
+          navMap.setInfoSummary();
           timeScale.unhighlight()
         });
 
@@ -547,7 +548,7 @@ var navMap = (function() {
     },
 
     "drawBins": function(data, level, zoom) {
-      navMap.parseTotalOccurrences(data);
+      navMap.summarize(data);
 
       d3.selectAll(".clusters").remove();
 
@@ -600,10 +601,8 @@ var navMap = (function() {
           }
         })
         .on("mouseout", function() {
-          d3.select(".info")
-            .html("")
-           // .style("display", "none");
-          timeScale.unhighlight()
+          navMap.setInfoSummary();
+          timeScale.unhighlight();
         });
 
       points.exit().remove();
@@ -613,7 +612,7 @@ var navMap = (function() {
     },
 
     "drawCollections": function(data, level, zoom) {
-      navMap.parseTotalOccurrences(data);
+      navMap.summarize(data);
 
       var g = d3.select("#binHolder");
 
@@ -700,7 +699,7 @@ var navMap = (function() {
           navMap.openStackedCollectionModal(d);
         })
         .on("mouseout", function(d) {
-          d3.select(".info").html("");
+          navMap.setInfoSummary();
           timeScale.unhighlight();
         });
 
@@ -715,7 +714,7 @@ var navMap = (function() {
           timeScale.highlight(this);
         })
         .on("mouseout", function(d) {
-          d3.select(".info").html("");
+          navMap.setInfoSummary();
           timeScale.unhighlight();
         })
         .on("click", function(d) {
@@ -748,6 +747,7 @@ var navMap = (function() {
           navMap.openCollectionModal(d);
         })
         .on("mouseout", function(d) {
+          navMap.setInfoSummary();
           timeScale.unhighlight();
         });
 
@@ -769,6 +769,7 @@ var navMap = (function() {
           navMap.openCollectionModal(d);
         })
         .on("mouseout", function(d) {
+          navMap.setInfoSummary();
           timeScale.unhighlight();
         });
 
@@ -1939,8 +1940,23 @@ var navMap = (function() {
       return params;
     },
 
-    "parseTotalOccurrences" : function(data) {
-      navMap.totalOccurrences = d3.sum(data.records, function(d) { return d.noc });
+    "summarize" : function(data) {
+      if (data.records.length > 0) {
+        if (data.records[0].typ === "col") {
+          navMap.totalCollections = numberWithCommas(data.records.length);
+        } else {
+          navMap.totalCollections = numberWithCommas(d3.sum(data.records, function(d) { return d.nco }));
+        }
+
+        navMap.totalOccurrences = numberWithCommas(d3.sum(data.records, function(d) { return d.noc }));
+        navMap.setInfoSummary();
+      }
+    },
+
+    "setInfoSummary" : function() {
+      d3.select(".info")
+        .style("display", "block")
+        .html("<strong>" + navMap.totalCollections + " total collections</strong><br>" + navMap.totalOccurrences + " total occurrences");
     },
 
     "filters": filters,
