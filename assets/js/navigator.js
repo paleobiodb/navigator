@@ -667,7 +667,7 @@ var paleo_nav = (function() {
         });
 
         toDisplay.forEach(function(d) {
-          d.display_text = d.display_name + ((d.display_name.length > 10) ? "" : (" " + d.percentage + "%"));
+          d.display_text = d.display_name + ((d.display_name.length > 17) ? "" : (" " + d.percentage + "%"));
         });
 
         var summaryRendered = Mustache.render(prevalenceSummaryPartial, {"records": toDisplay});
