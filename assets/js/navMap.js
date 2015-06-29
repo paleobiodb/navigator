@@ -11,24 +11,24 @@ var navMap = (function() {
     currentRequest,
     totalOccurrences;
 
-  var filters = { "selectedInterval": 
+  var filters = { "selectedInterval":
                   { "nam": "",
-                    "mid": "", 
+                    "mid": "",
                     "oid": ""
-                  }, 
+                  },
                   "personFilter": {
-                    "id":"", 
+                    "id":"",
                     "name": ""
-                  }, 
-                  "taxa": [ ], 
+                  },
+                  "taxa": [ ],
                   "stratigraphy": {
-                    "name": "", 
+                    "name": "",
                     "rank": ""
-                  }, 
+                  },
                   "exist": {
-                    "selectedInterval" : false, 
-                    "personFilter": false, 
-                    "taxon": false, 
+                    "selectedInterval" : false,
+                    "personFilter": false,
+                    "taxon": false,
                     "stratigraphy": false
                   }
                 };
@@ -124,7 +124,7 @@ var navMap = (function() {
 
       // Hide the map after initialized
       /* Setting "display" = "none" doesn't allow us to operate on
-         the map when it is invisible, so hiding/showing the leaflet 
+         the map when it is invisible, so hiding/showing the leaflet
          map is done by changing its height */
       d3.select("#map").style("height", 0);
 
@@ -171,23 +171,23 @@ var navMap = (function() {
       });
 
       // Lazily load all the partials once
-      d3.text("build/partials/binModal.html", function(error, template) { 
+      d3.text("build/partials/binModal.html", function(error, template) {
         binModalPartial = template;
       });
 
-      d3.text("build/partials/collectionModal.html", function(error, template) { 
+      d3.text("build/partials/collectionModal.html", function(error, template) {
         collectionModalPartial = template;
       });
 
-      d3.text("build/partials/occurrences.html", function(error, template) { 
+      d3.text("build/partials/occurrences.html", function(error, template) {
         occurrencePartial = template;
       });
 
-      d3.text("build/partials/stackedCollectionModal.html", function(error, template) { 
+      d3.text("build/partials/stackedCollectionModal.html", function(error, template) {
         stackedCollectionPartial = template;
       });
 
-      
+
     },
 
     "changeMaps": function(mouse) {
@@ -305,7 +305,7 @@ var navMap = (function() {
                 return navMap.refreshHammer(timeScale.interval_hash[filters.selectedInterval.oid].data);
               }
             }
-          
+
           } else {
             url += "&level=2";
             url = navMap.parseURL(url);
@@ -316,10 +316,10 @@ var navMap = (function() {
           url = navMap.parseURL(url);
         }
 
-        currentRequest = d3.json(url, function(error, data) { 
+        currentRequest = d3.json(url, function(error, data) {
           navMap.refreshHammer(data);
         });
-        
+
         return;
       }
 
@@ -441,7 +441,7 @@ var navMap = (function() {
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           navMap.drawCollections(data, 3, zoom);
         });
-        
+
       }
     },
 
@@ -489,7 +489,7 @@ var navMap = (function() {
       }
 
       paleo_nav.hideLoading();
-  
+
       d3.select(".leaflet-zoom-hide").style("visibility", "visible");
     },
 
@@ -537,7 +537,7 @@ var navMap = (function() {
         .on("click", function(d) {
           navMap.changeMaps(d3.mouse(this));
         });
-      
+
       bins.exit().remove();
 
       if (!reconstructMap.reconstructing) {
@@ -662,7 +662,7 @@ var navMap = (function() {
         var index = navMap.getIndex(data.records, toRemove[i], "oid");
         data.records.splice(index, 1);
       }
-      
+
       // Create a Leaflet Lat/lng for all clusters
       clusters.forEach(function(d) {
         var totalOccurrences = [];
@@ -673,7 +673,7 @@ var navMap = (function() {
         //d.ageTop = d3.min(clusterTops);
         //d.ageBottom = d3.max(clusterBottoms);
         // TODO: fix this to something more accurate
-        /* Annecdotal evidence suggests all collections that share a lat/lng should be from the 
+        /* Annecdotal evidence suggests all collections that share a lat/lng should be from the
           same interval, but I doubt that it's always true */
         d.cxi = d.members[0].cxi;
         d.noc = d3.sum(totalOccurrences);
@@ -703,7 +703,7 @@ var navMap = (function() {
           d3.select(".info").html("");
           timeScale.unhighlight();
         });
-      
+
       clusters.enter().append("circle")
         .attr("class", "clusters")
         .attr("id", function(d) { return "p" + d.members[0].cxi; })
@@ -725,7 +725,7 @@ var navMap = (function() {
           timeScale.highlight(this);
           navMap.openStackedCollectionModal(d);
         });
-      
+
       clusters.exit().remove();
 
       var points = g.selectAll(".bins")
@@ -777,45 +777,45 @@ var navMap = (function() {
       navMap.redrawPoints(points, clusters);
 
     },
-    
+
     "getOffsetCollections": function(cluster, offset) {
       d3.json(paleo_nav.dataUrl + "/data1.1/colls/list.json?clust_id=" + cluster + "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&offset=" +offset, function(err, data) {
-        
+
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
         });
-        
+
         var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
-        
+
         $("#collectionCount").html("Showing " + offset + " of " + data.records_found + " collections");
         $("#collectionAccordion").append(output);
         $(".show-more-collections").data()["shown-collections"] = offset;
         if (offset >= $(".show-more-collections").data("total-collections")) {
           $(".show-more-collections").hide();
         }
-        
+
         $(".occurrenceTab").on("show.bs.tab", function(d) {
           var id = d.target.id;
           id = id.replace("occToggle", "");
-          
+
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
             if (data.records.length > 0) {
               var taxonHierarchy = navMap.buildTaxonHierarchy(data);
-        
+
               var output = Mustache.render(occurrencePartial, taxonHierarchy);
               $("#occurrences" + id).html(output);
-        
+
               $(".filterByOccurrence").click(function(event) {
                 event.preventDefault();
                 navMap.filterByTaxon($(this).attr("data-name"));
                 $("#collectionModal").modal("hide");
               });
-        
+
             } else {
               var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
               $("#occurrences" + id).html(output);
@@ -833,25 +833,25 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
       url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&count";
-      
+
       d3.json(url, function(err, data) {
-        
+
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
         });
-        
+
         var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
-        
+
         d3.select("#collectionCount").html("Showing " + data.records.length + " of " + data.records_found + " collections");
         d3.select("#collectionAccordion").html(output);
-        
+
         $(".show-more-collections")
           .data("total-collections", data.records_found)
           .data("shown-collections", data.records_returned);
-        
+
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
           var id = d.target.id;
           id = id.replace("collapse", "");
@@ -864,33 +864,33 @@ var navMap = (function() {
             $("#ref" + id).html(data.records[0].ref);
           });
         });
-        
+
         $(".occurrenceTab").on("show.bs.tab", function(d) {
             var id = d.target.id;
             id = id.replace("occToggle", "");
-            
+
             var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
             d3.json(url, function(err, data) {
               if (data.records.length > 0) {
                 var taxonHierarchy = navMap.buildTaxonHierarchy(data);
-        
+
                 var output = Mustache.render(occurrencePartial, taxonHierarchy);
                 $("#occurrences" + id).html(output);
-        
+
                 $(".filterByOccurrence").click(function(event) {
                   event.preventDefault();
                   navMap.filterByTaxon($(this).attr("data-name"));
                   $("#collectionModal").modal("hide");
                 });
-        
+
               } else {
                 var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
                 $("#occurrences" + id).html(output);
               }
             });
           });
-        
+
         // Handle showing/hiding "show more collections"
         if (data.records_found <= data.records_returned) {
           $(".show-more-collections").hide();
@@ -905,7 +905,7 @@ var navMap = (function() {
               navMap.getOffsetCollections(id, $(".show-more-collections").data()["offset"]);
             });
         }
-        
+
         $("#binModal").modal();
         $("#loading").hide();
       });
@@ -919,7 +919,7 @@ var navMap = (function() {
         d.rank = (d.mra) ? taxaBrowser.rankMap(d.mra) : (d.rank) ?  taxaBrowser.rankMap(d.rnk) : "Unknown";
         d.itallics = (d.rnk < 6) ? "itallics" : "";
         d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
-        d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : (d.tid > 0) ? d.idt : ""; 
+        d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : (d.tid > 0) ? d.idt : "";
 
         // If it has a genus name...
         if (d.idt) {
@@ -956,7 +956,7 @@ var navMap = (function() {
           var newPhylum = {"phylum": d.phl, "classes": []};
           occurrenceTree.phyla.push(newPhylum);
         }
-        
+
         // Find unique phylum/class combinations
         var phyla_classes = [];
         for (var i = 0; i < occurrenceTree.phyla.length; i++) {
@@ -994,7 +994,7 @@ var navMap = (function() {
             familyIndex = navMap.getIndex(occurrenceTree.phyla[phylumIndex].classes[classIndex].families, d.fml, "family");
         occurrenceTree.phyla[phylumIndex].classes[classIndex].families[familyIndex].genera.push(d);
       });
-      
+
       for (var i = 0; i < occurrenceTree.phyla.length; i++) {
         var undefinedClassIndex;
         for (var j = 0; j < occurrenceTree.phyla[i].classes.length; j++) {
@@ -1010,7 +1010,7 @@ var navMap = (function() {
           if (typeof(undefinedFamilyIndex) != "undefined") {
             occurrenceTree.phyla[i].classes[j].families.push(occurrenceTree.phyla[i].classes[j].families.splice(undefinedFamilyIndex, 1)[0]);
           }
-          
+
           if (typeof(occurrenceTree.phyla[i].classes[j].nameClass) === "undefined") {
             undefinedFamilyIndex = j;
             occurrenceTree.phyla[i].classes[j].nameClass = "Miscellaneous " + (typeof(occurrenceTree.phyla[i].phylum) === "undefined") ? "Miscellaneous unranked taxa" : occurrenceTree.phyla[i].phylum;
@@ -1027,13 +1027,13 @@ var navMap = (function() {
           occurrenceTree.phyla[i].unranked = true;
         }
       }
-      console.log(occurrenceTree)
+
       return occurrenceTree;
     },
 
     "openCollectionModal": function(d) {
       $("#loading").show();
-    /* 
+    /*
       Placeholder for once the data service allows filters on colls/single.json
       var url = paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
       url = navMap.parseURL(url);
@@ -1078,7 +1078,7 @@ var navMap = (function() {
         $(".occurrenceTab").on("show.bs.tab", function(d) {
           var id = d.target.id;
           id = id.replace("occToggle", "");
-          
+
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
@@ -1273,7 +1273,7 @@ var navMap = (function() {
           } else {
             return 0.70;
           }
-          break; 
+          break;
         case 3:
           if (navMap.checkFilters()) {
             return 0.38;
@@ -1309,7 +1309,7 @@ var navMap = (function() {
           break;
       }
     },
-    
+
     "resizeSvgMap": function() {
       var width = parseInt(d3.select("#graphics").style("width"));
 
@@ -1369,7 +1369,7 @@ var navMap = (function() {
         $("#downloadData").removeClass("active");
         $("#urlTab").addClass("active");
         $("#getURL").addClass("active");
-      } else if (parseInt(d3.select("#map").style("height")) > 1) { 
+      } else if (parseInt(d3.select("#map").style("height")) > 1) {
         d3.select("#map")
           .style("height", function(d) {
             if (d3.select(".timeScale").style("visibility") === "hidden") {
@@ -1383,7 +1383,7 @@ var navMap = (function() {
       } else {
         navMap.resizeSvgMap();
       }
-      
+
       d3.select("#infoContainer")
         .style("bottom", function() {
           if (window.innerWidth < 468) {
@@ -1398,7 +1398,7 @@ var navMap = (function() {
         .style("height", function() {
           var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height")) - 121;
           return (height) + "px";
-          
+
         });
 
       if (window.innerHeight > 600) {
@@ -1415,7 +1415,7 @@ var navMap = (function() {
           .style("top", 0)
           .style("bottom", "inherit")
       }
-        
+
 
       d3.selectAll(".helpModalTimescaleLabel")
         .style("top", function() {
@@ -1445,6 +1445,7 @@ var navMap = (function() {
               filters[type][keys[i]] = "";
             }
             break;
+
           case "personFilter":
             parent.style("display", "none").html("");
             filters.exist["personFilter"] = false;
@@ -1454,25 +1455,12 @@ var navMap = (function() {
               filters[type][keys[i]] = "";
             }
             break;
+
           case "taxon":
             parent.remove();
-            var index;
-            // Find the index of the taxon being removed
-            filters.taxa.forEach(function(d, i) {
-              if (parseInt(d.id) === id) {
-                index = i;
-              }
-            });
-            // Remove from taxa filter array
-            filters.taxa.splice(index, 1);
-
-            // Check if there are any others left
-            if (filters.taxa.length < 1) {
-              filters.exist["taxon"] = false;
-            }
-
-            d3.select(".taxa").style("box-shadow", "");
+            navMap.removeTaxonFilters([id]);
             break;
+
           case "stratFilter":
             parent.style("display", "none").html("");
             filters.exist["stratigraphy"] = false;
@@ -1490,7 +1478,7 @@ var navMap = (function() {
         } else {
           navMap.refresh("reset");
         }
-        
+
       });
     },
 
@@ -1538,7 +1526,7 @@ var navMap = (function() {
           navMap.refreshFilterHandlers();
           break;
       }
-      
+
       if (window.innerHeight > 600) {
         d3.select(".filters")
           .style("left", 0)
@@ -1569,17 +1557,50 @@ var navMap = (function() {
       navMap.updateFilterList("selectedInterval");
     },
 
-    "filterByTaxon": function(name, preventRefresh) {
+
+    "removeTaxonFilters": function(ids) {
+        // Remove the filters from the interface
+        d3.selectAll(".filters > .filter").each(function(d) {
+          var id = parseInt(d3.select(this).attr("data-id"));
+          if (ids.indexOf(id) > -1) {
+            d3.select(this).remove();
+          }
+        });
+
+        // Remove them from the application data
+        navMap.filters.taxa = navMap.filters.taxa.filter(function(d) {
+          if (ids.indexOf(d.id) < 0) {
+              return d;
+          }
+        });
+
+        // Check if there are any others left
+        if (navMap.filters.taxa.length < 1) {
+          navMap.filters.exist["taxon"] = false;
+        }
+
+        d3.select(".taxa").style("box-shadow", "");
+    },
+
+
+    "filterByTaxon": function(name, preventRefresh, isPhylo) {
       if (!name) {
         var name = $("#taxonInput").val();
       }
-      
-      d3.json(paleo_nav.dataUrl + '/data1.1/taxa/list.json?name=' + name + '&status=all', function(err, data) {
+
+      d3.json(paleo_nav.dataUrl + '/data1.1/taxa/list.json?name=' + name + '&status=all&rel=all_parents', function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
         } else {
           if ( data.records.length > 0 ) {
-            var taxon = {"id": data.records[0].oid, "name": data.records[0].nam};
+            var parents = data.records.map(function(d) { return d.oid });
+
+            // The target taxon is the last one (others are parents)
+            var taxon = {
+              "id": data.records[data.records.length - 1].oid,
+              "name": data.records[data.records.length - 1].nam,
+              "isPhylo": (isPhylo) ? isPhylo : false
+            };
 
             // Check if we have already applied this taxon filter
             for (var i = 0; i < navMap.filters.taxa.length; i++) {
@@ -1588,7 +1609,16 @@ var navMap = (function() {
                 return;
               }
             }
-            
+
+            var toRemove = []
+            // Check if we are filtering by a child of an existing filter
+            for (var i = 0; i < navMap.filters.taxa.length; i++) {
+              if (parents.indexOf(navMap.filters.taxa[i].id) > -1) {
+                toRemove.push(navMap.filters.taxa[i].id);
+              }
+            }
+            navMap.removeTaxonFilters(toRemove);
+
             // Update the taxon browser unless it's explicitly blocked
             if (!preventRefresh) {
               taxaBrowser.goToTaxon(name);
@@ -1597,7 +1627,7 @@ var navMap = (function() {
             // Add map filter for this taxon
             navMap.filters.taxa.push(taxon);
             navMap.filters.exist.taxon = true;
-            navMap.updateFilterList("taxon", data.records[0].oid);
+            navMap.updateFilterList("taxon", taxon.id);
 
             // Refresh either the reconstruction map or the regular one
             if (d3.select("#reconstructMap").style("display") === "block") {
@@ -1675,7 +1705,7 @@ var navMap = (function() {
         ne.lng = ne.lng.toFixed(4);
         url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
       }
-      
+
       url = navMap.parseURL(url);
 
       url += "&show=comments,ent,entname,crmod&showsource";
@@ -1773,7 +1803,7 @@ var navMap = (function() {
     },
 
     "restoreState": function(state) {
-    /*TODO: should probably change this check to something like 
+    /*TODO: should probably change this check to something like
       Array.isArray(state) to check if it's an array, and
       Object.keys(state).length > 0 for an object.
 
@@ -1798,7 +1828,7 @@ var navMap = (function() {
           params.taxaFilter.forEach(function(d) {
             navMap.filterByTaxon((d.name) ? d.name : d.nam);
           });
-        } 
+        }
 
         if (typeof(params.stratFilter) === "object" ) {
           if (params.stratFilter.name != "") {
@@ -1818,7 +1848,7 @@ var navMap = (function() {
           paleo_nav.toggleReconstructMap();
           navMap.checkFilters();
         }
-        
+
         navMap.resize();
         window.scrollTo(0,0);
       } else {
@@ -1844,15 +1874,15 @@ var navMap = (function() {
                 });
               }
             }
-  
+
             params.timeFilter.mid = parseInt(params.timeFilter.mid);
             params.timeFilter.oid = parseInt(params.timeFilter.oid);
-            
+
             params.currentReconstruction.mid = parseInt(params.currentReconstruction.mid);
             params.currentReconstruction.id = parseInt(params.currentReconstruction.id);
 
             params.authFilter.id = parseInt(params.authFilter.id);
-            
+
             if (params.zoom && params.zoom > 2) {
               navMap.goTo(params.center, params.zoom);
             }
@@ -1905,7 +1935,7 @@ var navMap = (function() {
           params.taxaFilter.push(d);
         });
       }
-      
+
       return params;
     },
 

@@ -1,26 +1,26 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
-     If developing locally default to paleobiodb.org, otherwise use localhost */  
+     If developing locally default to paleobiodb.org, otherwise use localhost */
   var dataUrl = window.location.origin,
       testUrl = "https://testpaleodb.geology.wisc.edu",
       stateUrl = "https://paleobiodb.org";
-  
+
   if ( window.location.search.indexOf("local") > -1 ) {
     dataUrl = window.location.origin + ":3000";
     testUrl = window.location.origin + ":3000";
-    
+
   } else if (window.location.search.indexOf("test") > -1) {
     dataUrl = "https://testpaleodb.geology.wisc.edu";
   } else if ( window.location.hostname === "localhost" ) {
     dataUrl = "https://paleobiodb.org";
   }
-  
+
   var prevalencePartial, prevalenceSummaryPartial;
 
-  d3.text("build/partials/prevalent.html", function(error, template) { 
+  d3.text("build/partials/prevalent.html", function(error, template) {
     prevalencePartial = template;
   });
-  d3.text("build/partials/prevalent_summary.html", function(error, template) { 
+  d3.text("build/partials/prevalent_summary.html", function(error, template) {
     prevalenceSummaryPartial = template;
   });
 
@@ -47,7 +47,7 @@ var paleo_nav = (function() {
         reconstructMap.init();
         taxaBrowser.init();
       });
-        
+
 
       // Handler for the zoom-in button
       var zoomInButton = $(".zoom-in").hammer();
@@ -90,7 +90,7 @@ var paleo_nav = (function() {
           paleo_nav.toggleReconstructMap();
         }
       });
-      
+
       // Handler for the taxa filter UI button
       var taxaButton = $(".taxa").hammer();
 
@@ -243,7 +243,7 @@ var paleo_nav = (function() {
             navMap.filterByPerson(data);
             document.activeElement.blur();
             break;
-          case 'time': 
+          case 'time':
             timeScale.goTo(data.name);
             navMap.filterByTime(data.name);
             navMap.refresh("reset");
@@ -297,7 +297,7 @@ var paleo_nav = (function() {
               navMap.filterByPerson(selectedValue.datum);
               document.activeElement.blur();
               break;
-            case 'time': 
+            case 'time':
               timeScale.goTo(selectedValue.datum.nam);
               navMap.filterByTime(selectedValue.datum.nam);
               navMap.refresh("reset");
@@ -327,7 +327,7 @@ var paleo_nav = (function() {
         navMap.resize();
         reconstructMap.resize();
       });
-      
+
       $("#binModal").on("hide.bs.modal", function() {
         $("#collectionLoading").hide();
         $("#collectionCount").show();
@@ -360,7 +360,7 @@ var paleo_nav = (function() {
         var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         $(".diversityDownload").attr("href", diversityURL);
         diversityPlot.plot(diversityURL);
-        
+
       });
 
       $("#statsBox").on("hide.bs.modal", function() {
@@ -578,11 +578,11 @@ var paleo_nav = (function() {
           },
           "center": "",
           "currentReconstruction": {
-            "nam": "Permian", 
+            "nam": "Permian",
             "col": "#F04028",
             "mid": 275,
             "oid": 17,
-            "taxon": "Plantae", 
+            "taxon": "Plantae",
             "person": ""
           },
           "taxaFilter": [],
@@ -602,7 +602,7 @@ var paleo_nav = (function() {
         navMap.restoreState(state);
         $("#helpModal").modal('hide');
       });
-      
+
     },
 
     "getPrevalence": function(line) {
@@ -663,7 +663,7 @@ var paleo_nav = (function() {
             if (i < Math.floor((window.innerHeight)/80)) {
               return d;
             }
-          } 
+          }
         });
 
         var summaryRendered = Mustache.render(prevalenceSummaryPartial, {"records": toDisplay});
@@ -809,7 +809,7 @@ var paleo_nav = (function() {
           alert("Please click a time interval below to build a reconstruction map");
         }
       }
-      
+
     },
 
     "closeReconstructMap": function() {
@@ -873,7 +873,7 @@ var paleo_nav = (function() {
       navMap.resize();
       map.invalidateSize();
     },
-    
+
     "dataUrl": dataUrl,
     "testUrl": testUrl,
     "stateUrl": stateUrl
