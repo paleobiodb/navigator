@@ -676,7 +676,7 @@ var paleo_nav = (function() {
         var rendered = Mustache.render(prevalencePartial, {"records":toRender});
         $(".prevalence-container").html(rendered);
 
-        $(".prevalent-taxon").click(function(d) {
+        $(".prevalent-summary-taxon").click(function(d) {
           var name = $(this).data("name").replace(" (other)", "").replace(" (unclassified)", "");
           navMap.filterByTaxon(name);
         });

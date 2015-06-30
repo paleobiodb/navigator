@@ -395,13 +395,13 @@ color: rgb(245,245,245);
   display: inline-block;
   padding: 8px;
   text-align: center;
-  cursor: pointer;
 }
 .prevalent-taxon > p {
   font-size: 0.7em;
 }
 .prevalent-summary-taxon {
   padding: 2px 2px;
+  cursor: pointer;
 }
 .prevalent-summary-taxon > img {
   height: 35px;
