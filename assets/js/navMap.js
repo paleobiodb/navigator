@@ -1589,32 +1589,35 @@ var navMap = (function() {
         var name = $("#taxonInput").val();
       }
 
-      d3.json(paleo_nav.dataUrl + '/data1.1/taxa/list.json?name=' + name + '&status=all&rel=all_parents', function(err, data) {
+      d3.json(paleo_nav.dataUrl + '/data1.2/taxa/list.json?name=' + name + '&show=seq', function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
         } else {
           if ( data.records.length > 0 ) {
-            var parents = data.records.map(function(d) { return d.oid });
-
-            // The target taxon is the last one (others are parents)
+            // The target taxon is the only one...
             var taxon = {
-              "id": data.records[data.records.length - 1].oid,
-              "name": data.records[data.records.length - 1].nam,
-              "isPhylo": (isPhylo) ? isPhylo : false
+              "id": parseInt(data.records[0].oid.replace("txn:", "")),
+              "name": data.records[0].nam,
+              "lsq": data.records[0].lsq,
+              "rsq": data.records[0].rsq
             };
 
             // Check if we have already applied this taxon filter
             for (var i = 0; i < navMap.filters.taxa.length; i++) {
-              if (navMap.filters.taxa[i].name === taxon.name) {
+              if (navMap.filters.taxa[i].id === taxon.name) {
                 // If so, ignore the request to add another taxon filter
                 return;
               }
             }
 
-            var toRemove = []
-            // Check if we are filtering by a child of an existing filter
+            var toRemove = [];
             for (var i = 0; i < navMap.filters.taxa.length; i++) {
-              if (parents.indexOf(navMap.filters.taxa[i].id) > -1) {
+              // Check if we are filtering by a child of an existing filter
+              if (taxon.lsq >= navMap.filters.taxa[i].lsq && taxon.rsq <= navMap.filters.taxa[i].rsq) {
+                toRemove.push(navMap.filters.taxa[i].id);
+              }
+              // Check if we are filtering by a parent of an existing filter
+              if (taxon.lsq <= navMap.filters.taxa[i].lsq && taxon.rsq >= navMap.filters.taxa[i].rsq) {
                 toRemove.push(navMap.filters.taxa[i].id);
               }
             }
