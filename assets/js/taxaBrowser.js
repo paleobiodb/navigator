@@ -22,10 +22,11 @@ var taxaBrowser = (function(){
       d3.json(paleo_nav.dataUrl + '/data1.1/taxa/list.json?status=all&name=' + name, function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
+          paleo_nav.hideLoading();
         } else {
           if ( data.records.length > 0 ) {
             paleo_nav.untoggleTaxa();
-            
+
             // Update the selected taxon in the taxa browser
             d3.select(".taxonTitle")
               .html(data.records[0].nam + " (" + rankMap(data.records[0].rnk) + ")" + "<i class='fa fa-plus-square'></i>")
@@ -42,7 +43,7 @@ var taxaBrowser = (function(){
             // Reset search box
             $("#taxonInput").val("");
             $("#taxaInput").val("");
-            
+
           } else {
             // TODO: Don't use a damn alert!
             return alert("No taxa with this name found");
@@ -56,6 +57,7 @@ var taxaBrowser = (function(){
     // Ask the API for the details of the selected taxon
     d3.json(paleo_nav.dataUrl + '/data1.1/taxa/single.json?id=' + taxon.oid + '&show=attr,nav,size', function(err, data ) {
       if (err) {
+        paleo_nav.hideLoading();
         // This should never be true, unless something goes horrifically wrong
         return alert("Error retrieving from single.json - ", err);
       } else if (data.records.length > 0) {
@@ -75,37 +77,37 @@ var taxaBrowser = (function(){
   function computeParentList(taxon) {
     var parent_list = [],
         last_oid = 0;
-    
+
     if (taxon.kgt && taxon.kgn && taxon.kgn != taxon.gid) {
       taxon.kgt.rnk = 'kingdom';
       parent_list.push(taxon.kgt);
       last_oid = taxon.kgn;
     }
-    
+
     if (taxon.phl && taxon.phn && taxon.phn != taxon.gid) {
       taxon.pht.rnk = 'phylum';
       parent_list.push(taxon.pht);
       last_oid = taxon.phn;
     }
-    
+
     if (taxon.cll && taxon.cln && taxon.cln != taxon.gid) {
       taxon.clt.rnk = 'class';
       parent_list.push(taxon.clt);
       last_oid = taxon.cln;
     }
-    
+
     if (taxon.odl && taxon.odn && taxon.odn != taxon.gid) {
       taxon.odt.rnk = 'order';
       parent_list.push(taxon.odt);
       last_oid = taxon.odn;
     }
-    
+
     if (taxon.fml && taxon.fmn && taxon.fmn != taxon.gid) {
       taxon.fmt.rnk = 'family';
       parent_list.push(taxon.fmt);
       last_oid = taxon.fmn;
     }
-    
+
     if (taxon.prt && taxon.par != last_oid) {
       parent_list.push(taxon.prt);
     }
@@ -149,49 +151,49 @@ var taxaBrowser = (function(){
 
   function computeChildList(taxon) {
     section_list = [];
-        
+
     if (taxon.chl && taxon.rnk > 5 && (taxon.chl.length === 0 || !taxon.gns || taxon.chl.length != taxon.gnc)) {
-        section_list.push({ section: "immediate subtaxa", size: taxon.chl.length, rank: "immediate", 
+        section_list.push({ section: "immediate subtaxa", size: taxon.chl.length, rank: "immediate",
           offset: 0, order: 'size.desc', taxa: taxon.chl });
     }
-    
+
     if (taxon.phs) {
-        section_list.push({ section: "phyla", size: taxon.phc, rank: 20, 
+        section_list.push({ section: "phyla", size: taxon.phc, rank: 20,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.phs });
     }
-    
+
     if (taxon.cls) {
-        section_list.push({ section: "classes", size: taxon.clc, rank: 17, 
+        section_list.push({ section: "classes", size: taxon.clc, rank: 17,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.cls });
     }
-    
+
     if (taxon.ods) {
-        section_list.push({ section: "orders", size: taxon.odc, rank: 13, 
+        section_list.push({ section: "orders", size: taxon.odc, rank: 13,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.ods });
     }
-    
+
     if (taxon.fms) {
-        section_list.push({ section: "families", size: taxon.fmc, rank: 9, 
+        section_list.push({ section: "families", size: taxon.fmc, rank: 9,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.fms });
     }
-    
+
     if (taxon.gns) {
-        section_list.push({ section: "genera", size: taxon.gnc, rank: 5, 
+        section_list.push({ section: "genera", size: taxon.gnc, rank: 5,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.gns });
     }
-    
+
     if (taxon.sgs && taxon.sgs.length > 0) {
-        section_list.push({ section: "subgenera", size: taxon.gnc, rank: 4, 
+        section_list.push({ section: "subgenera", size: taxon.gnc, rank: 4,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.sgs });
     }
-    
+
     if (taxon.sps && taxon.sps.length > 0) {
-        section_list.push({ section: "species", size: taxon.sps.length, rank: 3, 
+        section_list.push({ section: "species", size: taxon.sps.length, rank: 3,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.sps });
     }
-    
+
     if (taxon.sss && taxon.sss.length > 0) {
-        section_list.push({ section: "subspecies", size: taxon.sss.length, rank: 2, 
+        section_list.push({ section: "subspecies", size: taxon.sss.length, rank: 2,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.sss });
     }
 
@@ -217,20 +219,23 @@ var taxaBrowser = (function(){
   // Function that retrieves all immediate subtaxa of a given taxon
   function getSubtaxa(taxon, rank, offset, limit) {
     var lim_str = '';
-      
+
     if (typeof offset === "number") {
         lim_str += '&offset=' + offset;
     }
-    
+
     if (typeof limit === "number") {
         lim_str += '&limit=' + limit;
     }
-    
+
     if (rank > 0) {
       // Ask the API for all immediate subtaxa
       var url = paleo_nav.dataUrl + '/data1.1/taxa/list.json?id=' + taxon.oid + lim_str + '&show=size&rel=all_children&rank=' + rank;
 
       d3.json(url, function(err, data) {
+        if (error) {
+          return paleo_nav.hideLoading();
+        }
         if (data.records.length > 0) {
 
           d3.select("#subtaxa").selectAll("li").remove();
@@ -258,7 +263,7 @@ var taxaBrowser = (function(){
 
           // Open up the modal that shows all subtaxa
           $("#subtaxaModal").modal();
-        }     
+        }
       });
     }
   }
@@ -297,7 +302,7 @@ var taxaBrowser = (function(){
     $(".children").off("click");
     $(".children").click(function(d) {
       d.preventDefault();
-      /* When clicked, get all subtaxa given the focal taxon and 
+      /* When clicked, get all subtaxa given the focal taxon and
       the rank of the item clicked (i.e. was order, family, etc selected?)*/
       if (d.target.id.substr(1) != "immediate") {
         getSubtaxa(taxon, d.target.id.substr(1));
@@ -329,7 +334,7 @@ var taxaBrowser = (function(){
         // Open up the modal that shows all subtaxa
         $("#subtaxaModal").modal();
       }
-      
+
     });
   }
 
@@ -337,8 +342,8 @@ var taxaBrowser = (function(){
     var value = $(param).val();
 
     value = value.charAt(0).toUpperCase() + value.slice(1);
-    
-    $('#subtaxa > li:not(:contains(' + value + '))').hide(); 
+
+    $('#subtaxa > li:not(:contains(' + value + '))').hide();
     $('#subtaxa > li:contains(' + value + ')').show();
   }
 

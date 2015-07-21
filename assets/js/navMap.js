@@ -299,6 +299,9 @@ var navMap = (function() {
               if (typeof(timeScale.interval_hash[filters.selectedInterval.oid].data) === "undefined") {
                 // ...load it...
                 currentRequest = d3.json(url, function(error, data) {
+                  if (error) {
+                    return paleo_nav.hideLoading();
+                  }
                   // ...and hold on to it
                   timeScale.interval_hash[filters.selectedInterval.oid].data = data;
                   return navMap.refreshHammer(data);
@@ -320,6 +323,9 @@ var navMap = (function() {
         }
 
         currentRequest = d3.json(url, function(error, data) {
+          if (error) {
+            return paleo_nav.hideLoading();
+          }
           navMap.refreshHammer(data);
         });
 
@@ -405,6 +411,9 @@ var navMap = (function() {
         var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+          if (error) {
+            return paleo_nav.hideLoading();
+          }
           navMap.drawBins(data, 1, zoom);
         });
 
@@ -420,6 +429,9 @@ var navMap = (function() {
             if (typeof(timeScale.interval_hash[filters.selectedInterval.oid].data) === "undefined") {
               // ...load it...
               currentRequest = d3.json(url, function(error, data) {
+                if (error) {
+                  return paleo_nav.hideLoading();
+                }
                 // ...and hold on to it
                 timeScale.interval_hash[filters.selectedInterval.oid].data = data;
                 return navMap.drawBins(data, 2, zoom);
@@ -434,6 +446,9 @@ var navMap = (function() {
           var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
 
           currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
             navMap.drawBins(data, 2, zoom);
           });
         }
@@ -442,6 +457,9 @@ var navMap = (function() {
         var url = paleo_nav.dataUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all&show=ref,time,strat,geo,lith,entname,prot&markrefs';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+          if (error) {
+            return paleo_nav.hideLoading();
+          }
           navMap.drawCollections(data, 3, zoom);
         });
 
@@ -781,7 +799,9 @@ var navMap = (function() {
 
     "getOffsetCollections": function(cluster, offset) {
       d3.json(paleo_nav.dataUrl + "/data1.1/colls/list.json?clust_id=" + cluster + "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&offset=" +offset, function(err, data) {
-
+        if (error) {
+          return paleo_nav.hideLoading();
+        }
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
@@ -805,6 +825,9 @@ var navMap = (function() {
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
             if (data.records.length > 0) {
               var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
@@ -836,7 +859,9 @@ var navMap = (function() {
       url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&count";
 
       d3.json(url, function(err, data) {
-
+        if (error) {
+          return paleo_nav.hideLoading();
+        }
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
@@ -862,6 +887,9 @@ var navMap = (function() {
           d3.json(url, function(err, data) {
         */
           d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
             $("#ref" + id).html(data.records[0].ref);
           });
         });
@@ -873,6 +901,9 @@ var navMap = (function() {
             var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
             d3.json(url, function(err, data) {
+              if (error) {
+                return paleo_nav.hideLoading();
+              }
               if (data.records.length > 0) {
                 var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
@@ -1041,7 +1072,9 @@ var navMap = (function() {
       d3.json(url, function(err, data) {
     */
       d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
-
+        if (error) {
+          return paleo_nav.hideLoading();
+        }
         data.records.forEach(function(d) {
           d.intervals = (d.oli) ? d.oei + " - " + d.oli : d.oei;
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
@@ -1083,6 +1116,9 @@ var navMap = (function() {
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
             if (data.records.length > 0) {
               var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
@@ -1130,6 +1166,9 @@ var navMap = (function() {
         d3.json(url, function(err, data) {
       */
         d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+          if (error) {
+            return paleo_nav.hideLoading();
+          }
           $("#ref" + id).html(data.records[0].ref);
         });
       });
@@ -1141,6 +1180,9 @@ var navMap = (function() {
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
             if (data.records.length > 0) {
               var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
@@ -1592,6 +1634,7 @@ var navMap = (function() {
       d3.json(paleo_nav.dataUrl + '/data1.2/taxa/list.json?name=' + name + '&show=seq', function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
+          return paleo_nav.hideLoading();
         } else {
           if ( data.records.length > 0 ) {
             // The target taxon is the only one...
