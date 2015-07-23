@@ -41,7 +41,7 @@ a:hover {
   font-weight: bold;
   border: 1px solid #ccc;
 }
-.extinct {  
+.extinct {
   font-style: italic;
 }
 .laAttr {
@@ -63,4 +63,22 @@ td {
 }
 .childTaxa {
   color:#777;
+}
+
+.children {
+  color: #777;
+  cursor: default;
+}
+#timmediate.children {
+  color: #428bca;
+}
+.children:hover {
+  color: #777;
+  cursor: default;
+  text-decoration: none;
+}
+#timmediate.children:hover {
+  color: #2a6496;
+  text-decoration: underline;
+  cursor: pointer;
 }

@@ -55,7 +55,7 @@ var taxaBrowser = (function(){
 
   function getTaxonDetails(taxon) {
     // Ask the API for the details of the selected taxon
-    d3.json(paleo_nav.dataUrl + '/data1.1/taxa/single.json?id=' + taxon.oid + '&show=attr,nav,size', function(err, data ) {
+    d3.json(paleo_nav.dataUrl + '/data1.1/taxa/single.json?id=' + taxon.oid + '&show=attr,nav,size', function(err, data) {
       if (err) {
         paleo_nav.hideLoading();
         // This should never be true, unless something goes horrifically wrong
@@ -233,7 +233,7 @@ var taxaBrowser = (function(){
       var url = paleo_nav.dataUrl + '/data1.1/taxa/list.json?id=' + taxon.oid + lim_str + '&show=size&rel=all_children&rank=' + rank;
 
       d3.json(url, function(err, data) {
-        if (error) {
+        if (err) {
           return paleo_nav.hideLoading();
         }
         if (data.records.length > 0) {
@@ -304,9 +304,7 @@ var taxaBrowser = (function(){
       d.preventDefault();
       /* When clicked, get all subtaxa given the focal taxon and
       the rank of the item clicked (i.e. was order, family, etc selected?)*/
-      if (d.target.id.substr(1) != "immediate") {
-        getSubtaxa(taxon, d.target.id.substr(1));
-      } else {
+      if (d.target.id.substr(1) === "immediate") {
         d3.select("#subtaxa").selectAll("li").remove();
         d3.select("#subtaxa").selectAll("br").remove();
 
@@ -333,8 +331,8 @@ var taxaBrowser = (function(){
 
         // Open up the modal that shows all subtaxa
         $("#subtaxaModal").modal();
-      }
 
+      }
     });
   }
 
