@@ -198,11 +198,12 @@ var diversityPlot = (function() {
       .call(xAxis);
 
     // Append the y axis
-    svg.append("g")
+    var label = svg.append("g")
       .attr("class", "y axis")
     .attr("transform", "translate(" + padding.left + ",0)")
-      .call(yAxis)
-    .append("text")
+      .call(yAxis);
+
+    label.append("text")
       .attr("transform", "rotate(-90)")
       .attr("dy", "1em")
       .style("text-anchor", "end")
@@ -210,6 +211,16 @@ var diversityPlot = (function() {
       .style("font-size", "2em")
       .style("font-weight", 400)
       .text("Genera sampled in bin");
+
+    label.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("dy", "3em")
+      .style("text-anchor", "end")
+      .style("letter-spacing", "5px")
+      .style("font-size", "1.3em")
+      .style("font-weight", 300)
+      .style("font-style", "italics")
+      .text("(Approximate)");
 
     // Draw zee line
     var line = d3.svg.line()
