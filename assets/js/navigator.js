@@ -1,22 +1,27 @@
 var paleo_nav = (function() {
   /* Server to be used for all data service requests;
-     If developing locally default to paleobiodb.org, otherwise use localhost */  
+     If developing locally default to paleobiodb.org, otherwise use localhost */
   var dataUrl = window.location.origin,
       testUrl = "https://testpaleodb.geology.wisc.edu",
       stateUrl = "https://paleobiodb.org";
-  
+
   if ( window.location.search.indexOf("local") > -1 ) {
     dataUrl = window.location.origin + ":3000";
     testUrl = window.location.origin + ":3000";
-    
+
+  } else if (window.location.search.indexOf("test") > -1) {
+    dataUrl = "https://testpaleodb.geology.wisc.edu";
   } else if ( window.location.hostname === "localhost" ) {
     dataUrl = "https://paleobiodb.org";
   }
-  
-  var prevalencePartial;
 
-  d3.text("build/partials/prevalent.html", function(error, template) { 
+  var prevalencePartial, prevalenceSummaryPartial;
+
+  d3.text("build/partials/prevalent.html", function(error, template) {
     prevalencePartial = template;
+  });
+  d3.text("build/partials/prevalent_summary.html", function(error, template) {
+    prevalenceSummaryPartial = template;
   });
 
   return {
@@ -42,7 +47,7 @@ var paleo_nav = (function() {
         reconstructMap.init();
         taxaBrowser.init();
       });
-        
+
 
       // Handler for the zoom-in button
       var zoomInButton = $(".zoom-in").hammer();
@@ -85,7 +90,7 @@ var paleo_nav = (function() {
           paleo_nav.toggleReconstructMap();
         }
       });
-      
+
       // Handler for the taxa filter UI button
       var taxaButton = $(".taxa").hammer();
 
@@ -238,7 +243,7 @@ var paleo_nav = (function() {
             navMap.filterByPerson(data);
             document.activeElement.blur();
             break;
-          case 'time': 
+          case 'time':
             timeScale.goTo(data.name);
             navMap.filterByTime(data.name);
             navMap.refresh("reset");
@@ -292,7 +297,7 @@ var paleo_nav = (function() {
               navMap.filterByPerson(selectedValue.datum);
               document.activeElement.blur();
               break;
-            case 'time': 
+            case 'time':
               timeScale.goTo(selectedValue.datum.nam);
               navMap.filterByTime(selectedValue.datum.nam);
               navMap.refresh("reset");
@@ -322,7 +327,7 @@ var paleo_nav = (function() {
         navMap.resize();
         reconstructMap.resize();
       });
-      
+
       $("#binModal").on("hide.bs.modal", function() {
         $("#collectionLoading").hide();
         $("#collectionCount").show();
@@ -333,14 +338,13 @@ var paleo_nav = (function() {
 
       $("#statsBox").on('show.bs.modal', function() {
         $(".statsContent").height(window.innerHeight - 75);
-        $(".diversityContainer").height(window.innerHeight - 300)
+        $(".diversityContainer").height(window.innerHeight - 380)
         $("#diversityWait").css("display", "block");
         // Remove any old ones...
         d3.select("#diversity").select("svg").remove();
         $("#prevalence-container").html("")
 
         // Show waiting
-
 
         var bounds = map.getBounds(),
             sw = bounds._southWest,
@@ -354,35 +358,9 @@ var paleo_nav = (function() {
         }
 
         var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        $(".diversityDownload").attr("href", diversityURL);
         diversityPlot.plot(diversityURL);
 
-        var prevalenceURL = navMap.parseURL(testUrl + "/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
-        d3.json(prevalenceURL, function(error, data) {
-          var scale = d3.scale.linear()
-            .domain([d3.min(data.records, function(d) {
-              return d.noc
-            }), d3.max(data.records, function(d) {
-              return d.noc
-            })])
-            .range([40, 80]);
-
-          var total = data.records.map(function(d) { return d.noc }).reduce(function(a, b) { return a + b }, 0);
-          data.records.forEach(function(d) {
-            d.height = scale(d.noc);
-            var percentage = parseInt((d.noc/total)*100);
-            d.percentage = (percentage < 1) ? ("< 1") : percentage;
-          });
-
-          var toRender = data.records.filter(function(d, i) {
-            if (i < 11) {
-              return d;
-            }
-          });
-
-          var rendered = Mustache.render(prevalencePartial, {"records":toRender});
-          $("#prevalence-container").html(rendered);
-        });
-        
       });
 
       $("#statsBox").on("hide.bs.modal", function() {
@@ -600,11 +578,11 @@ var paleo_nav = (function() {
           },
           "center": "",
           "currentReconstruction": {
-            "nam": "Permian", 
+            "nam": "Permian",
             "col": "#F04028",
             "mid": 275,
             "oid": 17,
-            "taxon": "Plantae", 
+            "taxon": "Plantae",
             "person": ""
           },
           "taxaFilter": [],
@@ -624,7 +602,85 @@ var paleo_nav = (function() {
         navMap.restoreState(state);
         $("#helpModal").modal('hide');
       });
-      
+
+    },
+
+    "getPrevalence": function(line) {
+      $(".prevalence-summary").html("");
+
+      if(typeof(currentPrevRequest) != 'undefined') {
+        if (Object.keys(currentPrevRequest).length > 0) {
+          currentPrevRequest.abort();
+          currentPrevRequest = {};
+        }
+      }
+
+      var bounds = map.getBounds(),
+          sw = bounds._southWest,
+          ne = bounds._northEast;
+
+      if (parseInt(d3.select("#map").style("height")) < 1) {
+        sw.lng = -180,
+        ne.lng = 180,
+        sw.lat = -90,
+        ne.lat = 90;
+      }
+
+      var prevalenceURL = navMap.parseURL(testUrl + "/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+      prevalenceURL = prevalenceURL.replace("touched_by", "occ_touched_by");
+      currentPrevRequest = d3.json(prevalenceURL, function(error, data) {
+        var scale = d3.scale.linear()
+          .domain([d3.min(data.records, function(d) {
+            return d.noc
+          }), d3.max(data.records, function(d) {
+            return d.noc
+          })])
+          .range([40, 80]);
+
+        var total = data.records.map(function(d) { return d.noc }).reduce(function(a, b) { return a + b }, 0);
+        data.records.forEach(function(d) {
+          var split_name = d.nam.split(" ");
+          d.display_name = split_name[0] + ((split_name.length > 1) ? "*" : "");
+          d.data_url = paleo_nav.dataUrl;
+          d.height = scale(d.noc);
+          var percentage = parseInt((d.noc/total)*100);
+          d.percentage = (percentage < 1) ? ("< 1") : percentage;
+        });
+
+        var toRender = data.records.filter(function(d, i) {
+          if (i < 11) {
+            return d;
+          }
+        });
+
+        var toDisplay = data.records.filter(function(d, i) {
+          if (window.innerWidth > 700) {
+            var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height"));
+            if (i < Math.floor((height/80))) {
+              return d;
+            }
+          } else {
+            if (i < Math.floor((window.innerHeight)/80)) {
+              return d;
+            }
+          }
+        });
+
+        toDisplay.forEach(function(d) {
+          d.display_text = d.display_name + ((d.display_name.length > 17) ? "" : (" " + d.percentage + "%"));
+        });
+
+        var summaryRendered = Mustache.render(prevalenceSummaryPartial, {"records": toDisplay});
+        $(".prevalence-summary").html(summaryRendered);
+
+        var rendered = Mustache.render(prevalencePartial, {"records":toRender});
+        $(".prevalence-container").html(rendered);
+
+        $(".prevalent-summary-taxon").click(function(d) {
+          var name = $(this).data("name").replace(" (other)", "").replace(" (unclassified)", "");
+          navMap.filterByTaxon(name);
+        });
+      });
     },
 
     "prelaunch": function() {
@@ -644,6 +700,7 @@ var paleo_nav = (function() {
       d3.select("#waiting").style("display", "none");
       navMap.resizeSvgMap();
       setTimeout(navMap.resize, 500);
+      this.getPrevalence();
 
       if (!localStorage.pbdb) {
         if (window.innerWidth > 700) {
@@ -698,6 +755,8 @@ var paleo_nav = (function() {
       paleo_nav.closeTaxaBrowser();
 
       reconstructMap.visible = true;
+
+     // d3.select(".prevalence-row").style("display", "none");
 
       d3.select(".rotate")
         .style("box-shadow", "inset 3px 0 0 #ff992c")
@@ -754,7 +813,7 @@ var paleo_nav = (function() {
           alert("Please click a time interval below to build a reconstruction map");
         }
       }
-      
+
     },
 
     "closeReconstructMap": function() {
@@ -791,6 +850,9 @@ var paleo_nav = (function() {
         })
         .css("color", "#000");
 
+      d3.select(".prevalence-row").style("display", "block");
+      paleo_nav.getPrevalence();
+
       // Show the time interval filter remove button
       d3.select("#selectedInterval")
         .select("button")
@@ -815,7 +877,7 @@ var paleo_nav = (function() {
       navMap.resize();
       map.invalidateSize();
     },
-    
+
     "dataUrl": dataUrl,
     "testUrl": testUrl,
     "stateUrl": stateUrl

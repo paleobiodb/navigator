@@ -4,7 +4,7 @@ var diversityPlot = (function() {
       width = 960,
       height = 800 - margin.top - margin.bottom,
       currentRequest;
-  
+
   // Fetch diversity data from PBDB
   function getDiversityData(url) {
     // Abort any pending requests
@@ -27,7 +27,7 @@ var diversityPlot = (function() {
       }
     });
   }
-  
+
   // Get appropriate timescale
   function getTimescale(data) {
     // Figure out how much timescale we need
@@ -39,7 +39,7 @@ var diversityPlot = (function() {
       {"nam": "Mesozoic", "lag": 66, "eag": 252.17},
       {"nam": "Cenozoic", "lag": 0, "eag": 66}
     ];
-    
+
     var requestedMaxAge, requestedMinAge;
     for (var i = 0; i < eras.length; i++) {
       // Get early era
@@ -51,7 +51,7 @@ var diversityPlot = (function() {
         requestedMinAge = eras[i].lag;
       }
     }
-    
+
     // Request timescale data
     $.ajax(paleo_nav.dataUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
       .fail(function(error) {
@@ -69,7 +69,7 @@ var diversityPlot = (function() {
         draw(data, timescale);
       });
   } // End getTimescale
-  
+
   function draw(data, timescale) {
     // Remove any old ones...
     d3.select("#diversity").select("svg").remove();
@@ -91,34 +91,34 @@ var diversityPlot = (function() {
     var x = d3.scale.linear()
       .domain([d3.max(eras, function(d) { return d.eag; }), d3.min(eras, function(d) { return d.lag; }) - 1])
       .range([0, width - margin.left - margin.right]);
-    
+
     // Define a scale for the y axis
     var y = d3.scale.linear()
       .domain([0, d3.max(data, function(d) { return d.total; })])
       .range([height - margin.top - margin.bottom, 0]);
-    
+
     // Create an x axis
     var xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
       .ticks(5);
-    
+
     // Create a Y axis
     var yAxis = d3.svg.axis()
       .scale(y)
       .orient("left")
       .ticks(5);
-    
+
     // Define a scale for scaling the periods
     var periodX = d3.scale.linear()
       .domain([0, d3.sum(timescale, function(d) { if (d.lvl === 2) { return d.totalTime; } })])
       .range([0, width - margin.left - margin.right]);
-    
+
     // Define a scale for positioning the periods
     var periodPos = d3.scale.linear()
       .domain([d3.max(timescale, function(d) { return d.eag }), d3.min(timescale, function(d) { return d.lag })])
       .range([0, width - margin.left - margin.right]);
-    
+
     // Draw the SVG to hold everything
     var svg = d3.select("#diversity").append("svg")
       .attr("width", width)
@@ -127,7 +127,7 @@ var diversityPlot = (function() {
     .append("g")
       .attr("id", "diversityGraphGroup")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
+
     // Draw a group to hold the timescale
     var scale = d3.select("#diversityGraph").select("g")
       .append("g")
@@ -146,7 +146,7 @@ var diversityPlot = (function() {
       .style("opacity", 0.83)
       .append("svg:title")
       .text(function(d) { return d.nam });
-    
+
     // Draw period abbreviations
     scale.selectAll(".periodNames")
       .data(periods)
@@ -156,7 +156,7 @@ var diversityPlot = (function() {
       .attr("id", function(d) { return "l" + d.oid })
       .attr("class", "timeLabel abbreviation")
       .text(function(d) { return d.abr });
-    
+
     // Draw the full period names
     scale.selectAll(".periodNames")
       .data(periods)
@@ -166,7 +166,7 @@ var diversityPlot = (function() {
       .attr("class", "timeLabel dFullName")
       .attr("id", function(d) { return "l" + d.oid })
       .text(function(d) { return d.nam });
-    
+
     // Draw the era(s)
     scale.selectAll(".eras")
       .data(eras)
@@ -180,7 +180,7 @@ var diversityPlot = (function() {
       .style("opacity", 0.83)
       .append("svg:title")
       .text(function(d) { return d.nam });
-    
+
     // Draw the full era names
     scale.selectAll(".eraNames")
       .data(eras)
@@ -190,19 +190,20 @@ var diversityPlot = (function() {
       .attr("class", "timeLabel dFullName")
       .attr("id", function(d) { return "l" + d.oid })
       .text(function(d) { return d.nam; });
-    
+
     // Append the x axis ticks and numbers
     svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(" + padding.left + "," + (height - margin.top - margin.bottom + 85) + ")")
       .call(xAxis);
-    
+
     // Append the y axis
-    svg.append("g")
+    var label = svg.append("g")
       .attr("class", "y axis")
     .attr("transform", "translate(" + padding.left + ",0)")
-      .call(yAxis)
-    .append("text")
+      .call(yAxis);
+
+    label.append("text")
       .attr("transform", "rotate(-90)")
       .attr("dy", "1em")
       .style("text-anchor", "end")
@@ -210,13 +211,23 @@ var diversityPlot = (function() {
       .style("font-size", "2em")
       .style("font-weight", 400)
       .text("Genera sampled in bin");
-    
+
+    label.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("dy", "3em")
+      .style("text-anchor", "end")
+      .style("letter-spacing", "5px")
+      .style("font-size", "1.3em")
+      .style("font-weight", 300)
+      .style("font-style", "italics")
+      .text("(Approximate)");
+
     // Draw zee line
     var line = d3.svg.line()
-      .interpolate("linear") 
+      .interpolate("linear")
       .x(function(d) { return periodPos(d.eag) })
       .y(function(d) { return y(d.total); });
-    
+
     svg.append("path")
       .datum(data)
       .attr("class", "line diversityLine")
@@ -227,62 +238,68 @@ var diversityPlot = (function() {
 
     $("#diversityWait").css("display", "none");
   }
-  
-  function positionLabels() {
-    var labels = d3.selectAll(".dFullName"),
-         abbreviations = d3.selectAll(".abbreviation");
+
+  function positionLabels(stop) {
+    var labels = d3.selectAll(".dFullName");
+
+    // Show all the labels so we can properly compute widths
+    d3.selectAll(".dFullName").style("display","block");
+    d3.selectAll(".abbreviation").style("display","block");
 
     for (var i = 0; i < labels[0].length; i++) {
       var id = d3.select(labels[0][i]).data()[0].oid,
           rectWidth = parseFloat(d3.select("rect#r" + id).attr("width")),
           rectX = parseFloat(d3.select("rect#r" + id).attr("x"))
-    
+
       var labelWidth;
       try {
         labelWidth = d3.select(".dFullName#l" + id).node().getComputedTextLength();
       } catch(err) {
         labelWidth = 25;
       }
-    
+
+      // If the full label doesn't fit...
       if (rectWidth - 8 < labelWidth) {
+        // Hide the full label
         d3.select(".dFullName#l" + id).style("display", "none");
+
+        // Then check if the abbreviated label will fit
+        var abbreviationWidth;
+        try {
+          abbreviationWidth = d3.select(".abbreviation#l" + id).node().getComputedTextLength();
+        } catch(err) {
+          abbreviationWidth = 10;
+        }
+
+        if (rectWidth - 8 < abbreviationWidth) {
+          d3.select(".abbreviation#l" + id).style("display", "none");
+        } else {
+          d3.select(".abbreviation#l" + id)
+            .style("display", "block")
+            .attr("x", rectX + ((rectWidth - abbreviationWidth)/ 2));
+        }
+
       } else {
+        // Otherwise, hide the abbreviation and position the full label
         d3.select(".abbreviation#l" + id).style("display", "none");
         d3.select(".dFullName#l" + id).attr("x", rectX + ((rectWidth - labelWidth)/ 2));
       }
     }
 
-    abbreviations.style("display","block");
-    for (var i = 0; i < abbreviations[0].length; i++) {
-      var id = d3.select(abbreviations[0][i]).data()[0].oid,
-          rectWidth = parseFloat(d3.select("rect#r" + id).attr("width")),
-          rectX = parseFloat(d3.select("rect#r" + id).attr("x"))
-
-      var abbreviationWidth;
-      try {
-        abbreviationWidth = d3.select(".abbreviation#l" + id).node().getComputedTextLength();
-      } catch(err) {
-        abbreviationWidth = 20;
-      }
-    
-      if (d3.select(".dFullName#l" + id).style("display") === "block" || rectWidth - 8 < abbreviationWidth) {
-        d3.select(".abbreviation#l" + id).style("display", "none");
-      } else {
-        d3.select(".abbreviation#l" + id).attr("x", rectX + ((rectWidth - abbreviationWidth)/ 2));
-      }
+    if (!stop) {
+      setTimeout(resize, 100);
     }
 
-    setTimeout(resize, 100);
   }
-  
+
   function resize() {
     $(".statsContent").height("auto");
-    var containerHeight = $(".diversityContainer").height() - 100,
+    var containerHeight = $(".diversityContainer").height() - 50,
         containerWidth = $(".diversityContainer").width() ;
-      
+
     if (containerHeight > containerWidth) {
       var scale = containerWidth / width;
-      
+
       if ((scale * height) > containerHeight) {
         scale = containerHeight / height;
       }
@@ -293,24 +310,24 @@ var diversityPlot = (function() {
         scale = containerWidth / width;
       }
     }
-      
+
     d3.select("#diversityGraphGroup")
       .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.right + ")");
-    
+
     var computedWidth = d3.select("#diversityGraphGroup").node().getBBox().width;
     d3.select("#diversityGraph")
       .attr("height", containerHeight + margin.bottom)
       .attr("width",computedWidth * scale + margin.left + 20);
-    
-    positionLabels();
+
+    positionLabels(true);
   }
-  
-  d3.select(window).on("resize", resize);
-  
+
+  d3.select(window).on("resize", positionLabels);
+
   return {
     "plot": getDiversityData,
     "resize": resize,
     "currentRequest": currentRequest
   }
-  
+
 })();

@@ -180,6 +180,13 @@ nav {
   left: 3em;
   line-height: 45px;
 }
+.helpModalControls.right {
+  right: 84px;
+  left: inherit;
+}
+.helpModalControls.right > .helpModalControlLabel > i {
+  margin-left: 5px;
+}
 .helpModalControlLabel {
   color: #ddd;
 }
@@ -368,8 +375,21 @@ color: rgb(245,245,245);
   margin-left: 40%;
   margin-top: 10%;
 }
-#prevalence-container {
+.prevalence-row {
+  position: absolute;
+  z-index: 10;
+  background-color: rgba(255,255,255,0.95);
+  right: 0;
+  width: auto;
+  border-left: 1px solid #ccc;
+  padding: 5px;
+}
+.prevalence-container, .prevalence-summary {
   text-align: center;
+}
+.prevalence-summary {
+  width: 99px;
+  height: 100%;
 }
 .prevalent-taxon {
   display: inline-block;
@@ -379,8 +399,12 @@ color: rgb(245,245,245);
 .prevalent-taxon > p {
   font-size: 0.7em;
 }
-.prevalent-taxon > img {
- /* height: 50px;*/
+.prevalent-summary-taxon {
+  padding: 2px 2px;
+  cursor: pointer;
+}
+.prevalent-summary-taxon > img {
+  height: 35px;
 }
 .save > a {
   color:#000;
@@ -422,11 +446,14 @@ color: rgb(245,245,245);
   position: absolute;
   z-index: 2;
   background-color: rgba(255,255,255,0.95);
-  border-top: 1px solid #ccc;
-  border-right: 1px solid #ccc;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ccc;
   display: block;
-  left:0;
+  right: 0;
+  z-index: 100;
   bottom:16px;
+  min-height: 52px;
+  min-width: 110px;
 }
 .info {
   display: none;
@@ -441,8 +468,7 @@ color: rgb(245,245,245);
   border: 1px solid #ccc;
   text-align: center;
   display: none;
-  right:0;
-  bottom:16px;
+  left:0;
 }
 .filters > p {
   display: inline;
@@ -516,8 +542,6 @@ color: rgb(245,245,245);
 }
 .collection {
   fill: #EFEE69;
-  stroke: #777;
-  stroke-width:0.03em;
   opacity:0.7;
 }
 .collection:hover {
@@ -596,6 +620,7 @@ td:first-child {
 }
 #reconstructMapRefContainerContainer {
   float:right;
+  margin-right: 75px;
 }
 #reconstructMapRefContainer {
    position: relative;
@@ -617,16 +642,21 @@ td:first-child {
   border-top:0;
 }
 .plates {
-  fill: #fff;
-  stroke:#777;
-  stroke-width:.75px;
+  fill: #ffffff;
+  stroke: none;
+  stroke-width: 0.05em;
   opacity:1;
+}
+.coastlines {
+  fill: none;
+  stroke: #dddddd;
+  stroke-width: 0.75px;
 }
 
 #loading {
   position: absolute;
-  top:0.3em;
-  right:0.3em;
+  top: 0.15em;
+  left: 50px;
   z-index: 100;
   color:#999;
   display: none;
@@ -947,6 +977,13 @@ br {
 #getUrlNavbar {
   display: none;
 }
+@media (max-width: 1050px) and (min-height: 600px) {
+  .filter {
+    left: 49px;
+    top: 0;
+    bottom: inherit;
+  }
+}
 @media(max-width: 1050px) {
   .examples>button> img {
     height: 60px;
@@ -988,6 +1025,16 @@ br {
   }
   .mapCtrl {
     display: none;
+  }
+  .prevalence-row {
+    display: none;
+  }
+  #infoContainer {
+    display: none;
+  }
+  #loading {
+    left: 0;
+    top: 0.1em;
   }
   .timeScale {
     visibility: hidden;
