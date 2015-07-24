@@ -677,7 +677,7 @@ var paleo_nav = (function() {
         $(".prevalence-container").html(rendered);
 
         $(".prevalent-summary-taxon").click(function(d) {
-          var name = $(this).data("name").replace(" (other)", "").replace(" (unclassified)", "");
+          var name = $(this).data("name").replace(" (other)", "").replace(" (unclassified)", "").replace("*", "");
           navMap.filterByTaxon(name);
         });
       });
