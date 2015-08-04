@@ -799,7 +799,7 @@ var navMap = (function() {
 
     "getOffsetCollections": function(cluster, offset) {
       d3.json(paleo_nav.dataUrl + "/data1.1/colls/list.json?clust_id=" + cluster + "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&offset=" +offset, function(err, data) {
-        if (error) {
+        if (err) {
           return paleo_nav.hideLoading();
         }
         data.records.forEach(function(d) {
@@ -825,7 +825,7 @@ var navMap = (function() {
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
-            if (error) {
+            if (err) {
               return paleo_nav.hideLoading();
             }
             if (data.records.length > 0) {
@@ -859,7 +859,7 @@ var navMap = (function() {
       url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&count";
 
       d3.json(url, function(err, data) {
-        if (error) {
+        if (err) {
           return paleo_nav.hideLoading();
         }
         data.records.forEach(function(d) {
@@ -887,7 +887,7 @@ var navMap = (function() {
           d3.json(url, function(err, data) {
         */
           d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
-            if (error) {
+            if (err) {
               return paleo_nav.hideLoading();
             }
             $("#ref" + id).html(data.records[0].ref);
@@ -901,7 +901,7 @@ var navMap = (function() {
             var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
             d3.json(url, function(err, data) {
-              if (error) {
+              if (err) {
                 return paleo_nav.hideLoading();
               }
               if (data.records.length > 0) {
@@ -1072,7 +1072,7 @@ var navMap = (function() {
       d3.json(url, function(err, data) {
     */
       d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
-        if (error) {
+        if (err) {
           return paleo_nav.hideLoading();
         }
         data.records.forEach(function(d) {
@@ -1116,7 +1116,7 @@ var navMap = (function() {
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
-            if (error) {
+            if (err) {
               return paleo_nav.hideLoading();
             }
             if (data.records.length > 0) {
@@ -1166,7 +1166,7 @@ var navMap = (function() {
         d3.json(url, function(err, data) {
       */
         d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
-          if (error) {
+          if (err) {
             return paleo_nav.hideLoading();
           }
           $("#ref" + id).html(data.records[0].ref);
@@ -1180,7 +1180,7 @@ var navMap = (function() {
           var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
-            if (error) {
+            if (err) {
               return paleo_nav.hideLoading();
             }
             if (data.records.length > 0) {
