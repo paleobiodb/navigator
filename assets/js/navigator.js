@@ -184,7 +184,7 @@ var paleo_nav = (function() {
               return data.records;
             }
           },
-          valueKey: 'name',
+          valueKey: 'nam',
           header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
           limt: 5
         },
@@ -244,8 +244,8 @@ var paleo_nav = (function() {
             document.activeElement.blur();
             break;
           case 'time':
-            timeScale.goTo(data.name);
-            navMap.filterByTime(data.name);
+            timeScale.goTo(data.nam);
+            navMap.filterByTime(data.nam);
             navMap.refresh("reset");
             break;
           case 'taxa':
