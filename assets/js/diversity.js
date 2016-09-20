@@ -35,6 +35,7 @@ var diversityPlot = (function() {
         minAge = data[0].lag;
 
     var eras = [
+      {"nam": "Neoproterozoic", "lag": 541, "eag": 1000},
       {"nam": "Paleozoic", "lag": 252.17, "eag": 541},
       {"nam": "Mesozoic", "lag": 66, "eag": 252.17},
       {"nam": "Cenozoic", "lag": 0, "eag": 66}
@@ -51,6 +52,7 @@ var diversityPlot = (function() {
         requestedMinAge = eras[i].lag;
       }
     }
+      console.log(data[data.length-1], maxAge,requestedMaxAge);
 
     // Request timescale data
     $.ajax(paleo_nav.dataUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
@@ -210,7 +212,7 @@ var diversityPlot = (function() {
       .style("letter-spacing", "5px")
       .style("font-size", "2em")
       .style("font-weight", 400)
-      .text("Genera sampled in bin");
+      .text($("[name=taxonLevel]").val() + " sampled in " + $("[name=timeLevel]").val());
 
     label.append("text")
       .attr("transform", "rotate(-90)")
@@ -220,7 +222,7 @@ var diversityPlot = (function() {
       .style("font-size", "1.3em")
       .style("font-weight", 300)
       .style("font-style", "italics")
-      .text("(Approximate)");
+      .text("(approximate)");
 
     // Draw zee line
     var line = d3.svg.line()
@@ -324,10 +326,57 @@ var diversityPlot = (function() {
 
   d3.select(window).on("resize", positionLabels);
 
+  function updateQuickdiv() {
+    var taxonLevel = $("[name=taxonLevel]").val();
+    var timeLevel = $("[name=timeLevel]").val();
+    var singletons = $("[name=singletons]").val();
+    var recent = $("[name=recent]").val();
+    var url=paleo_nav.dataUrl;
+
+    url += "/data1.2/occs/quickdiv.json?";
+    url = navMap.parseURL(url);
+    url += "&count="+taxonLevel+"&time_reso="+timeLevel+"&recent="+recent;
+    console.log(url);
+    getDiversityData(url);
+  }
+
+  function saveImg() {
+    var html = d3.select("#diversityGraph")
+          .attr("version", 1.1)
+          .attr("xmlns", "http://www.w3.org/2000/svg")
+          .node().parentNode.innerHTML;
+
+    // console.log(html);
+    var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
+    var img = '<img src="'+imgsrc+'">'; 
+    d3.select("#svgdataurl").html(img);
+
+    var canvas = document.querySelector("canvas"),
+      context = canvas.getContext("2d");
+
+    var image = new Image;
+    image.src = imgsrc;
+    image.onload = function() {
+      context.drawImage(image, 0, 0);
+
+      var canvasdata = canvas.toDataURL("image/png");
+
+      var pngimg = '<img src="'+canvasdata+'">'; 
+        d3.select("#pngdataurl").html(pngimg);
+
+      var a = document.createElement("a");
+      a.download = "diversity-curve.png";
+      a.href = canvasdata;
+      a.click();
+      }
+    };
+
   return {
     "plot": getDiversityData,
     "resize": resize,
-    "currentRequest": currentRequest
+    "currentRequest": currentRequest,
+    "updateQuickdiv": updateQuickdiv,
+    "saveImg": saveImg
   }
 
 })();
