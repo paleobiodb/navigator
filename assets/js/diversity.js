@@ -329,13 +329,11 @@ var diversityPlot = (function() {
   function updateQuickdiv() {
     var taxonLevel = $("[name=taxonLevel]").val();
     var timeLevel = $("[name=timeLevel]").val();
-    var singletons = $("[name=singletons]").val();
-    var recent = $("[name=recent]").val();
     var url=paleo_nav.dataUrl;
 
     url += "/data1.2/occs/quickdiv.json?";
     url = navMap.parseURL(url);
-    url += "&count="+taxonLevel+"&time_reso="+timeLevel+"&recent="+recent;
+    url += "&count="+taxonLevel+"&time_reso="+timeLevel;
     console.log(url);
     getDiversityData(url);
   }

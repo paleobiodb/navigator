@@ -192,7 +192,6 @@
                 <div class="col-sm-12 diversityControl">
                   <p>Change taxonomic level</p>
                   <select name="taxonLevel" onchange="diversityPlot.updateQuickdiv()">
-                    <!-- <option value="species">Species</option> -->
                     <option value="genera">Genus (excluding subgenera)</option>
                     <option value="genera_plus" selected="selected">Genus (including subgenera)</option>
                     <option value="families">Family</option>
@@ -208,21 +207,7 @@
                     <option value="era" >Era (e.g. "Paleozoic")</option>
                   </select>
                 </div>
-                <div class="col-sm-12 diversityControl" onchange="diversityPlot.updateQuickdiv()">
-                  <p>Include modern (extant) taxa</p>
-                  <select name="recent">
-                    <option value="yes">Yes</option>
-                    <option value="no" selected="selected">No</option>
-                  </select>
-                </div>
-<!--                 <div class="col-sm-12 diversityControl" onchange="diversityPlot.updateQuickdiv()">
-                  <p>Include taxa found only once (singletons)</p>
-                  <select name="singletons">
-                    <option value="yes" selected="selected">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
--->                <br><br><br>
+                <br><br><br>
 <!--                 <div class="col-sm-12 diversityControl"> 
                   <button class="saveButton" onclick="diversityPlot.saveImg()">Save this image</button>
                 </div>
