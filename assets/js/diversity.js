@@ -139,7 +139,7 @@ var diversityPlot = (function() {
     // Draw the periods
     scale.selectAll(".periods")
       .data(periods)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("height", "40")
       .attr("width", function(d) { return periodX(d.totalTime); })
       .attr("x", function(d) { return periodPos(d.eag) })
@@ -152,27 +152,29 @@ var diversityPlot = (function() {
     // Draw period abbreviations
     scale.selectAll(".periodNames")
       .data(periods)
-    .enter().append("text")
+      .enter().append("text")
       .attr("x", function(d) { return (periodPos(d.eag) + periodPos(d.lag))/2 })
       .attr("y", "30")
       .attr("id", function(d) { return "l" + d.oid })
       .attr("class", "timeLabel abbreviation")
+      .attr("style", "font-size:2.4em;font-family: Helvetica,sans-serif;font-weight: 100;")
       .text(function(d) { return d.abr });
 
     // Draw the full period names
     scale.selectAll(".periodNames")
       .data(periods)
-    .enter().append("text")
+      .enter().append("text")
       .attr("x", function(d) { return (periodPos(d.eag) + periodPos(d.lag))/2 })
       .attr("y", "30")
       .attr("class", "timeLabel dFullName")
+      .attr("style", "font-size:2.4em;font-family: Helvetica,sans-serif;font-weight: 100;")
       .attr("id", function(d) { return "l" + d.oid })
       .text(function(d) { return d.nam });
 
     // Draw the era(s)
     scale.selectAll(".eras")
       .data(eras)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("height", "40")
       .attr("width", function(d) { return periodX(d.totalTime); })
       .attr("x", function(d) { return periodPos(d.eag) })
@@ -186,10 +188,11 @@ var diversityPlot = (function() {
     // Draw the full era names
     scale.selectAll(".eraNames")
       .data(eras)
-    .enter().append("text")
+      .enter().append("text")
       .attr("x", function(d) { return (periodPos(d.eag) + periodPos(d.lag))/2 })
       .attr("y", "70")
       .attr("class", "timeLabel dFullName")
+      .attr("style", "font-size:2.4em;font-family: Helvetica,sans-serif;font-weight: 100;")      
       .attr("id", function(d) { return "l" + d.oid })
       .text(function(d) { return d.nam; });
 
@@ -197,12 +200,14 @@ var diversityPlot = (function() {
     svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(" + padding.left + "," + (height - margin.top - margin.bottom + 85) + ")")
+      .attr("style", "font-family:Helvetica,sans-serif;fill: #777;")
       .call(xAxis);
 
     // Append the y axis
     var label = svg.append("g")
       .attr("class", "y axis")
-    .attr("transform", "translate(" + padding.left + ",0)")
+      .attr("transform", "translate(" + padding.left + ",0)")
+      .attr("style", "font-family:Helvetica,sans-serif;")
       .call(yAxis);
 
     label.append("text")
@@ -212,6 +217,7 @@ var diversityPlot = (function() {
       .style("letter-spacing", "5px")
       .style("font-size", "2em")
       .style("font-weight", 400)
+      .style("fill", "#777")
       .text($("[name=taxonLevel]").val() + " sampled in " + $("[name=timeLevel]").val());
 
     label.append("text")
@@ -222,6 +228,7 @@ var diversityPlot = (function() {
       .style("font-size", "1.3em")
       .style("font-weight", 300)
       .style("font-style", "italics")
+      .style("font-family", "Helvetica,sans-serif")
       .text("(approximate)");
 
     // Draw zee line
@@ -232,7 +239,8 @@ var diversityPlot = (function() {
 
     svg.append("path")
       .datum(data)
-      .attr("class", "line diversityLine")
+      // .attr("class", "line diversityLine")
+      .attr("style", "fill: none; stroke: rgb(119, 119, 119); stroke-width: 4px;")
       .attr("d", line)
       .attr("transform", "translate(" + padding.left + ",0)");
 
@@ -334,7 +342,7 @@ var diversityPlot = (function() {
     url += "/data1.2/occs/quickdiv.json?";
     url = navMap.parseURL(url);
     url += "&count="+taxonLevel+"&time_reso="+timeLevel;
-    console.log(url);
+    // console.log(url);
     getDiversityData(url);
   }
 
@@ -348,6 +356,8 @@ var diversityPlot = (function() {
     var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
     var img = '<img src="'+imgsrc+'">'; 
     d3.select("#svgdataurl").html(img);
+
+    getCanvasSize();
 
     var canvas = document.querySelector("canvas"),
       context = canvas.getContext("2d");
@@ -365,16 +375,28 @@ var diversityPlot = (function() {
       var a = document.createElement("a");
       a.download = "diversity-curve.png";
       a.href = canvasdata;
+      a.id = "downloadLink";
+      document.getElementsByTagName("body")[0].appendChild(a);
+      // setTimeout(function(){console.log("click"); a.click()},10000);
       a.click();
+      console.log(a);
       }
     };
+
+  function getCanvasSize() {
+    var svg = d3.select("#diversityGraph");
+    var height = svg.attr("height");
+    var width = svg.attr("width");
+    d3.select("canvas").attr("height",height).attr("width",width);
+  } 
 
   return {
     "plot": getDiversityData,
     "resize": resize,
     "currentRequest": currentRequest,
     "updateQuickdiv": updateQuickdiv,
-    "saveImg": saveImg
+    "saveImg": saveImg,
+    "getCanvasSize": getCanvasSize
   }
 
 })();
