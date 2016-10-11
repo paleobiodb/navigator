@@ -895,35 +895,72 @@ br {
 }
 #diversityGraph {
   padding-top: 20px;
-  font-family: Helvetica,sans-serif;
-  font-weight: 100;
-  font-size: .8em;
-  color: #333;
+  /*font-family: Helvetica,sans-serif;*/
+  /*font-weight: 100;*/
+  /*font-size: .8em;*/
+  /*color: #333;*/
+}
+
+.diversityControls {
+  position: relative;
+}
+
+.diversityControl {
+  padding-bottom: 20px;
+  float: right;
+}
+
+.diversityControl > select {
+  font-size: 0.9em;
+  border: none;
+  background: #aaa;
+  padding: 3px;
+  margin-bottom: 1em;
+}
+
+.sink > * {
+  float: none;
+  display: inline-block;
+}
+
+.sink > *.last-child {
+  vertical-align: bottom;
+}
+
+.sink button:last-child {
+    margin-bottom: 0; /* optional */
+}
+
+.saveButton {
+  margin      : 0;
+  background  : rgb(66, 139, 202);
+  font-family : inherit;
+  font-size   : 1em;
+  cursor      : pointer;
+  color: white;
+  border        : 0.5px solid rgb(40, 94, 142);
+  border-radius : 4px; 
+  padding: 4px 9px 3px 9px;
+}
+
+.saveButton > a {
+  color: white;
+}
+
+.diversityControl > .filters {
+  position: relative;
+  bottom: 20px;
+  border: none;
+}
+
+.diversityControl > .filters > .filter {
+  float:left;
+  margin: 6px;
 }
 
 .axis path,
 .axis line {
-  fill: none;
-  stroke: #000;
-  stroke-width:2px;
   shape-rendering: crispEdges;
-}
-.y.axis > text {
-  font-size: 2.2em;
-  letter-spacing: 8px;
-}
-.tick > text {
-  font-size: 3em;
-  fill: rgb(119, 119, 119);
-}
-
-.tick > line {
-  stroke-width: 0.2em;
-  stroke: #777;
-}
-
-.x.axis path {
-  display: none;
 }
 
 .line {
@@ -931,14 +968,17 @@ br {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
-.diversityLine {
-  stroke-width:4px;
-  stroke: #777;
-}
 
-.dFullName, .abbreviation {
-  font-size: 2.4em;
-}
+.modeSwitch {
+  margin      : 0;
+  background  : #aaa;
+  font-family : inherit;
+  font-size   : 1em;
+  cursor      : pointer;
+  border: 1px solid #888;
+  border-radius : 4px; 
+  padding: 4px 9px 3px 9px;
+} 
 
 /*-----------------*/
 

@@ -35,6 +35,7 @@ var diversityPlot = (function() {
         minAge = data[0].lag;
 
     var eras = [
+      {"nam": "Neoproterozoic", "lag": 541, "eag": 1000},
       {"nam": "Paleozoic", "lag": 252.17, "eag": 541},
       {"nam": "Mesozoic", "lag": 66, "eag": 252.17},
       {"nam": "Cenozoic", "lag": 0, "eag": 66}
@@ -124,9 +125,13 @@ var diversityPlot = (function() {
       .attr("width", width)
       .attr("height", height)
       .attr("id", "diversityGraph")
-    .append("g")
+      .append("g")
       .attr("id", "diversityGraphGroup")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .style("font-family", "Helvetica,sans-serif")
+      .style("fill", "#333")
+      .style("font-weight","100")
+      .style("font-size","0.8em");
 
     // Draw a group to hold the timescale
     var scale = d3.select("#diversityGraph").select("g")
@@ -137,7 +142,7 @@ var diversityPlot = (function() {
     // Draw the periods
     scale.selectAll(".periods")
       .data(periods)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("height", "40")
       .attr("width", function(d) { return periodX(d.totalTime); })
       .attr("x", function(d) { return periodPos(d.eag) })
@@ -150,27 +155,30 @@ var diversityPlot = (function() {
     // Draw period abbreviations
     scale.selectAll(".periodNames")
       .data(periods)
-    .enter().append("text")
+      .enter().append("text")
       .attr("x", function(d) { return (periodPos(d.eag) + periodPos(d.lag))/2 })
       .attr("y", "30")
       .attr("id", function(d) { return "l" + d.oid })
       .attr("class", "timeLabel abbreviation")
+      .style("font-size","2.4em")
       .text(function(d) { return d.abr });
 
     // Draw the full period names
     scale.selectAll(".periodNames")
       .data(periods)
-    .enter().append("text")
+      .enter().append("text")
       .attr("x", function(d) { return (periodPos(d.eag) + periodPos(d.lag))/2 })
       .attr("y", "30")
       .attr("class", "timeLabel dFullName")
+      .style("font-size","2.4em")
+      // .attr("style", "font-size:2.4em;font-weight: 100;color:black;")
       .attr("id", function(d) { return "l" + d.oid })
       .text(function(d) { return d.nam });
 
     // Draw the era(s)
     scale.selectAll(".eras")
       .data(eras)
-    .enter().append("rect")
+      .enter().append("rect")
       .attr("height", "40")
       .attr("width", function(d) { return periodX(d.totalTime); })
       .attr("x", function(d) { return periodPos(d.eag) })
@@ -184,10 +192,11 @@ var diversityPlot = (function() {
     // Draw the full era names
     scale.selectAll(".eraNames")
       .data(eras)
-    .enter().append("text")
+      .enter().append("text")
       .attr("x", function(d) { return (periodPos(d.eag) + periodPos(d.lag))/2 })
       .attr("y", "70")
       .attr("class", "timeLabel dFullName")
+      .style("font-size","2.4em")
       .attr("id", function(d) { return "l" + d.oid })
       .text(function(d) { return d.nam; });
 
@@ -195,32 +204,43 @@ var diversityPlot = (function() {
     svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(" + padding.left + "," + (height - margin.top - margin.bottom + 85) + ")")
-      .call(xAxis);
+      .style("font-size","3em")
+      .style("fill","#777")
+      .call(xAxis)
+      .select("path")
+      .style("display","none");
 
     // Append the y axis
     var label = svg.append("g")
       .attr("class", "y axis")
-    .attr("transform", "translate(" + padding.left + ",0)")
+      .attr("transform", "translate(" + padding.left + ",0)")
+      .style("fill","none")
+      .style("font-size","3em")
+      .style("letter-spacing","normal")
       .call(yAxis);
 
     label.append("text")
       .attr("transform", "rotate(-90)")
       .attr("dy", "1em")
+      .style("fill","#777")
       .style("text-anchor", "end")
-      .style("letter-spacing", "5px")
-      .style("font-size", "2em")
+      .style("font-size", "0.8em")
       .style("font-weight", 400)
-      .text("Genera sampled in bin");
+      .text($("[name=taxonLevel]").val() + " sampled in " + $("[name=timeLevel]").val());
 
     label.append("text")
       .attr("transform", "rotate(-90)")
       .attr("dy", "3em")
       .style("text-anchor", "end")
-      .style("letter-spacing", "5px")
-      .style("font-size", "1.3em")
+      .style("font-size", "0.6em")
       .style("font-weight", 300)
       .style("font-style", "italics")
-      .text("(Approximate)");
+      .style("fill","#777")
+      .text("(approximate)");
+
+    label.selectAll(".tick")
+      .style("letter-spacing","8px")
+      .style("fill","#777");
 
     // Draw zee line
     var line = d3.svg.line()
@@ -231,6 +251,7 @@ var diversityPlot = (function() {
     svg.append("path")
       .datum(data)
       .attr("class", "line diversityLine")
+      .attr("style", "fill: none; stroke: #777; stroke-width: 4px;")
       .attr("d", line)
       .attr("transform", "translate(" + padding.left + ",0)");
 
@@ -324,10 +345,65 @@ var diversityPlot = (function() {
 
   d3.select(window).on("resize", positionLabels);
 
+  function updateQuickdiv() {
+    var taxonLevel = $("[name=taxonLevel]").val();
+    var timeLevel = $("[name=timeLevel]").val();
+    var url=paleo_nav.dataUrl;
+
+    url += "/data1.2/occs/quickdiv.json?";
+    url = navMap.parseURL(url);
+    url += "&count="+taxonLevel+"&time_reso="+timeLevel;
+    getDiversityData(url);
+  }
+
+  function saveImg() {
+    var html = d3.select("#diversityGraph")
+          .attr("version", 1.1)
+          .attr("xmlns", "http://www.w3.org/2000/svg")
+          .node().parentNode.innerHTML;
+
+    var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
+    var img = '<img src="'+imgsrc+'">'; 
+    d3.select("#svgdataurl").html(img);
+
+    getCanvasSize();
+
+    var canvas = document.querySelector("canvas"),
+      context = canvas.getContext("2d");
+
+    var image = new Image;
+    image.src = imgsrc;
+    image.onload = function() {
+      context.drawImage(image, 0, 0);
+
+      var canvasdata = canvas.toDataURL("image/png");
+
+      var pngimg = '<img src="'+canvasdata+'">'; 
+        d3.select("#pngdataurl").html(pngimg);
+
+      var a = document.createElement("a");
+      a.download = "diversity-curve.png";
+      a.href = canvasdata;
+      a.id = "downloadLink";
+      document.getElementsByTagName("body")[0].appendChild(a);
+      a.click();
+      }
+    };
+
+  function getCanvasSize() {
+    var svg = d3.select("#diversityGraph");
+    var height = svg.attr("height");
+    var width = svg.attr("width");
+    d3.select("canvas").attr("height",height).attr("width",width);
+  } 
+
   return {
     "plot": getDiversityData,
     "resize": resize,
-    "currentRequest": currentRequest
+    "currentRequest": currentRequest,
+    "updateQuickdiv": updateQuickdiv,
+    "saveImg": saveImg,
+    "getCanvasSize": getCanvasSize
   }
 
 })();
