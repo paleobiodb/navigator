@@ -337,7 +337,7 @@ var paleo_nav = (function() {
       });
 
       $("#statsBox").on('show.bs.modal', function() {
-        $(".statsContent").height(window.innerHeight - 75);
+        $(".statsContent").height(window.innerHeight - 70);
         $(".diversityContainer").height(window.innerHeight - 380)
         $("#diversityWait").css("display", "block");
         // Remove any old ones...

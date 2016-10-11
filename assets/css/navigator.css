@@ -895,10 +895,10 @@ br {
 }
 #diversityGraph {
   padding-top: 20px;
-  font-family: Helvetica,sans-serif;
-  font-weight: 100;
-  font-size: .8em;
-  color: #333;
+  /*font-family: Helvetica,sans-serif;*/
+  /*font-weight: 100;*/
+  /*font-size: .8em;*/
+  /*color: #333;*/
 }
 
 .diversityControls {
@@ -960,42 +960,13 @@ br {
 
 .axis path,
 .axis line {
-  fill: none;
-  stroke: #000;
-  stroke-width:2px;
   shape-rendering: crispEdges;
-}
-.y.axis > text {
-  font-size: 2.2em;
-  letter-spacing: 8px;
-}
-.tick > text {
-  font-size: 3em;
-  fill: rgb(119, 119, 119);
-}
-
-.tick > line {
-  stroke-width: 0.2em;
-  stroke: #777;
-}
-
-.x.axis path {
-  display: none;
 }
 
 .line {
   fill: none;
   stroke: steelblue;
   stroke-width: 1.5px;
-}
-
-.diversityLine {
-  stroke-width:4px;
-  stroke: #777;
-}
-
-.dFullName, .abbreviation {
-  font-size: 2.4em;
 }
 
 .modeSwitch {
