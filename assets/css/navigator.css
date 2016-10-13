@@ -33,6 +33,7 @@ nav {
   font-weight: 800;
   /*padding:0.1em;*/
 }
+
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {
   background-color: rgba(71,76,80,0.93);
 }
@@ -51,6 +52,17 @@ nav {
 }
 .brand-small {
   font-size: 0.6em;
+}
+.navbar-home {
+  background-color: rgba(71,76,80,.93);
+  padding: 0;
+  border-radius: 50%;
+  margin-left: 10px;
+  margin-right: 20px;
+  float: left;
+}
+.navbar-home > a > img {
+  height: 52px;
 }
 .navbar-text {
   font-size:0.9em;
