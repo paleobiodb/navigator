@@ -23,6 +23,7 @@ i, text, .navbar-text, .navbar-brand, .filters, #interval, #age {
 nav {
   font-family: 'Raleway', sans-serif;
 }
+
 .navbar {
   margin-bottom: 0;
   width:100%;
@@ -30,12 +31,14 @@ nav {
   top:0;
   left:0;
   font-family: 'Raleway', sans-serif;
-  font-weight: 800;
-  /*padding:0.1em;*/
-}
+  font-weight: 400;
+  padding: 0 .5em;
+}}
+
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {
   background-color: rgba(71,76,80,0.93);
 }
+
 .navbar-default {
   background-color: rgba(71,76,80,0.93);
   z-index: 99;
@@ -52,8 +55,20 @@ nav {
 .brand-small {
   font-size: 0.6em;
 }
+.navbar-home {
+  background-color: rgba(71,76,80,.93);
+  padding: 0;
+  border-radius: 50%;
+  margin-left: 10px;
+  margin-right: 20px;
+  float: left;
+}
+.navbar-home > a > img {
+  height: 52px;
+  padding: 3px 0;
+}
 .navbar-text {
-  font-size:0.9em;
+  margin:0;
 }
 .navbar-default .navbar-nav>li>a {
   color: rgb(245,245,245);
@@ -795,12 +810,6 @@ br {
 }
 .itallics {
   font-style: italic;
-}
-
-.navbar-text {
-  margin:0;
-  margin-top:2px;
-  font-size: 0.8em;
 }
 
 .navbar-nav {
