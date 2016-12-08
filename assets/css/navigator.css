@@ -305,11 +305,17 @@ color: rgb(245,245,245);
 }
 .bins {
   fill: #EFEE69;
-  stroke: #aaa;
-  stroke-width:0.02em;
-  opacity:0.7;
+  stroke: #969696;
+  stroke-width: 0.04em;
+  opacity: 0.7;
 }
-.bins:hover {
+.binsHammer {
+  fill: #EFEE69;
+  stroke: #aaa;
+  stroke-width: 0.02em;
+  opacity: 0.7;
+}
+.bins:hover, .binsHammer:hover {
   stroke:#222;
   stroke-width:1px;
 }
@@ -948,7 +954,7 @@ br {
   cursor      : pointer;
   color: white;
   border        : 0.5px solid rgb(40, 94, 142);
-  border-radius : 4px; 
+  border-radius : 4px;
   padding: 4px 9px 3px 9px;
 }
 
@@ -985,9 +991,9 @@ br {
   font-size   : 1em;
   cursor      : pointer;
   border: 1px solid #888;
-  border-radius : 4px; 
+  border-radius : 4px;
   padding: 4px 9px 3px 9px;
-} 
+}
 
 /*-----------------*/
 
