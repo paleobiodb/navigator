@@ -104,8 +104,6 @@ var diversityPlot = (function() {
       var rangethrough = $('[name="extant"]').is(":checked");
       var origination = $('[name="extant"]').is(":checked");
       var extinction = $('[name="extant"]').is(":checked");
-
-      console.log(data);
     };
 
     // Define a scale for the x axis
@@ -313,7 +311,7 @@ var diversityPlot = (function() {
         .style("text-anchor", "end")
         .style("font-size", "0.8em")
         .style("font-weight", 400)
-        .text("proportion of " + $("[name=taxonLevel]").val() + " per " + $("[name=timeLevel]").val());
+        .text("proportion of " + $("[name=taxonLevel]").val() + " (instantaneous)");
 
       label2.selectAll(".tick")
         .style("letter-spacing","8px")
@@ -336,17 +334,26 @@ var diversityPlot = (function() {
     if(full){
       toggleLine('sampledLine');
 
-      var singletons = $('[name="singletons"]').is(":checked");
-
-      var lineRangethrough = d3.svg.line()
+      var lineRangethroughYes = d3.svg.line()
         .interpolate("linear")
         .x(function(d) { return periodPos(d.eag); })
-        .y(function(d) { return y(d[(singletons)?"rangethroughYes":"rangethroughNo"]); });
+        .y(function(d) { return y(d.rangethroughYes); });
       
         svg.append("path")
-          .attr("class", "line diversityLine rangethroughLine")
+          .attr("class", "line diversityLine rangethroughLineYes")
           .attr("style", "fill: none; stroke: black; stroke-width: 4px; stroke-dasharray: 4,2; display:none;")
-          .attr("d", lineRangethrough(data))
+          .attr("d", lineRangethroughYes(data))
+          .attr("transform", "translate(" + padding.left + ",0)");
+
+      var lineRangethroughNo = d3.svg.line()
+        .interpolate("linear")
+        .x(function(d) { return periodPos(d.eag); })
+        .y(function(d) { return y(d.rangethroughNo); });
+      
+        svg.append("path")
+          .attr("class", "line diversityLine rangethroughLineNo")
+          .attr("style", "fill: none; stroke: black; stroke-width: 4px; stroke-dasharray: 4,2; display:none;")
+          .attr("d", lineRangethroughYes(data))
           .attr("transform", "translate(" + padding.left + ",0)");
 
         toggleLine('rangethroughLine');
@@ -486,12 +493,16 @@ var diversityPlot = (function() {
 
 
   function toggleLine(lineName){
+    console.log(lineName);
     var checked = $('[name=' + lineName + ']').is(":checked");
-    // if (lineName = "rangethroughLine") {
-    //   var singletons = $('[name="singletons"]').is(":checked");
-    //   var lineName = singletons?rangethroughYes:rangethroughNo;
-    // }
-    $('.' + lineName).css("display" , checked ? '' : 'none');
+    if (lineName === "rangethroughLine") {
+      var singletons = $('[name="singletons"]').is(":checked");
+      var lineNameFull = singletons?['rangethroughLineYes','rangethroughLineNo']:['rangethroughLineNo','rangethroughLineYes'];
+      $('.' + lineNameFull[0]).css("display" , checked ? '' : 'none');
+      $('.' + lineNameFull[1]).css("display" , 'none');
+    } else {
+      $('.' + lineName).css("display" , checked ? '' : 'none');
+    }
   }
 
   function updateQuickdiv() {

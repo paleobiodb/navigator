@@ -396,8 +396,8 @@ var paleo_nav = (function() {
         }
 
         var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) 
-          + "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val() + "&recent=" + $('[name="extant"]').is(":checked"));
-        // For debugging purposes this is only showing Echinoidea; kill the last clause in the previous line before production
+          + "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val() + "&recent=" + $('[name="extant"]').is(":checked")) + "&base_id=13131";
+        // For debugging purposes this is only showing Nautiloidea; kill the last clause in the previous line before production
         $(".diversityDownload").attr("href", diversityURL);
         diversityPlot.plot(diversityURL,true);
 
