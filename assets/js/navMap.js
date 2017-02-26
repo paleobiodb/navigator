@@ -1722,9 +1722,11 @@ var navMap = (function() {
         navMap.downloadOccs();
       } else if ($("#refs:checked").length > 0) {
         navMap.downloadRefs();
-      } else {
+      } else if ($("#diver:checked").length > 0){
         navMap.downloadDiversity();
-      }
+      } else {
+        navMap.downloadFullDiversity();
+      } 
     },
 
     "downloadRefs": function() {
@@ -1821,7 +1823,40 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&count=genera&reso=stage";
+      url += "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val() ;
+
+      window.open(url);
+    },
+
+    "downloadFullDiversity": function() {
+      var bounds = map.getBounds(),
+          sw = bounds._southWest,
+          ne = bounds._northEast,
+          url = paleo_nav.dataUrl + '/data1.2/occs/diversity.';
+
+      if ($("#tsv:checked").length > 0) {
+        url += "txt";
+      } else if ($("#csv:checked").length > 0) {
+        url += "csv";
+      } else if ($("#json:checked").length > 0) {
+        url += "json";
+      } else {
+        return alert("RIS format not available for occurrences. Please select a different format.");
+      }
+
+      if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
+        url += '?lngmin=-180&lngmax=180&latmin=-90&latmax=90';
+      } else {
+        sw.lat = sw.lat.toFixed(4);
+        sw.lng = sw.lng.toFixed(4);
+        ne.lat = ne.lat.toFixed(4);
+        ne.lng = ne.lng.toFixed(4);
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
+      }
+
+      url = navMap.parseURL(url);
+
+      url += "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val() + "&recent=" + $('[name="extant"]').is(":checked");
 
       window.open(url);
     },
