@@ -529,7 +529,7 @@ var navMap = (function() {
 
       bins.enter().append("circle")
         .attr("id", function(d) { return "p" + d.cxi; })
-        .attr("class", "bins")
+        .attr("class", "binsHammer")
         .on("mouseout", function() {
           navMap.setInfoSummary();
           timeScale.unhighlight()
@@ -1319,7 +1319,7 @@ var navMap = (function() {
           break;
         case 3:
           if (navMap.checkFilters()) {
-            return 0.38;
+            return 0.2;
           } else {
             return 1;
           }
