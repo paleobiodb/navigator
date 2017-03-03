@@ -285,7 +285,7 @@ var navMap = (function() {
           }
         }
 
-        var url = paleo_nav.dataUrl + '/data1.2/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
+        var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
 
         // If filters are applied to the map
         if (filtered) {
@@ -408,7 +408,7 @@ var navMap = (function() {
 
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
       if (zoom < 5 && filtered === false) {
-        var url = paleo_nav.dataUrl + '/data1.2/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
+        var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           if (error) {
@@ -421,7 +421,7 @@ var navMap = (function() {
 
         // If filtered only by a time interval...
         if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
-          var url = paleo_nav.dataUrl + '/data1.2/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time&level=3';
+          var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time&level=3';
           url = navMap.parseURL(url);
 
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -443,7 +443,7 @@ var navMap = (function() {
           }
         // If not filtered only by a time interval, refresh normally
         } else {
-          var url = paleo_nav.dataUrl + '/data1.2/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
+          var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
 
           currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
             if (error) {
@@ -454,7 +454,7 @@ var navMap = (function() {
         }
 
       } else {
-        var url = paleo_nav.dataUrl + '/data1.2/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all&show=ref,time,strat,geo,lith,entname,prot&markrefs';
+        var url = paleo_nav.dataUrl + '/data1.1/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all&show=ref,time,strat,geo,lith,entname,prot&markrefs';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           if (error) {
@@ -798,7 +798,7 @@ var navMap = (function() {
     },
 
     "getOffsetCollections": function(cluster, offset) {
-      d3.json(paleo_nav.dataUrl + "/data1.2/colls/list.json?clust_id=" + cluster + "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&offset=" +offset, function(err, data) {
+      d3.json(paleo_nav.dataUrl + "/data1.1/colls/list.json?clust_id=" + cluster + "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&offset=" +offset, function(err, data) {
         if (err) {
           return paleo_nav.hideLoading();
         }
@@ -822,7 +822,7 @@ var navMap = (function() {
           var id = d.target.id;
           id = id.replace("occToggle", "");
 
-          var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.2/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+          var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
             if (err) {
@@ -853,7 +853,7 @@ var navMap = (function() {
     "openBinModal": function(d, collections, occurrences, interval) {
       $("#loading").show();
       var id = (d.properties) ? d.properties.oid : d.oid,
-          url = paleo_nav.dataUrl + "/data1.2/colls/list.json?clust_id=" + id;
+          url = paleo_nav.dataUrl + "/data1.1/colls/list.json?clust_id=" + id;
 
       url = navMap.parseURL(url);
       url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&count";
@@ -882,11 +882,11 @@ var navMap = (function() {
           var id = d.target.id;
           id = id.replace("collapse", "");
         /* Placeholder for data service fix
-          var url = paleo_nav.dataUrl + "/data1.2/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+          var url = paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
           url = navMap.parseURL(url);
           d3.json(url, function(err, data) {
         */
-          d3.json(paleo_nav.dataUrl + "/data1.2/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+          d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
             if (err) {
               return paleo_nav.hideLoading();
             }
@@ -898,7 +898,7 @@ var navMap = (function() {
             var id = d.target.id;
             id = id.replace("occToggle", "");
 
-            var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.2/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+            var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
             d3.json(url, function(err, data) {
               if (err) {
@@ -1067,11 +1067,11 @@ var navMap = (function() {
       $("#loading").show();
     /*
       Placeholder for once the data service allows filters on colls/single.json
-      var url = paleo_nav.dataUrl + "/data1.2/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+      var url = paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
       url = navMap.parseURL(url);
       d3.json(url, function(err, data) {
     */
-      d3.json(paleo_nav.dataUrl + "/data1.2/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+      d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + d.oid + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
         if (err) {
           return paleo_nav.hideLoading();
         }
@@ -1113,7 +1113,7 @@ var navMap = (function() {
           var id = d.target.id;
           id = id.replace("occToggle", "");
 
-          var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.2/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+          var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
             if (err) {
@@ -1161,11 +1161,11 @@ var navMap = (function() {
         var id = d.target.id;
         id = id.replace("collapse", "");
       /* Placeholder for data service fix
-        var url = paleo_nav.dataUrl + "/data1.2/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+        var url = paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
         url = navMap.parseURL(url);
         d3.json(url, function(err, data) {
       */
-        d3.json(paleo_nav.dataUrl + "/data1.2/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
+        d3.json(paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
           if (err) {
             return paleo_nav.hideLoading();
           }
@@ -1177,7 +1177,7 @@ var navMap = (function() {
           var id = d.target.id;
           id = id.replace("occToggle", "");
 
-          var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.2/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+          var url = navMap.parseURL(paleo_nav.dataUrl + "/data1.1/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
           d3.json(url, function(err, data) {
             if (err) {
@@ -1733,7 +1733,7 @@ var navMap = (function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
           ne = bounds._northEast,
-          url = paleo_nav.dataUrl + '/data1.2/occs/refs.';
+          url = paleo_nav.dataUrl + '/data1.1/occs/refs.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
@@ -1766,7 +1766,7 @@ var navMap = (function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
           ne = bounds._northEast,
-          url = paleo_nav.dataUrl + '/data1.2/occs/list.';
+          url = paleo_nav.dataUrl + '/data1.1/occs/list.';
 
       if ($("#tsv:checked").length > 0) {
         url += "txt";
@@ -1865,7 +1865,7 @@ var navMap = (function() {
       var bounds = map.getBounds(),
           sw = bounds._southWest,
           ne = bounds._northEast,
-          url = 'https://paleobiodb.org/data1.2/occs/list.json';
+          url = 'https://paleobiodb.org/data1.1/occs/list.json';
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
         url += "?limit=all";

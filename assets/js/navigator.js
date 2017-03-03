@@ -139,7 +139,7 @@ var paleo_nav = (function() {
       var taxaAutocomplete = $("#taxonInput").typeahead({
         name: 'taxaBrowser',
         remote: {
-          url: dataUrl + '/data1.2/taxa/auto.json?name=%QUERY&limit=10',
+          url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
           filter: function(data) {
             data.records.forEach(function(d) {
               d.rank = taxaBrowser.rankMap(d.rnk);
@@ -179,7 +179,7 @@ var paleo_nav = (function() {
         {
           name: 'time',
           prefetch: {
-            url: dataUrl + '/data1.2/intervals/list.json?scale=1&order=age.desc&max_ma=4000',
+            url: dataUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
             filter: function(data) {
               return data.records;
             }
@@ -191,7 +191,7 @@ var paleo_nav = (function() {
         {
           name: 'contribs',
           prefetch: {
-            url: dataUrl + '/data1.2/people/list.json?name=%',
+            url: dataUrl + '/data1.1/people/list.json?name=%',
             filter: function(data) {
               return data.records;
             }
@@ -203,7 +203,7 @@ var paleo_nav = (function() {
         {
           name: 'taxa',
           remote: {
-            url: dataUrl + '/data1.2/taxa/auto.json?name=%QUERY&limit=10',
+            url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.rank = taxaBrowser.rankMap(d.rnk);
@@ -223,7 +223,7 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: dataUrl + '/data1.2/strata/auto.json?limit=10&name=%QUERY',
+            url: dataUrl + '/data1.1/strata/auto.json?limit=10&name=%QUERY',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.display_name = d.nam + " " + stratRankMap[d.rnk];
@@ -472,7 +472,7 @@ var paleo_nav = (function() {
           }
         }
 
-        var url = dataUrl + '/data1.2/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
+        var url = dataUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);
 
         d3.json(url, function(err, results) {
