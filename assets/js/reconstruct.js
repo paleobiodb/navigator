@@ -187,7 +187,7 @@ var reconstructMap = (function() {
             /* If there is a taxon or contributor filter applied to the map, ask the API
                for all the level2 bins with those filters applied. */
             if (navMap.filters.exist.taxon || navMap.filters.exist.personFilter || navMap.filters.exist.stratigraphy) {
-              var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=3&limit=99999';
+              var url = paleo_nav.dataUrl + '/data1.2/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=3&limit=99999';
 
               url = navMap.parseURL(url); 
 

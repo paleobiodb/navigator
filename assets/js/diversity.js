@@ -53,7 +53,7 @@ var diversityPlot = (function() {
     }
 
     // Request timescale data
-    $.ajax(paleo_nav.dataUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
+    $.ajax(paleo_nav.dataUrl + "/data1.2/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
       .fail(function(error) {
         console.log(error);
       })
@@ -509,6 +509,16 @@ var diversityPlot = (function() {
     var taxonLevel = $("[name=taxonLevel]").val();
     var timeLevel = $("[name=timeLevel]").val();
     var url=paleo_nav.dataUrl;
+
+    var bounds = map.getBounds(),
+      sw = bounds._southWest,
+      ne = bounds._northEast;
+    if (parseInt(d3.select("#map").style("height")) < 1) {
+      sw.lng = -180,
+      ne.lng = 180,
+      sw.lat = -90,
+      ne.lat = 90;
+    }
 
     url += "/data1.2/occs/quickdiv.json?";
     url = navMap.parseURL(url);
