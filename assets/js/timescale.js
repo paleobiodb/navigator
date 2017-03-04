@@ -107,7 +107,7 @@ var timeScale = (function() {
       .attr("transform", "translate(0," + (height + 15) + ")");
 
     // Load the time scale data
-    d3.json(paleo_nav.dataUrl + "/data1.2/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
+    d3.json(paleo_nav.dataUrl + "/data1.2/intervals/list.json?scale=1&order=age.desc&max_ma=4000", function(error, result) {
       for(var i = 0; i < result.records.length; i++) {
         var r = {
           "id": result.records[i].oid,
