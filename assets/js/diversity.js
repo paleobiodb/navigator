@@ -493,7 +493,6 @@ var diversityPlot = (function() {
 
 
   function toggleLine(lineName){
-    console.log(lineName);
     var checked = $('[name=' + lineName + ']').is(":checked");
     if (lineName === "rangethroughLine") {
       var singletons = $('[name="singletons"]').is(":checked");
