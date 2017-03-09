@@ -172,11 +172,11 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-sm-8 diversityContainer">
+              <div class="col-sm-9 diversityContainer">
                 <i class="fa fa-spinner fa-3x fa-spin" id="diversityWait"></i>
                 <div id="diversity"></div>
               </div>
-              <div class="row col-sm-4 diversityControls">
+              <div class="row col-sm-3 diversityControls">
                 <div class="col-sm-12 diversityControl">
                   <p>Change taxonomic level</p>
                   <select name="taxonLevel" onchange="diversityPlot.updateQuickdiv()">
@@ -199,7 +199,7 @@
                 <canvas style="display:none;"></canvas>
                 <div id="pngdataurl" style="display:none;"></div>
                 <div class="col-sm-12 diversityControl"> 
-                  <button class="saveButton" onclick="diversityPlot.saveImg()">Save this image</button>
+                  <button class="saveButton" onclick="diversityPlot.saveImg(false)">Save this image</button>
                 </div>
                 <div class="col-sm-12 diversityControl">
                   <button class="saveButton" data-dismiss="modal" data-toggle="modal" data-target="#saveBox">Download these data</button>
@@ -228,22 +228,20 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-sm-8 advdiversityContainer">
+              <div class="col-sm-9 advdiversityContainer">
                 <i class="fa fa-spinner fa-3x fa-spin" id="advdiversityWait"></i>
                 <div id="advdiversity"></div>
               </div>
-              <div class="row col-sm-4 diversityControls">
+              <div class="row col-sm-3 diversityControls">
                 <div class="col-sm-12 diversityControl">
-                  <p>Choose data to display<br><a onclick="showHide('advdiversityExplainer')"><small>How are these calculated?</small></a></p>
+                  <p>Choose data to display</p>
                   <form>
                     <input type="checkbox" name="sampledLine" onchange="diversityPlot.toggleLine('sampledLine')" checked> Sampled-in-bin diversity<br>
                     <input type="checkbox" name="rangethroughLine" onchange="diversityPlot.toggleLine('rangethroughLine')"> Rangethrough diversity<br>
+                    <input type="checkbox" name="singletons" onchange="diversityPlot.toggleLine('rangethroughLine')" checked style="margin-left: 2em;"> Include singletons<br>
                     <input type="checkbox" name="originationLine" onchange="diversityPlot.toggleLine('originationLine')"> Origination rate<br>
                     <input type="checkbox" name="extinctionLine" onchange="diversityPlot.toggleLine('extinctionLine')"> Extinction rate<br>
                   </form>
-                </div>
-                <div class="col-sm-12 diversityControl">
-                  <input type="checkbox" name="singletons" onchange="diversityPlot.toggleLine('rangethroughLine')" checked> Include singletons<br>
                 </div>
 <!--                 <div class="col-sm-12 diversityControl">
                   <input type="checkbox" name="extant" onchange="diversityPlot.updateFulldiv()"> Extend range of extant taxa to Present<br>
@@ -253,17 +251,22 @@
                 <canvas style="display:none;"></canvas>
                 <div id="advpngdataurl" style="display:none;"></div>
                 <div class="col-sm-12 diversityControl"> 
-                  <button class="saveButton" onclick="diversityPlot.saveImg()">Save this image</button>
+                  <button class="saveButton" onclick="diversityPlot.saveImg(true)">Save this image</button>
                 </div>
                 <div class="col-sm-12 diversityControl">
                   <button class="saveButton" data-dismiss="modal" data-toggle="modal" data-target="#saveBox">Download these data</button>
                 </div>
+                <div class="col-sm-12 diversityControl">
+                  <h5><a onclick="showHide('advdiversityExplainer')"><i class="fa fa-question-circle fa-2x"></i> How are these calculated?</a></h5>
+                  <p class="general" id="advdiversityExplainer" style="display:none;">
+                    Sampled-in-bin diversity is the number of taxa actually found in each time interval, just as in the basic diversity method.<br>
+                    Rangethrough diversity shows each taxon as present from its first occurrence to its last occurrence, whether or not it was ever found in the fossil record in the intervening intervals.<br>
+                    Origination and extinction rates are estimated here using the "per-capita rate" method of <a href="http://dx.doi.org/10.1666/0094-8373(2000)26[74:OAECOT]2.0.CO;2">Foote (2000) (Table 1)</a>. This method compares the number of taxa which exist both before and after each interval are compared to those that either originate or go extinct during it. In terms of the values returned by the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html">diversity API method</a>, origination=-ln((xbt)/(xbt+xft))/(eag-lag) and extinction=-ln((xbt)/(xbt+xbl))/(eag-lag).<br>
+                    Note that many other methods exist for calculating diversity and origination/extinction rates; those given here are among the simplest.</p>
+                </div>
                 <br>
                 <div class="col-sm-12 diversityControl">
                   <button class="modeSwitch" data-dismiss="modal" data-toggle="modal" data-target="#statsBox">Back to basic diversity window</button>
-                </div>
-                <div class="col-sm-12 diversityControl general explainer" id="advdiversityExplainer" style="display:none;">
-                  <i class="fa fa-question-circle fa-2x"></i>  Explanation of the four functions goes here
                 </div>
               </div>
             </div>
