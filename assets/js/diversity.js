@@ -475,7 +475,7 @@ var diversityPlot = (function() {
 
     if (full) {
       d3.select("#" + modalPrefix + "diversityGraphGroup")
-      .attr("transform", "scale(" + scale + ")translate(" + margin.left + 80 + "," + margin.right + ")");
+      .attr("transform", "scale(" + scale + ")translate(" + (margin.left - 80) + "," + margin.right + ")");
     } else {
       d3.select("#" + modalPrefix + "diversityGraphGroup")
       .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.right + ")");
@@ -557,9 +557,9 @@ var diversityPlot = (function() {
 
     var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
     var img = '<img src="'+imgsrc+'">'; 
-    d3.select((full)?"#advsvgdataurl":"#svgdataurl").html(img);
+    d3.select(full?"#advsvgdataurl":"#svgdataurl").html(img);
 
-    getCanvasSize();
+    getCanvasSize(full);
 
     var canvas = document.querySelector("canvas"),
       context = canvas.getContext("2d");
@@ -572,7 +572,7 @@ var diversityPlot = (function() {
       var canvasdata = canvas.toDataURL("image/png");
 
       var pngimg = '<img src="'+canvasdata+'">'; 
-        d3.select((full)?"#advpngdataurl":"#pngdataurl").html(pngimg);
+      d3.select((full)?"#advpngdataurl":"#pngdataurl").html(pngimg);
 
       var a = document.createElement("a");
       a.download = "diversity-curve.png";
@@ -583,8 +583,8 @@ var diversityPlot = (function() {
     }
   };
 
-  function getCanvasSize() {
-    var svg = d3.select("#diversityGraph");
+  function getCanvasSize(full) {
+    var svg = d3.select(full?"#advdiversityGraph":"#diversityGraph");
     var height = svg.attr("height");
     var width = svg.attr("width");
     d3.select("canvas").attr("height",height).attr("width",width);
