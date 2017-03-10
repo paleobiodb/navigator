@@ -285,6 +285,7 @@ var reconstructMap = (function() {
       // Remove reconstructing listener and loading GIF
       reconstructing = false;
       paleo_nav.hideLoading();
+      navMap.summarize(data);
 
       // Update currentReconstruction
       reconstructMap.currentReconstruction = {"name": (interval.nam) ? interval.nam : interval.name, "color":interval.col, "mid": interval.mid, "id": interval.oid, "taxa": [], "person": "", "stratigraphy": ""};
