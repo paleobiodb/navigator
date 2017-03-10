@@ -139,7 +139,7 @@ var paleo_nav = (function() {
       var taxaAutocomplete = $("#taxonInput").typeahead({
         name: 'taxaBrowser',
         remote: {
-          url: dataUrl + '/data1.2/taxa/auto.json?name=%QUERY&limit=10',
+          url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
           filter: function(data) {
             data.records.forEach(function(d) {
               d.rank = taxaBrowser.rankMap(d.rnk);
@@ -191,7 +191,7 @@ var paleo_nav = (function() {
         {
           name: 'contribs',
           prefetch: {
-            url: dataUrl + '/data1.2/people/list.json?name=%',
+            url: dataUrl + '/data1.1/people/list.json?name=%',
             filter: function(data) {
               return data.records;
             }
@@ -203,7 +203,7 @@ var paleo_nav = (function() {
         {
           name: 'taxa',
           remote: {
-            url: dataUrl + '/data1.2/taxa/auto.json?name=%QUERY&limit=10',
+            url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.rank = taxaBrowser.rankMap(d.rnk);
@@ -223,7 +223,7 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: dataUrl + '/data1.2/strata/auto.json?limit=10&name=%QUERY',
+            url: dataUrl + '/data1.1/strata/auto.json?limit=10&name=%QUERY',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.display_name = d.nam + " " + stratRankMap[d.rnk];
@@ -336,6 +336,7 @@ var paleo_nav = (function() {
         $(".show-more-collections").data("total-collections", 0);
       });
 
+    // Fires when the "quick diversity plot" modal opens
       $("#statsBox").on('show.bs.modal', function() {
         $(".statsContent").height(window.innerHeight - 70);
         $(".diversityContainer").height(window.innerHeight - 380)
@@ -359,11 +360,50 @@ var paleo_nav = (function() {
 
         var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         $(".diversityDownload").attr("href", diversityURL);
-        diversityPlot.plot(diversityURL);
+        diversityPlot.plot(diversityURL,false);
 
       });
 
       $("#statsBox").on("hide.bs.modal", function() {
+        // Abort any pending requests
+        if(typeof(diversityPlot.currentRequest) != 'undefined') {
+          if (Object.keys(diversityPlot.currentRequest).length > 0) {
+            diversityPlot.currentRequest.abort();
+            diversityPlot.currentRequest = {};
+          }
+        }
+      })
+
+    // Fires when the "full diversity plot" modal opens
+      $("#advstatsBox").on('show.bs.modal', function() {
+        $(".advstatsContent").height(window.innerHeight - 70);
+        $(".advdiversityContainer").height(window.innerHeight - 380)
+        $("#diversityWait").css("display", "block");
+        // Remove any old ones...
+        d3.select("#advdiversity").select("svg").remove();
+
+        // Show waiting
+
+        var bounds = map.getBounds(),
+            sw = bounds._southWest,
+            ne = bounds._northEast;
+
+        if (parseInt(d3.select("#map").style("height")) < 1) {
+          sw.lng = -180,
+          ne.lng = 180,
+          sw.lat = -90,
+          ne.lat = 90;
+        }
+
+        var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) 
+          + "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val() + "&recent=" + $('[name="extant"]').is(":checked")) + "&base_id=13131";
+        // For debugging purposes this is only showing Nautiloidea; kill the last clause in the previous line before production
+        $(".diversityDownload").attr("href", diversityURL);
+        diversityPlot.plot(diversityURL,true);
+
+      });
+
+      $("#advstatsBox").on("hide.bs.modal", function() {
         // Abort any pending requests
         if(typeof(diversityPlot.currentRequest) != 'undefined') {
           if (Object.keys(diversityPlot.currentRequest).length > 0) {
@@ -432,7 +472,7 @@ var paleo_nav = (function() {
           }
         }
 
-        var url = dataUrl + '/data1.2/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
+        var url = dataUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);
 
         d3.json(url, function(err, results) {

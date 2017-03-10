@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="assets/css/lib/leaflet.css" type="text/css"/>
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" type="text/css"/>
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway:200" type="text/css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="build/css/navigator.min.css" type="text/css"/>
 
     <script>
@@ -133,7 +133,8 @@
               <div class="rotate mapCtrl" title="Toggle paleogeography"><div id="rotateIcon"></div></div>
               <div class="taxa mapCtrl" title="Toggle taxa browser"><i class="fa fa-bug fa-2x ctrlButton"></i></div>
               <div class="stats mapCtrl" title="Toggle stats"><a data-toggle="modal" href="#statsBox"><i class="fa fa-line-chart fa-2x ctrlButton"></i></a></div>
-              <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="fa fa-share fa-2x ctrlButton"></i></a></div>
+              <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="fa fa-download fa-2x ctrlButton"></i></a></div>
+              <div class="save mapCtrl" title="See examples"><a data-toggle="modal" href="#helpModal"><i class="fa fa-hand-o-right fa-2x ctrlButton"></i></a></div>
             </div>
           </div>
 
@@ -167,35 +168,19 @@
         <div class="modal-content statsContent">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            Current view stats
+            Sampled-in-bin diversity for current view data
           </div>
           <div class="modal-body">
-            <!-- <div class="row">
-              <div class="col-sm-12" id="prevalence">
-                <p><i>Prevalent Taxa (% occurrences)</i></p>
-                <div class="prevalence-container"></div>
-              </div>
-            </div> -->
             <div class="row">
               <div class="col-sm-8 diversityContainer">
                 <i class="fa fa-spinner fa-3x fa-spin" id="diversityWait"></i>
                 <div id="diversity"></div>
-<!--                 <div class="diversityControl">
-                  <div class="filters">
-                    <div id="selectedInterval" class="filter"></div>
-                    <div id="personFilter" class="filter"></div>
-                    <div id="taxon" class="filter"></div>
-                    <div id="stratFilter" class="filter"></div>
-                  </div> 
-                </div>
- -->                <!-- this does not work-->
               </div>
               <div class="row col-sm-4 diversityControls">
                 <div class="col-sm-12 diversityControl">
                   <p>Change taxonomic level</p>
                   <select name="taxonLevel" onchange="diversityPlot.updateQuickdiv()">
-                    <option value="genera">Genus (excluding subgenera)</option>
-                    <option value="genera_plus" selected="selected">Genus (including subgenera)</option>
+                    <option value="genera">Genus </option>
                     <option value="families">Family</option>
                     <option value="orders">Order</option>
                   </select>
@@ -206,7 +191,7 @@
                     <option value="stage" selected="selected">Age (e.g. "Famennian")</option>
                     <option value="epoch">Epoch (e.g. "Eocene")</option>
                     <option value="period">Period (e.g. "Cretaceous")</option>
-                    <option value="era" >Era (e.g. "Paleozoic")</option>
+                    <option value="era">Era (e.g. "Paleozoic")</option>
                   </select>
                 </div>
                 <br><br><br>
@@ -219,16 +204,75 @@
                 <div class="col-sm-12 diversityControl">
                   <button class="saveButton" data-dismiss="modal" data-toggle="modal" data-target="#saveBox">Download these data</button>
                 </div>
+                <div class="col-sm-12 diversityControl general explainer">
+                  <h5><a onclick="showHide('diversityExplainer')"><i class="fa fa-question-circle fa-2x"></i> What's in this plot?</a></h5>
+                  <p class="general" id="diversityExplainer" style="display:none;">This plot displays the "sampled-in-bin" diversity; that is, it counts the number of occurrences of the selected taxa in each time bin within the selected geographic extent. Sampled-in-bin genus diversity is approximate and based on the <a href="https://paleobiodb.org/data1.2/occs/quickdiv_doc.html" target="_blank">quick_div API route</a>. The advanced diversity curve generator displays a more complete diversity summary, based on the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html" target="_blank">full diversity API route</a>.</p>
+                  <p><strong>Before switching to the advanced diversity curve window, choose the taxonomic and temporal resolution you want to use.</strong></p>
+                  <button class="modeSwitch" data-dismiss="modal" data-toggle="modal" href="#advstatsBox">Use advanced diversity curve generator</button>
+                </div>
               </div>
             </div>
           </div>
-          <div class="modal-footer warningText">
-            <div class="col-sm-12"><p class="warning general"><i class="fa fa-warning fa-2x"></i>Sampled-in-bin genus diversity is approximate and based on <a href="https://paleobiodb.org/data1.2/occs/quickdiv_doc.html" target="_blank">quick_div</a>. The <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html" target="_blank">full diversity API route</a> computes a more complete diversity summary.</p></div>
-<!--             <div class="col-sm-4"><button class="modeSwitch">Use advanced diversity curve generator</button></div>
- -->          </div>
+          <div class="modal-footer">
+          </div>
         </div>
       </div>
     </div><!-- end stats modal -->
+
+    <div class="modal fade" id="advstatsBox" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" id="advstatsDialogue">
+        <div class="modal-content advstatsContent">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            Advanced diversity metrics for current view data
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-8 advdiversityContainer">
+                <i class="fa fa-spinner fa-3x fa-spin" id="advdiversityWait"></i>
+                <div id="advdiversity"></div>
+              </div>
+              <div class="row col-sm-4 diversityControls">
+                <div class="col-sm-12 diversityControl">
+                  <p>Choose data to display<br><a onclick="showHide('advdiversityExplainer')"><small>How are these calculated?</small></a></p>
+                  <form>
+                    <input type="checkbox" name="sampledLine" onchange="diversityPlot.toggleLine('sampledLine')" checked> Sampled-in-bin diversity<br>
+                    <input type="checkbox" name="rangethroughLine" onchange="diversityPlot.toggleLine('rangethroughLine')"> Rangethrough diversity<br>
+                    <input type="checkbox" name="originationLine" onchange="diversityPlot.toggleLine('originationLine')"> Origination rate<br>
+                    <input type="checkbox" name="extinctionLine" onchange="diversityPlot.toggleLine('extinctionLine')"> Extinction rate<br>
+                  </form>
+                </div>
+                <div class="col-sm-12 diversityControl">
+                  <input type="checkbox" name="singletons" onchange="diversityPlot.toggleLine('rangethroughLine')" checked> Include singletons<br>
+                </div>
+<!--                 <div class="col-sm-12 diversityControl">
+                  <input type="checkbox" name="extant" onchange="diversityPlot.updateFulldiv()"> Extend range of extant taxa to Present<br>
+                </div> -->
+                <br><br><br>
+                <div id="advsvgdataurl" style="display:none;"></div>
+                <canvas style="display:none;"></canvas>
+                <div id="advpngdataurl" style="display:none;"></div>
+                <div class="col-sm-12 diversityControl"> 
+                  <button class="saveButton" onclick="diversityPlot.saveImg()">Save this image</button>
+                </div>
+                <div class="col-sm-12 diversityControl">
+                  <button class="saveButton" data-dismiss="modal" data-toggle="modal" data-target="#saveBox">Download these data</button>
+                </div>
+                <br>
+                <div class="col-sm-12 diversityControl">
+                  <button class="modeSwitch" data-dismiss="modal" data-toggle="modal" data-target="#statsBox">Back to basic diversity window</button>
+                </div>
+                <div class="col-sm-12 diversityControl general explainer" id="advdiversityExplainer" style="display:none;">
+                  <i class="fa fa-question-circle fa-2x"></i>  Explanation of the four functions goes here
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+      </div>
+    </div><!-- end advanced stats modal -->
 
     <div class="modal fade" id="saveBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -300,6 +344,12 @@
                             Diversity summary
                           </label>
                         </div>
+                       <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="fulldiv">
+                            Full diversity method
+                          </label>
+                        </div>
                       </div>
                     </div>
                     <div class="col-sm-12">
@@ -337,7 +387,7 @@
                           <button class="btn btn-primary" type="button" id="getApiUrl">Get URL</button>
                         </span>
                       </div>
-                      <p class="help-block">The API data URL for taxonomic occurrence data. For use with external services and scripts, such as R or Python. See the <a href="/data1.2">data service documentation</a> for additional information.</p>
+                      <p class="help-block">The API data URL for taxonomic occurrence data. For use with external services and scripts, such as R or Python. See the <a href="/data1.1">data service documentation</a> for additional information.</p>
                     </div>
                   </div>
                 </div>
@@ -368,7 +418,7 @@
       </div>
     </div><!-- end collectionBox modal -->
 
-     <div class="modal fade" id="gPlatesBox" tabindex="-1" role="dialog" aria-labelledby="GPlatesInfo" aria-hidden="true">
+    <div class="modal fade" id="gPlatesBox" tabindex="-1" role="dialog" aria-labelledby="GPlatesInfo" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -397,7 +447,6 @@
         </div>
       </div>
     </div><!-- end gPlatesBox modal -->
-
 
     <div class="modal fade" id="collectionModal" tabindex="-1" role="dialog" aria-labelledby="BinInfo" aria-hidden="true">
       <div class="modal-dialog">
@@ -468,7 +517,7 @@
           </div>
           <div class="modal-body">
             <h4>The Application</h4>
-            <p>Built on the <a href="http://paleobiodb.org/data1.2/" target="_blank">PBDB API</a>, PBDB Navigator allows users to explore the <a href="/" target="_blank">Paleobiology Database</a> through space, time, and taxonomy. All code unique to the PBDB Navigator interface uses a <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0 1.0 Universal</a> Public Domain Dedication, and can be found on <a href="https://github.com/paleobiodb/navigator" target="_blank">Github</a>.</p><br>
+            <p>Built on the <a href="http://paleobiodb.org/data1.1/" target="_blank">PBDB API</a>, PBDB Navigator allows users to explore the <a href="/" target="_blank">Paleobiology Database</a> through space, time, and taxonomy. All code unique to the PBDB Navigator interface uses a <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0 1.0 Universal</a> Public Domain Dedication, and can be found on <a href="https://github.com/paleobiodb/navigator" target="_blank">Github</a>.</p><br>
             <h4>Data Sources</h4>
             <div class="row">
               <div class="col-xs-4 dataSource">
@@ -584,6 +633,9 @@
               <div class="helpModalControlLabel">
                 <i class="fa fa-angle-left"></i><p>Save data</p>
               </div>
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>Show examples</p>
+              </div>
             </div>
             <div class="helpModalControls right">
               <div class="helpModalControlLabel">
@@ -601,6 +653,12 @@
       </div>
     </div><!-- end helpModal -->
     
+    <script>
+      function showHide(divID) {
+        var $x = $('#'+divID);
+        $x.css("display", $x.css("display") === 'none' ? '' : 'none');
+      }
+    </script>
     <script src="build/js/lib/leaflet.js"></script>
     <script src="build/js/lib/d3.v3.min.js" charset="utf-8"></script>
     <script src="build/js/lib/topojson.v1.min.js"></script>

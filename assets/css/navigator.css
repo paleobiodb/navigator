@@ -382,7 +382,7 @@ color: rgb(245,245,245);
   vertical-align: middle;
   display:none;
 }
-#statsDialogue {
+#statsDialogue, #advstatsDialogue {
   width: 95%;
 }
 .stats > a {
@@ -922,7 +922,7 @@ br {
 }
 
 .diversityControl {
-  padding-bottom: 20px;
+  padding-bottom: 1em;
   float: right;
 }
 
@@ -932,6 +932,10 @@ br {
   background: #aaa;
   padding: 3px;
   margin-bottom: 1em;
+}
+
+.diversityControl > form {
+  margin-left: 1.5em;
 }
 
 .sink > * {
@@ -974,6 +978,11 @@ br {
   margin: 6px;
 }
 
+.explainer {
+  font-size:small;
+  padding-top:2em;
+}
+
 .axis path,
 .axis line {
   shape-rendering: crispEdges;
@@ -989,12 +998,13 @@ br {
   margin      : 0;
   background  : #aaa;
   font-family : inherit;
-  font-size   : 1em;
+  font-size   : 1.1em;
   cursor      : pointer;
   border: 1px solid #888;
-  border-radius : 4px;
-  padding: 4px 9px 3px 9px;
-}
+  border-radius : 4px; 
+  padding: 10px;
+} 
+
 
 /*-----------------*/
 
