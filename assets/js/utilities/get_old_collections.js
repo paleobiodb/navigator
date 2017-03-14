@@ -9,7 +9,8 @@ var i = 0;
 getIntervals();
 
 function getIntervals() {
-  var url = paleo_nav.dataUrl + paleo_nav.dataService +  '/intervals/list.json?scale=1&order=older&max_ma=4000';
+  // var url = paleo_nav.dataUrl + paleo_nav.dataService +  '/intervals/list.json?scale=1&order=age.desc&max_ma=4000';
+  var url = paleo_nav.dataUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000';
 
   intervals = [];
 

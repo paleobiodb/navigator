@@ -181,7 +181,8 @@ var paleo_nav = (function() {
         {
           name: 'time',
           prefetch: {
-            url: dataUrl + dataService + '/intervals/list.json?scale=1&order=age.desc&max_ma=4000',
+            // url: dataUrl + dataService + '/intervals/list.json?scale=1&order=age.desc&max_ma=4000',
+            url: dataUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
             filter: function(data) {
               return data.records;
             }
