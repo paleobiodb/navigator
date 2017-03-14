@@ -9,7 +9,7 @@ var i = 0;
 getIntervals();
 
 function getIntervals() {
-  var url = 'http://paleobiodb.org/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000';
+  var url = paleo_nav.dataUrl + paleo_nav.dataService +  '/intervals/list.json?scale=1&order=older&max_ma=4000';
 
   intervals = [];
 
@@ -40,7 +40,7 @@ function getIntervals() {
 }
 
 function getJSON() {
-  var url = 'http://paleobiodb.org/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=999999&interval=' + intervals[i].name + '&show=time';
+  var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&limit=999999&interval=' + intervals[i].name + '&show=time';
 
   // Make the GET request
   http.get(url, function(res) {

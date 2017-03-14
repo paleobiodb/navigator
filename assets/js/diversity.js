@@ -53,7 +53,7 @@ var diversityPlot = (function() {
     }
 
     // Request timescale data
-    $.ajax(paleo_nav.dataUrl + "/data1.2/intervals/list.json?scale=1&order=age.desc&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
+    $.ajax(paleo_nav.dataUrl + paleo_nav.dataService + "/intervals/list.json?scale=1&order=age.desc&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
       .fail(function(error) {
         console.log(error);
       })
@@ -508,7 +508,7 @@ var diversityPlot = (function() {
   function updateQuickdiv() {
     var taxonLevel = $("[name=taxonLevel]").val();
     var timeLevel = $("[name=timeLevel]").val();
-    var url=paleo_nav.dataUrl;
+    var url=paleo_nav.dataUrl + paleo_nav.dataService;
 
     var bounds = map.getBounds(),
       sw = bounds._southWest,
@@ -520,7 +520,7 @@ var diversityPlot = (function() {
       ne.lat = 90;
     }
 
-    url += "/data1.2/occs/quickdiv.json?";
+    url += "/occs/quickdiv.json?";
     url = navMap.parseURL(url);
     url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
     url += "&count="+taxonLevel+"&time_reso="+timeLevel;
@@ -531,7 +531,7 @@ var diversityPlot = (function() {
     var taxonLevel = $("[name=taxonLevel]").val();
     var timeLevel = $("[name=timeLevel]").val();
     var extant = $('[name="extant"]').is(":checked");
-    var url=paleo_nav.dataUrl;
+    var url=paleo_nav.dataUrl + paleo_nav.dataService;
 
     var bounds = map.getBounds(),
       sw = bounds._southWest,
@@ -543,7 +543,7 @@ var diversityPlot = (function() {
       ne.lat = 90;
     }
 
-    url += "/data1.2/occs/diversity.json?";
+    url += "/occs/diversity.json?";
     url = navMap.parseURL(url);
     url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
     url += "&count=" + taxonLevel + "&time_reso=" + timeLevel + "&recent=" + extant;

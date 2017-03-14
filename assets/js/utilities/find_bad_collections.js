@@ -4,7 +4,7 @@ var http = require('http'),
     querystring = require('querystring');
 
 function getJSON() {
-  var url = 'http://paleobiodb.org/data1.1/colls/list.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999999999&show=time'
+  var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/list.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=999999999999&show=time'
   // Make the GET request
   http.get(url, function(res) {
       var body = '';
