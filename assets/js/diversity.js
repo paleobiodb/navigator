@@ -509,7 +509,7 @@ var diversityPlot = (function() {
   function updateQuickdiv() {
     var taxonLevel = $("[name=taxonLevel]").val();
     var timeLevel = $("[name=timeLevel]").val();
-    var url=paleo_nav.dataUrl + paleo_nav.dataService;
+    var url=paleo_nav.dataUrl;
 
     var bounds = map.getBounds(),
       sw = bounds._southWest,
@@ -521,35 +521,35 @@ var diversityPlot = (function() {
       ne.lat = 90;
     }
 
-    url += "/occs/quickdiv.json?";
+    url += "/data1.2/occs/quickdiv.json?";
     url = navMap.parseURL(url);
     url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
     url += "&count="+taxonLevel+"&time_reso="+timeLevel;
     getDiversityData(url);
   }
 
-  function updateFulldiv() {
-    var taxonLevel = $("[name=taxonLevel]").val();
-    var timeLevel = $("[name=timeLevel]").val();
-    var extant = $('[name="extant"]').is(":checked");
-    var url=paleo_nav.dataUrl + paleo_nav.dataService;
+  // function updateFulldiv() {
+  //   var taxonLevel = $("[name=taxonLevel]").val();
+  //   var timeLevel = $("[name=timeLevel]").val();
+  //   var extant = $('[name="extant"]').is(":checked");
+  //   var url=paleo_nav.dataUrl;
 
-    var bounds = map.getBounds(),
-      sw = bounds._southWest,
-      ne = bounds._northEast;
-    if (parseInt(d3.select("#map").style("height")) < 1) {
-      sw.lng = -180,
-      ne.lng = 180,
-      sw.lat = -90,
-      ne.lat = 90;
-    }
+  //   var bounds = map.getBounds(),
+  //     sw = bounds._southWest,
+  //     ne = bounds._northEast;
+  //   if (parseInt(d3.select("#map").style("height")) < 1) {
+  //     sw.lng = -180,
+  //     ne.lng = 180,
+  //     sw.lat = -90,
+  //     ne.lat = 90;
+  //   }
 
-    url += "/occs/diversity.json?";
-    url = navMap.parseURL(url);
-    url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
-    url += "&count=" + taxonLevel + "&time_reso=" + timeLevel + "&recent=" + extant;
-    getDiversityData(url);
-  }
+  //   url += "/data1.2/occs/diversity.json?";
+  //   url = navMap.parseURL(url);
+  //   url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
+  //   url += "&count=" + taxonLevel + "&time_reso=" + timeLevel + "&recent=" + extant;
+  //   getDiversityData(url);
+  // }
 
   function saveImg() {
     var html = d3.select("#diversityGraph")
