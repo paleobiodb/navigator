@@ -141,7 +141,7 @@ var diversityPlot = (function() {
       var yAxis2 = d3.svg.axis()
         .scale(y2)
         .orient("right")
-        .ticks(5)
+        .tickValues([-1,0,1])
         .tickFormat(Math.abs);      
     }
 
@@ -287,31 +287,31 @@ var diversityPlot = (function() {
         .call(yAxis2);
 
       label2.append("text")
-        .attr("transform", "rotate(90)translate(" + (height * 0.25) + ",-110)")
+        .attr("transform", "rotate(90)translate(" + (height * 0.28) + ",-35)")
         .attr("dy", "1em")
-        .style("fill","#777")
+        .style("fill","green")
         .style("text-anchor", "end")
-        .style("font-size", "0.8em")
+        .style("font-size", "0.6em")
         .style("font-weight", 400)
-        .text("originating");
+        .text("origination");
 
       label2.append("text")
-        .attr("transform", "rotate(90)translate(" + (height * 0.90) + ",-110)")
+        .attr("transform", "rotate(90)translate(" + (height * 0.70) + ",-35)")
         .attr("dy", "1em")
-        .style("fill","#777")
+        .style("fill","red")
         .style("text-anchor", "end")
-        .style("font-size", "0.8em")
+        .style("font-size", "0.6em")
         .style("font-weight", 400)
-        .text("going extinct");
+        .text("extinction");
 
       label2.append("text")
-        .attr("transform", "rotate(90)translate(" + (height * 0.75) + ",-140)")
+        .attr("transform", "rotate(90)translate(" + (height * 0.65) + ",-80)")
         .attr("dy", "1em")
         .style("fill","#777")
         .style("text-anchor", "end")
         .style("font-size", "0.8em")
         .style("font-weight", 400)
-        .text("proportion of " + $("[name=taxonLevel]").val() + " (instantaneous)");
+        .text("rates per " + $("[name=taxonLevel]").val() + " per Myr");
 
       label2.selectAll(".tick")
         .style("letter-spacing","8px")
@@ -353,7 +353,7 @@ var diversityPlot = (function() {
         svg.append("path")
           .attr("class", "line diversityLine rangethroughLineNo")
           .attr("style", "fill: none; stroke: black; stroke-width: 4px; stroke-dasharray: 4,2; display:none;")
-          .attr("d", lineRangethroughYes(data))
+          .attr("d", lineRangethroughNo(data))
           .attr("transform", "translate(" + padding.left + ",0)");
 
         toggleLine('rangethroughLine');
@@ -475,7 +475,7 @@ var diversityPlot = (function() {
 
     if (full) {
       d3.select("#" + modalPrefix + "diversityGraphGroup")
-      .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.right + ")");
+      .attr("transform", "scale(" + scale + ")translate(" + (margin.left - 80) + "," + margin.right + ")");
     } else {
       d3.select("#" + modalPrefix + "diversityGraphGroup")
       .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.right + ")");
@@ -493,7 +493,6 @@ var diversityPlot = (function() {
 
 
   function toggleLine(lineName){
-    console.log(lineName);
     var checked = $('[name=' + lineName + ']').is(":checked");
     if (lineName === "rangethroughLine") {
       var singletons = $('[name="singletons"]').is(":checked");
@@ -527,40 +526,40 @@ var diversityPlot = (function() {
     getDiversityData(url);
   }
 
-  function updateFulldiv() {
-    var taxonLevel = $("[name=taxonLevel]").val();
-    var timeLevel = $("[name=timeLevel]").val();
-    var extant = $('[name="extant"]').is(":checked");
-    var url=paleo_nav.dataUrl;
+  // function updateFulldiv() {
+  //   var taxonLevel = $("[name=taxonLevel]").val();
+  //   var timeLevel = $("[name=timeLevel]").val();
+  //   var extant = $('[name="extant"]').is(":checked");
+  //   var url=paleo_nav.dataUrl;
 
-    var bounds = map.getBounds(),
-      sw = bounds._southWest,
-      ne = bounds._northEast;
-    if (parseInt(d3.select("#map").style("height")) < 1) {
-      sw.lng = -180,
-      ne.lng = 180,
-      sw.lat = -90,
-      ne.lat = 90;
-    }
+  //   var bounds = map.getBounds(),
+  //     sw = bounds._southWest,
+  //     ne = bounds._northEast;
+  //   if (parseInt(d3.select("#map").style("height")) < 1) {
+  //     sw.lng = -180,
+  //     ne.lng = 180,
+  //     sw.lat = -90,
+  //     ne.lat = 90;
+  //   }
 
-    url += "/data1.2/occs/diversity.json?";
-    url = navMap.parseURL(url);
-    url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
-    url += "&count=" + taxonLevel + "&time_reso=" + timeLevel + "&recent=" + extant;
-    getDiversityData(url);
-  }
+  //   url += "/data1.2/occs/diversity.json?";
+  //   url = navMap.parseURL(url);
+  //   url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
+  //   url += "&count=" + taxonLevel + "&time_reso=" + timeLevel + "&recent=" + extant;
+  //   getDiversityData(url);
+  // }
 
-  function saveImg() {
-    var html = d3.select("#diversityGraph")
+  function saveImg(full) {
+    var html = d3.select(full?"#advdiversityGraph":"#diversityGraph")
           .attr("version", 1.1)
           .attr("xmlns", "http://www.w3.org/2000/svg")
           .node().parentNode.innerHTML;
 
     var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
     var img = '<img src="'+imgsrc+'">'; 
-    d3.select((full)?"#advsvgdataurl":"#svgdataurl").html(img);
+    d3.select(full?"#advsvgdataurl":"#svgdataurl").html(img);
 
-    getCanvasSize();
+    getCanvasSize(full);
 
     var canvas = document.querySelector("canvas"),
       context = canvas.getContext("2d");
@@ -573,7 +572,7 @@ var diversityPlot = (function() {
       var canvasdata = canvas.toDataURL("image/png");
 
       var pngimg = '<img src="'+canvasdata+'">'; 
-        d3.select((full)?"#advpngdataurl":"#pngdataurl").html(pngimg);
+      d3.select((full)?"#advpngdataurl":"#pngdataurl").html(pngimg);
 
       var a = document.createElement("a");
       a.download = "diversity-curve.png";
@@ -584,8 +583,8 @@ var diversityPlot = (function() {
     }
   };
 
-  function getCanvasSize() {
-    var svg = d3.select("#diversityGraph");
+  function getCanvasSize(full) {
+    var svg = d3.select(full?"#advdiversityGraph":"#diversityGraph");
     var height = svg.attr("height");
     var width = svg.attr("width");
     d3.select("canvas").attr("height",height).attr("width",width);
@@ -596,7 +595,7 @@ var diversityPlot = (function() {
     "resize": resize,
     "currentRequest": currentRequest,
     "updateQuickdiv": updateQuickdiv,
-    "updateFulldiv": updateFulldiv,
+    // "updateFulldiv": updateFulldiv,
     "saveImg": saveImg,
     "getCanvasSize": getCanvasSize,
     "toggleLine": toggleLine
