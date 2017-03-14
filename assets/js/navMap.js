@@ -285,7 +285,8 @@ var navMap = (function() {
           }
         }
 
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
+        // var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
+        var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
 
         // If filters are applied to the map
         if (filtered) {
@@ -408,7 +409,8 @@ var navMap = (function() {
 
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
       if (zoom < 5 && filtered === false) {
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
+        // var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
+        var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           if (error) {
@@ -421,7 +423,8 @@ var navMap = (function() {
 
         // If filtered only by a time interval...
         if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time&level=3';
+          // var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time&level=3';
+          var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time&level=3';
           url = navMap.parseURL(url);
 
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -443,7 +446,8 @@ var navMap = (function() {
           }
         // If not filtered only by a time interval, refresh normally
         } else {
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
+          // var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
+          var url = paleo_nav.dataUrl + '/data1.1/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
 
           currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
             if (error) {
