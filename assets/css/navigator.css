@@ -305,7 +305,7 @@ color: rgb(245,245,245);
 }
 .bins {
   fill: #EFEE69;
-  stroke: #828282;
+  stroke: #969696;
   stroke-width: 0.04em;
   opacity: 0.7;
 }
@@ -330,8 +330,7 @@ color: rgb(245,245,245);
 }
 .clusters {
   fill: #72BBDF;
-  stroke: #828282;
-  stroke-width: 0.04em;
+  stroke: none;
   opacity:0.7;
 }
 .clusters:hover {
