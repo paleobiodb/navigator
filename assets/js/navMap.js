@@ -2028,10 +2028,13 @@ var navMap = (function() {
         } else {
           navMap.totalCollections = numberWithCommas(d3.sum(data.records, function(d) { return d.nco }));
         }
-
         navMap.totalOccurrences = numberWithCommas(d3.sum(data.records, function(d) { return d.noc }));
-        navMap.setInfoSummary();
+      } else {
+        navMap.totalCollections = 0;
+        navMap.totalOccurrences = 0;
       }
+
+      navMap.setInfoSummary();
     },
 
     "setInfoSummary" : function() {
