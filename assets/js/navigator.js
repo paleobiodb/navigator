@@ -801,10 +801,6 @@ var paleo_nav = (function() {
         .style("box-shadow", "inset 3px 0 0 #ff992c")
         .style("color", "#ff992c");
 
-      d3.select(".info")
-        .html("Click a time interval to reconstruct collections and plates")
-        .style("display", "block");
-
       if (parseInt(d3.select("#map").style("height")) > 1) {
         d3.select("#map").style("display", "none");
       }
@@ -848,8 +844,14 @@ var paleo_nav = (function() {
           }
         } else if (reconstructMap.currentReconstruction.name.length < 1) {
           alert("Please click a time interval below to build a reconstruction map");
+          d3.select(".info")
+            .html("Click a time interval to reconstruct collections and plates")
+            .style("display", "block");
         } else {
           alert("Please click a time interval below to build a reconstruction map");
+          d3.select(".info")
+            .html("Click a time interval to reconstruct collections and plates")
+            .style("display", "block");
         }
       }
 
@@ -896,10 +898,6 @@ var paleo_nav = (function() {
       d3.select("#selectedInterval")
         .select("button")
           .style("display", "block");
-
-      d3.select(".info")
-        .html("")
-        .style("display", "none");
 
       d3.select(".rotate")
         .style("box-shadow", "")
