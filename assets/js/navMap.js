@@ -2022,13 +2022,18 @@ var navMap = (function() {
     },
 
     "summarize" : function(data) {
+      console.log(data);
+      console.log(data.records.length);
       if (data.records.length > 0) {
+        console.log(data.records[0].typ);
         if (data.records[0].typ === "col") {
           navMap.totalCollections = numberWithCommas(data.records.length);
         } else {
           navMap.totalCollections = numberWithCommas(d3.sum(data.records, function(d) { return d.nco }));
         }
         navMap.totalOccurrences = numberWithCommas(d3.sum(data.records, function(d) { return d.noc }));
+        console.log(navMap.totalCollections);
+        console.log(navMap.totalOccurrences);
       } else {
         navMap.totalCollections = 0;
         navMap.totalOccurrences = 0;

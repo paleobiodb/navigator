@@ -217,6 +217,7 @@ var reconstructMap = (function() {
 
                 // Now that we know which bins to display, add them to the map
                 reconstructMap.addToMap(matches, interval);
+                navMap.summarize(right);
               });
             } else {
               /* If there is only a time filter applied, simply match the rotated points to the
@@ -233,9 +234,11 @@ var reconstructMap = (function() {
 
               // Now that the data is bound, add them to the reconstruction map
               reconstructMap.addToMap(rotatedPoints.features, interval);
+              navMap.summarize(response);
             }
           }); // End plate callback
         }); // End rotated points callback
+      
       }); // end nonrotated point callback
     },
 
@@ -285,7 +288,6 @@ var reconstructMap = (function() {
       // Remove reconstructing listener and loading GIF
       reconstructing = false;
       paleo_nav.hideLoading();
-      navMap.summarize(data);
 
       // Update currentReconstruction
       reconstructMap.currentReconstruction = {"name": (interval.nam) ? interval.nam : interval.name, "color":interval.col, "mid": interval.mid, "id": interval.oid, "taxa": [], "person": "", "stratigraphy": ""};
