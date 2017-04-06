@@ -882,7 +882,7 @@ var navMap = (function() {
           var id = d.target.id;
           id = id.replace("collapse", "");
         /* Placeholder for data service fix
-          var url = paleo_nav.dataUrl + "/data1.1/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
           url = navMap.parseURL(url);
           d3.json(url, function(err, data) {
         */
