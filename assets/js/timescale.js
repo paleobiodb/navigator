@@ -107,11 +107,11 @@ var timeScale = (function() {
       .attr("transform", "translate(0," + (height + 15) + ")");
 
     // Load the time scale data
-    d3.json(paleo_nav.dataUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000", function(error, result) {
+    d3.json(paleo_nav.dataUrl + paleo_nav.dataService + "/intervals/list.json?scale=1&order=age.desc&max_ma=4000", function(error, result) {
       for(var i = 0; i < result.records.length; i++) {
         var r = {
-          "id": result.records[i].oid,
-          "pid": result.records[i].pid || 0,
+          "id": result.records[i].oid.replace("int:",""),
+          "pid": result.records[i].pid?result.records[i].pid.replace("int:",""):0,
           "level": result.records[i].lvl,
           "color": result.records[i].col,
           "name": result.records[i].nam,

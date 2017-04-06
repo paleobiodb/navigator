@@ -3,7 +3,8 @@ var paleo_nav = (function() {
      If developing locally default to paleobiodb.org, otherwise use localhost */
   var dataUrl = window.location.origin,
       testUrl = "https://paleobiodb.org",
-      stateUrl = "https://paleobiodb.org";
+      stateUrl = "https://paleobiodb.org",
+      dataService = "/data1.2";
 
   if ( window.location.search.indexOf("local") > -1 ) {
     dataUrl = window.location.origin + ":3000";
@@ -139,7 +140,7 @@ var paleo_nav = (function() {
       var taxaAutocomplete = $("#taxonInput").typeahead({
         name: 'taxaBrowser',
         remote: {
-          url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
+          url: dataUrl  + dataService + '/taxa/auto.json?name=%QUERY&limit=10',
           filter: function(data) {
             data.records.forEach(function(d) {
               d.rank = taxaBrowser.rankMap(d.rnk);
@@ -179,7 +180,7 @@ var paleo_nav = (function() {
         {
           name: 'time',
           prefetch: {
-            url: dataUrl + '/data1.1/intervals/list.json?scale=1&order=older&max_ma=4000',
+            url: dataUrl + dataService + '/intervals/list.json?scale=1&order=age.desc&max_ma=4000',
             filter: function(data) {
               return data.records;
             }
@@ -191,7 +192,7 @@ var paleo_nav = (function() {
         {
           name: 'contribs',
           prefetch: {
-            url: dataUrl + '/data1.1/people/list.json?name=%',
+            url: dataUrl + dataService + '/people/list.json?name=%',
             filter: function(data) {
               return data.records;
             }
@@ -203,7 +204,7 @@ var paleo_nav = (function() {
         {
           name: 'taxa',
           remote: {
-            url: dataUrl + '/data1.1/taxa/auto.json?name=%QUERY&limit=10',
+            url: dataUrl + dataService + '/taxa/auto.json?name=%QUERY&limit=10',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.rank = taxaBrowser.rankMap(d.rnk);
@@ -223,7 +224,7 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: dataUrl + '/data1.1/strata/auto.json?limit=10&name=%QUERY',
+            url: dataUrl + dataService + '/strata/auto.json?limit=10&name=%QUERY',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.display_name = d.nam + " " + stratRankMap[d.rnk];
@@ -358,7 +359,7 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        var diversityURL = navMap.parseURL(testUrl + dataService + "/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         $(".diversityDownload").attr("href", diversityURL);
         diversityPlot.plot(diversityURL,false);
 
@@ -395,7 +396,7 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var diversityURL = navMap.parseURL(testUrl + "/data1.2/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) 
+        var diversityURL = navMap.parseURL(testUrl + dataService + "/occs/diversity.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) 
           + "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val() + "&recent=" + $('[name="extant"]').is(":checked"));
         $(".diversityDownload").attr("href", diversityURL);
         diversityPlot.plot(diversityURL,true);
@@ -471,7 +472,7 @@ var paleo_nav = (function() {
           }
         }
 
-        var url = dataUrl + '/data1.1/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
+        var url = dataUrl + dataService + '/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
         url = navMap.parseURL(url);
 
         d3.json(url, function(err, results) {
@@ -665,7 +666,7 @@ var paleo_nav = (function() {
         ne.lat = 90;
       }
 
-      var prevalenceURL = navMap.parseURL(testUrl + "/data1.2/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+      var prevalenceURL = navMap.parseURL(testUrl + dataService + "/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
       prevalenceURL = prevalenceURL.replace("touched_by", "occ_touched_by");
       currentPrevRequest = d3.json(prevalenceURL, function(error, data) {
         var scale = d3.scale.linear()
@@ -917,7 +918,8 @@ var paleo_nav = (function() {
 
     "dataUrl": dataUrl,
     "testUrl": testUrl,
-    "stateUrl": stateUrl
+    "stateUrl": stateUrl,
+    "dataService": dataService
   }
 
 })();
