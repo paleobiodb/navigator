@@ -1,7 +1,7 @@
 # PBDB Navigator
 
 ##About
-Built on the [PBDB API](http://paleobiodb.org/data1.1/), **PBDB Navigator** allows users to explore the Paleobiology Database through space, time, and taxonomy. The application is entirely client-side and depends on external services, including the [Paleobiology Database](http://paleobiodb.org), [GPlates](http://www.gplates.org), and [Phylopic](http://phylopic.org).
+Built on the [PBDB API](http://paleobiodb.org/data1.2/), **PBDB Navigator** allows users to explore the Paleobiology Database through space, time, and taxonomy. The application is entirely client-side and depends on external services, including the [Paleobiology Database](http://paleobiodb.org), [GPlates](http://www.gplates.org), and [Phylopic](http://phylopic.org).
 
 You can find the current version at [http://paleobiodb.org/navigator](http://paleobiodb.org/navigator)
 
