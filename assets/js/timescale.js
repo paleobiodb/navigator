@@ -122,6 +122,7 @@ var timeScale = (function() {
           "total": result.records[i].eag - result.records[i].lag,
           "children": []
         };
+        console.log(r.pid);
         interval_hash[r.id] = r;
         interval_hash[r.pid].children.push(r);
       }
