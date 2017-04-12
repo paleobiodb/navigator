@@ -856,7 +856,7 @@ var navMap = (function() {
           url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/list.json?clust_id=" + id;
 
       url = navMap.parseURL(url);
-      url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&count";
+      url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20";
 
       d3.json(url, function(err, data) {
         if (err) {
