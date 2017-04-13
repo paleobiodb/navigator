@@ -447,7 +447,7 @@ var diversityPlot = (function() {
     }
 
     if (!stop) {
-      setTimeout(resize(full), 100);
+      setTimeout(function(){resize(full)}, 100);
     }
 
   }
