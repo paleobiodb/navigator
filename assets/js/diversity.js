@@ -53,7 +53,7 @@ var diversityPlot = (function() {
     }
 
     // Request timescale data
-    $.ajax(paleo_nav.dataUrl + "/data1.1/intervals/list.json?scale=1&order=older&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
+    $.ajax(paleo_nav.dataUrl + paleo_nav.dataService + "/intervals/list.json?scale=1&order=age.desc&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
       .fail(function(error) {
         console.log(error);
       })
@@ -181,7 +181,7 @@ var diversityPlot = (function() {
       .attr("height", "40")
       .attr("width", function(d) { return periodX(d.totalTime); })
       .attr("x", function(d) { return periodPos(d.eag) })
-      .attr("id", function(d) { return "r" + d.oid })
+      .attr("id", function(d) { return "r" + d.oid.replace("int:","") })
       .style("fill", function(d) { return d.col })
       .style("opacity", 0.83)
       .append("svg:title")
@@ -193,7 +193,7 @@ var diversityPlot = (function() {
       .enter().append("text")
       .attr("x", function(d) { return (periodPos(d.eag) + periodPos(d.lag))/2 })
       .attr("y", "30")
-      .attr("id", function(d) { return "l" + d.oid })
+      .attr("id", function(d) { return "l" + d.oid.replace("int:","") })
       .attr("class", "timeLabel abbreviation")
       .style("font-size","2.4em")
       .text(function(d) { return d.abr });
@@ -207,7 +207,7 @@ var diversityPlot = (function() {
       .attr("class", "timeLabel dFullName")
       .style("font-size","2.4em")
       // .attr("style", "font-size:2.4em;font-weight: 100;color:black;")
-      .attr("id", function(d) { return "l" + d.oid })
+      .attr("id", function(d) { return "l" + d.oid.replace("int:","") })
       .text(function(d) { return d.nam });
 
     // Draw the era(s)
@@ -218,7 +218,7 @@ var diversityPlot = (function() {
       .attr("width", function(d) { return periodX(d.totalTime); })
       .attr("x", function(d) { return periodPos(d.eag) })
       .attr("y", "40")
-      .attr("id", function(d) { return "r" + d.oid })
+      .attr("id", function(d) { return "r" + d.oid.replace("int:","") })
       .style("fill", function(d) { return d.col })
       .style("opacity", 0.83)
       .append("svg:title")
@@ -232,7 +232,7 @@ var diversityPlot = (function() {
       .attr("y", "70")
       .attr("class", "timeLabel dFullName")
       .style("font-size","2.4em")
-      .attr("id", function(d) { return "l" + d.oid })
+      .attr("id", function(d) { return "l" + d.oid.replace("int:","") })
       .text(function(d) { return d.nam; });
 
     // Append the x axis ticks and numbers
@@ -407,7 +407,7 @@ var diversityPlot = (function() {
     d3.selectAll(".abbreviation").style("display","block");
 
     for (var i = 0; i < labels[0].length; i++) {
-      var id = d3.select(labels[0][i]).data()[0].oid,
+      var id = d3.select(labels[0][i]).data()[0].oid.replace("int:",""),
           rectWidth = parseFloat(d3.select("rect#r" + id).attr("width")),
           rectX = parseFloat(d3.select("rect#r" + id).attr("x"))
 
@@ -447,7 +447,7 @@ var diversityPlot = (function() {
     }
 
     if (!stop) {
-      setTimeout(resize(full), 100);
+      setTimeout(function(){resize(full)}, 100);
     }
 
   }
@@ -519,7 +519,7 @@ var diversityPlot = (function() {
       ne.lat = 90;
     }
 
-    url += "/data1.2/occs/quickdiv.json?";
+    url += paleo_nav.dataService + "/occs/quickdiv.json?";
     url = navMap.parseURL(url);
     url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
     url += "&count="+taxonLevel+"&time_reso="+timeLevel;
@@ -542,7 +542,7 @@ var diversityPlot = (function() {
   //     ne.lat = 90;
   //   }
 
-  //   url += "/data1.2/occs/diversity.json?";
+  //   url +=  paleo_nav.dataService + "/occs/diversity.json?";
   //   url = navMap.parseURL(url);
   //   url += "&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1);
   //   url += "&count=" + taxonLevel + "&time_reso=" + timeLevel + "&recent=" + extant;
