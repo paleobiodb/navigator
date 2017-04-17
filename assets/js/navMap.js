@@ -807,6 +807,7 @@ var navMap = (function() {
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
+          d.oid = d.oid.replace(":","");          
         });
 
         var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
@@ -854,6 +855,7 @@ var navMap = (function() {
       $("#loading").show();
       var id = (d.properties) ? d.properties.oid : d.oid,
           url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/list.json?clust_id=" + id;
+          console.log(id); 
 
       url = navMap.parseURL(url);
       url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&rowcount";
@@ -867,6 +869,7 @@ var navMap = (function() {
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
+          d.oid = d.oid.replace(":","");
         });
 
         var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
@@ -881,11 +884,11 @@ var navMap = (function() {
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
           var id = d.target.id;
           id = id.replace("collapse", "");
-        /* Placeholder for data service fix
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
-          url = navMap.parseURL(url);
-          d3.json(url, function(err, data) {
-        */
+          /* Placeholder for data service fix
+            var url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+            url = navMap.parseURL(url);
+            d3.json(url, function(err, data) {
+          */
           d3.json(paleo_nav.dataUrl + paleo_nav.dataService + "/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
             if (err) {
               return paleo_nav.hideLoading();
@@ -895,33 +898,33 @@ var navMap = (function() {
         });
 
         $(".occurrenceTab").on("show.bs.tab", function(d) {
-            var id = d.target.id;
-            id = id.replace("occToggle", "");
+          var id = d.target.id;
+          id = id.replace("occToggle", "");
 
-            var url = navMap.parseURL(paleo_nav.dataUrl + paleo_nav.dataService + "/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+          var url = navMap.parseURL(paleo_nav.dataUrl + paleo_nav.dataService + "/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
-            d3.json(url, function(err, data) {
-              if (err) {
-                return paleo_nav.hideLoading();
-              }
-              if (data.records.length > 0) {
-                var taxonHierarchy = navMap.buildTaxonHierarchy(data);
+          d3.json(url, function(err, data) {
+            if (err) {
+              return paleo_nav.hideLoading();
+            }
+            if (data.records.length > 0) {
+              var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
-                var output = Mustache.render(occurrencePartial, taxonHierarchy);
-                $("#occurrences" + id).html(output);
+              var output = Mustache.render(occurrencePartial, taxonHierarchy);
+              $("#occurrences" + id).html(output);
 
-                $(".filterByOccurrence").click(function(event) {
-                  event.preventDefault();
-                  navMap.filterByTaxon($(this).attr("data-name"));
-                  $("#collectionModal").modal("hide");
-                });
+              $(".filterByOccurrence").click(function(event) {
+                event.preventDefault();
+                navMap.filterByTaxon($(this).attr("data-name"));
+                $("#collectionModal").modal("hide");
+              });
 
-              } else {
-                var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
-                $("#occurrences" + id).html(output);
-              }
-            });
+            } else {
+              var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
+              $("#occurrences" + id).html(output);
+            }
           });
+        });
 
         // Handle showing/hiding "show more collections"
         if (data.records_found <= data.records_returned) {
@@ -1080,6 +1083,7 @@ var navMap = (function() {
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
+          d.oid = d.oid.replace("col:","");
         });
 
         var output = Mustache.render(collectionModalPartial, data);
