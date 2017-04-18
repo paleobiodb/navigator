@@ -855,7 +855,6 @@ var navMap = (function() {
       $("#loading").show();
       var id = (d.properties) ? d.properties.oid : d.oid,
           url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/list.json?clust_id=" + id;
-          console.log(id); 
 
       url = navMap.parseURL(url);
       url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&rowcount";
@@ -869,7 +868,7 @@ var navMap = (function() {
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
-          d.oid = d.oid.replace(":","");
+          d.oid = d.oid.replace("col:","");
         });
 
         var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
@@ -1154,6 +1153,7 @@ var navMap = (function() {
         d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
         d.lat = Math.round(d.lat * 10000) / 10000;
         d.lng = Math.round(d.lng * 10000) / 10000;
+        d.oid = d.oid.replace("col:","");
       });
 
       var output = Mustache.render(stackedCollectionPartial, data);
