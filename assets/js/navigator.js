@@ -224,7 +224,7 @@ var paleo_nav = (function() {
           limit: 10,
           header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
           remote: {
-            url: dataUrl + dataService + '/strata/auto.json?limit=10&name=%QUERY',
+            url: dataUrl + dataService + '/strata/auto.json?name=%QUERY',
             filter: function(data) {
               data.records.forEach(function(d) {
                 d.display_name = d.nam + " " + stratRankMap[d.rnk];
