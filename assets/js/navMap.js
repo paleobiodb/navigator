@@ -951,7 +951,7 @@ var navMap = (function() {
       data.records.forEach(function(d) {
         // Some preproccessing
         d.rank = (d.mra) ? taxaBrowser.rankMap(d.mra) : (d.rank) ?  taxaBrowser.rankMap(d.rnk) : "Unknown";
-        d.itallics = (d.rnk < 6) ? "itallics" : "";
+        d.italics = (d.rnk < 6) ? "italics" : "";
         d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
         d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : (d.tid > 0) ? d.idt : "";
 
