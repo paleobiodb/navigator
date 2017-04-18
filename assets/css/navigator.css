@@ -783,6 +783,14 @@ br {
 .universalSearchForm > div > span > button {
   margin-right:-1px;
 }
+.universalSearchForm > div > span > button:hover, button:active {
+  background-color: rgb(66, 139, 202);
+  border-color: rgb(53, 126, 189);
+  color: white;
+  text-decoration: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
 .autocompleteTitle {
   margin: 0 10px 5px;
   padding: 7px 0;
@@ -814,7 +822,7 @@ br {
 .occurrenceTabRow {
   width: 100%;
 }
-.itallics {
+.italics {
   font-style: italic;
 }
 
