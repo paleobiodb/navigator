@@ -192,14 +192,15 @@ var reconstructMap = (function() {
               url = navMap.parseURL(url); 
 
               d3.json(url, function(wrong, right) {
-                var pbdbData = right.records;
+                // var pbdbData = right.records;
+                var pbdbData = right.records.map(function(d) {d.oid = d.oid.replace('clu:',''); return d;}); //return to previous version once we rebuild rotated intervals from new data service with abbreviations in oids
                 /* Instead of having to ask GPlates to rotate a ton of points, we'll simply
                    compare our filtered, non-rotated dataset with our unfiltered, rotated
                    dataset */
                 var matches = [];
                 pbdbData.forEach(function(d) {
                   rotatedPoints.features.forEach(function(e) {
-                    if (d.oid === parseInt(e.properties.NAME)) {
+                    if (d.oid == e.properties.NAME) {
                       matches.push(e);
                     }
                   });
