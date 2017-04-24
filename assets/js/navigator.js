@@ -11,7 +11,7 @@ var paleo_nav = (function() {
     testUrl = window.location.origin + ":3000";
 
   } else if (window.location.search.indexOf("test") > -1) {
-    dataUrl = "https://paleobiodb.org";
+    dataUrl = "https://training.paleobiodb.org";
   } else if ( window.location.hostname === "localhost" ) {
     dataUrl = "https://paleobiodb.org";
   }
