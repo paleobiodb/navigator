@@ -176,151 +176,212 @@ var paleo_nav = (function() {
         "group": "Gp"
       };
 
-      var universalAutocomplete = $("#universalAutocompleteInput").typeahead([
-        {
-          name: 'time',
-          prefetch: {
-            url: dataUrl + dataService + '/intervals/list.json?scale=1&order=age.desc&max_ma=4000',
-            filter: function(data) {
-              return data.records;
-            }
-          },
-          valueKey: 'nam',
-          header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
-          limt: 5
-        },
-        {
-          name: 'contribs',
-          prefetch: {
-            url: dataUrl + dataService + '/people/list.json?name=%',
-            filter: function(data) {
-              return data.records;
-            }
-          },
-          valueKey: 'nam',
-          header: '<h4 class="autocompleteTitle">Authorizers</h4>',
-          limit: 5
-        },
-        {
-          name: 'taxa',
-          remote: {
-            url: dataUrl + dataService + '/taxa/auto.json?name=%QUERY&limit=10',
-            filter: function(data) {
-              data.records.forEach(function(d) {
-                d.rank = taxaBrowser.rankMap(d.rnk);
-              });
-              return data.records;
-            }
-          },
-          valueKey: 'nam',
-          minLength:3,
-          limit: 10,
-          header: '<h4 class="autocompleteTitle">Taxa</h4>',
-          template: taxaTemplate
-        },
-        {
-          name: 'strat',
-          minLength: 3,
-          limit: 10,
-          header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
-          remote: {
-            url: dataUrl + dataService + '/strata/auto.json?name=%QUERY',
-            filter: function(data) {
-              data.records.forEach(function(d) {
-                d.display_name = d.nam + " " + stratRankMap[d.rnk];
-                d.type = stratRankMap[d.rnk];
-              });
-              return data.records
-            }
-          },
-          valueKey: 'display_name'
+      var universalAutocomplete = $("#universalAutocompleteInput").on('keyup', function(event) {
+        var autocompleteInput = $("#universalAutocompleteInput").val();
+        if (autocompleteInput.length < 3) {
+          $("#universalSearchResult").html("");
+          $("#universalSearchResult").css("display","none");
+          return;
         }
-      ]);
-
-      universalAutocomplete.on('typeahead:selected', function(evt, data, dataset) {
-        $(".navbar-collapse").collapse("hide");
-        switch (dataset) {
-          case 'contribs':
-            navMap.filterByPerson(data);
-            document.activeElement.blur();
-            break;
-          case 'time':
-            timeScale.goTo(data.nam);
-            navMap.filterByTime(data.nam);
-            navMap.refresh("reset");
-            break;
-          case 'taxa':
-            navMap.filterByTaxon(data.nam);
-            break;
-          case 'strat':
-            navMap.filterByStratigraphy(data);
-            break;
-          default:
-            console.log("default");
-            break;
-
-          $(".navbar-collapse").css("height", "auto");
-          $(".navbar-collapse").css("max-height", "340px");
-        }
-
-        document.activeElement.blur();
-        $("#universalAutocompleteInput").blur();
-        $("#universalAutocompleteInput").typeahead("setQuery", "");
-      });
-
-      $("#universalAutocompleteInput").on("focus", function() {
-        if (window.innerWidth < 700) {
-          $(".navbar-collapse").css("height", window.innerHeight - 50 + "px");
-          $(".navbar-collapse").css("max-height", window.innerHeight - 50 + "px");
-          $(".tt-dropdown-menu").css("width", $("#universalAutocompleteInput").width() + "px");
-        }
-      });
-
-      $("#universalAutocompleteInput").on("blur", function() {
-        window.scrollTo(0,0);
-        if (window.innerWidth < 700) {
-          $(".navbar-collapse").css("height", "auto");
-          $(".navbar-collapse").css("max-height", "340px");
-        }
-      });
-
-      $("#universalSearchButton").click(function(event) {
-        event.preventDefault();
-        return;
-      });
-
-      $('input#universalAutocompleteInput').keypress(function (e) {
-        if (e.which === 13) {
-          var selectedValue = $('input#universalAutocompleteInput').data().ttView.dropdownView.getFirstSuggestion();
-
-          switch (selectedValue.dataset) {
-            case 'contribs':
-              navMap.filterByPerson(selectedValue.datum);
-              document.activeElement.blur();
-              break;
-            case 'time':
-              timeScale.goTo(selectedValue.datum.nam);
-              navMap.filterByTime(selectedValue.datum.nam);
-              navMap.refresh("reset");
-              break;
-            case 'taxa':
-              navMap.filterByTaxon(selectedValue.datum.nam);
-              break;
-            case 'strat':
-              navMap.filterByStratigraphy(selectedValue.datum);
-              break;
-            default:
-              console.log("Default");
-              break;
+        d3.json(dataUrl + dataService + '/combined/auto.json?name=' + autocompleteInput, function(error,result){
+          var htmlResult = "";
+          if (error) {htmlResult += "<div class='autocompleteError'>Error in server response</div>"} //server is down or something
+          else if (result.records.length == 0) {htmlResult += "<div class='autocompleteError'>No matching results for \"" + autocompleteInput + "\"</div>"} //no matches
+          else {
+            var currentType = "";
+            result.records.map(function(d){
+              var rtype = d.oid.substr(0,3);
+              switch (rtype) {
+                case "int": 
+                  if ( currentType != "int" ) { htmlResult += "<h4 class='autocompleteTitle'>Time Intervals</h4>"; currentType = "int"; }
+                  htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + Math.round(d.eag) + "-" + Math.round(d.lag) + " ma</small></p>";
+                  break;
+                case "str": 
+                  if ( currentType != "str" ) { htmlResult += "<h4 class='autocompleteTitle'>Stratigraphic Units</h4>"; currentType = "str"; }
+                  htmlResult += "<p class='tt-suggestion'>" + d.nam + " " + stratRankMap[d.rnk] + " <small class=taxaRank>" + d.cc2 + "</small></p>";
+                  break;
+                case "prs": 
+                  if ( currentType != "prs" ) { htmlResult += "<h4 class='autocompleteTitle'>Authorizers</h4>"; currentType = "prs"; }
+                  htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.ist + "</small></p>"
+                  break;
+                case "txn": 
+                  if ( currentType != "txn" ) { htmlResult += "<h4 class='autocompleteTitle'>Taxa</h4>"; currentType = "txn"; }
+                  if (d.tdf) { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small><br><small class=misspelling>" + d.tdf + " " + d.acn + "</small></p>"; }
+                  else { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small></p>"; }
+                  break;
+                default: //do nothing 
+                }
+              })
           }
-
-          document.activeElement.blur();
-          $("#universalAutocompleteInput").blur();
-          $("#universalAutocompleteInput").typeahead("setQuery", "");
-          $(".navbar-collapse").collapse("hide");
-
-        }
+          $("#universalSearchResult").html(htmlResult);
+          $("#universalSearchResult").css("display","block");
+          return;
+        })
       });
+
+      // var universalAutocomplete = $("#universalAutocompleteInput").typeahead([
+      //   {
+      //     name: 'universal',
+      //     remote: {
+      //       url: dataUrl + dataService + '/combined/auto.json?name=%QUERY',
+      //       filter: function(data) {
+      //         data.records.forEach(function(d) {
+      //           if (d.oid.substr(0,3)=='txn'){
+      //           d.rank = taxaBrowser.rankMap(d.rnk);
+      //         }});
+      //         return data.records;
+      //       }
+      //     },
+      //     valueKey: 'nam',
+      //     minLength:3,
+      //     limit: 10,
+      //     // header: '<h4 class="autocompleteTitle">Taxa</h4>',
+      //     template: universalTemplate
+      //   }
+        // {
+        //   name: 'time',
+        //   prefetch: {
+        //     url: dataUrl + dataService + '/intervals/list.json?scale=1&order=age.desc&max_ma=4000',
+        //     filter: function(data) {
+        //       return data.records;
+        //     }
+        //   },
+        //   valueKey: 'nam',
+        //   header: '<h4 class="autocompleteTitle">Time Intervals</h4>',
+        //   limt: 5
+        // },
+        // {
+        //   name: 'contribs',
+        //   prefetch: {
+        //     url: dataUrl + dataService + '/people/list.json?name=%',
+        //     filter: function(data) {
+        //       return data.records;
+        //     }
+        //   },
+        //   valueKey: 'nam',
+        //   header: '<h4 class="autocompleteTitle">Authorizers</h4>',
+        //   limit: 5
+        // },
+        // {
+        //   name: 'taxa',
+        //   remote: {
+        //     url: dataUrl + dataService + '/taxa/auto.json?name=%QUERY&limit=10',
+        //     filter: function(data) {
+        //       data.records.forEach(function(d) {
+        //         d.rank = taxaBrowser.rankMap(d.rnk);
+        //       });
+        //       return data.records;
+        //     }
+        //   },
+        //   valueKey: 'nam',
+        //   minLength:3,
+        //   limit: 10,
+        //   header: '<h4 class="autocompleteTitle">Taxa</h4>',
+        //   template: taxaTemplate
+        // },
+        // {
+        //   name: 'strat',
+        //   minLength: 3,
+        //   limit: 10,
+        //   header: '<h4 class="autocompleteTitle">Stratigraphy</h4>',
+        //   remote: {
+        //     url: dataUrl + dataService + '/strata/auto.json?name=%QUERY',
+        //     filter: function(data) {
+        //       data.records.forEach(function(d) {
+        //         d.display_name = d.nam + " " + stratRankMap[d.rnk];
+        //         d.type = stratRankMap[d.rnk];
+        //       });
+        //       return data.records
+        //     }
+        //   },
+        //   valueKey: 'display_name'
+        // }
+      // ]);
+
+      // universalAutocomplete.on('typeahead:selected', function(evt, data, dataset) {
+      //   $(".navbar-collapse").collapse("hide");
+      //   switch (dataset) {
+      //     case 'contribs':
+      //       navMap.filterByPerson(data);
+      //       document.activeElement.blur();
+      //       break;
+      //     case 'time':
+      //       timeScale.goTo(data.nam);
+      //       navMap.filterByTime(data.nam);
+      //       navMap.refresh("reset");
+      //       break;
+      //     case 'taxa':
+      //       navMap.filterByTaxon(data.nam);
+      //       break;
+      //     case 'strat':
+      //       navMap.filterByStratigraphy(data);
+      //       break;
+      //     default:
+      //       console.log("default");
+      //       break;
+
+      //     $(".navbar-collapse").css("height", "auto");
+      //     $(".navbar-collapse").css("max-height", "340px");
+      //   }
+
+      //   document.activeElement.blur();
+      //   $("#universalAutocompleteInput").blur();
+      //   $("#universalAutocompleteInput").typeahead("setQuery", "");
+      // });
+
+      // $("#universalAutocompleteInput").on("focus", function() {
+      //   if (window.innerWidth < 700) {
+      //     $(".navbar-collapse").css("height", window.innerHeight - 50 + "px");
+      //     $(".navbar-collapse").css("max-height", window.innerHeight - 50 + "px");
+      //     $(".tt-dropdown-menu").css("width", $("#universalAutocompleteInput").width() + "px");
+      //   }
+      // });
+
+      // $("#universalAutocompleteInput").on("blur", function() {
+      //   window.scrollTo(0,0);
+      //   if (window.innerWidth < 700) {
+      //     $(".navbar-collapse").css("height", "auto");
+      //     $(".navbar-collapse").css("max-height", "340px");
+      //   }
+      // });
+
+      // $("#universalSearchButton").click(function(event) {
+      //   event.preventDefault();
+      //   return;
+      // });
+
+      // $('input#universalAutocompleteInput').keypress(function (e) {
+      //   if (e.which === 13) {
+      //     var selectedValue = $('input#universalAutocompleteInput').data().ttView.dropdownView.getFirstSuggestion();
+
+      //     switch (selectedValue.dataset) {
+      //       case 'contribs':
+      //         navMap.filterByPerson(selectedValue.datum);
+      //         document.activeElement.blur();
+      //         break;
+      //       case 'time':
+      //         timeScale.goTo(selectedValue.datum.nam);
+      //         navMap.filterByTime(selectedValue.datum.nam);
+      //         navMap.refresh("reset");
+      //         break;
+      //       case 'taxa':
+      //         navMap.filterByTaxon(selectedValue.datum.nam);
+      //         break;
+      //       case 'strat':
+      //         navMap.filterByStratigraphy(selectedValue.datum);
+      //         break;
+      //       default:
+      //         console.log("Default");
+      //         break;
+      //     }
+
+      //     document.activeElement.blur();
+      //     $("#universalAutocompleteInput").blur();
+      //     $("#universalAutocompleteInput").typeahead("setQuery", "");
+      //     $(".navbar-collapse").collapse("hide");
+
+      //   }
+      // });
 
       //attach window resize listener to the window
       d3.select(window).on("resize", function() {
