@@ -1762,7 +1762,7 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&show=comments,ent,entname,crmod&showsource";
+      url += "&show=comments,ent,entname,crmod&datainfo";
 
       window.open(url);
     },
@@ -1795,7 +1795,7 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&showsource";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&datainfo";
 
       window.open(url);
     },
@@ -1884,7 +1884,7 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&datainfo";
 
       return url;
     },
