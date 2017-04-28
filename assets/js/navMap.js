@@ -1702,7 +1702,6 @@ var navMap = (function() {
         filters.exist.personFilter = true;
         filters.personFilter.id = (person.oid) ? person.oid : person.id;
         filters.personFilter.name = (person.name) ? person.name : person.nam;
-        console.log(filters.personFilter);
         navMap.updateFilterList("personFilter");
 
         // Refresh either the reconstruction map or the regular one
@@ -2031,7 +2030,7 @@ var navMap = (function() {
 
     "summarize" : function(data) {
       if (data.records.length > 0) {
-        if (data.records[0].typ === "col") {
+        if (data.records[0].oid.substr(0,3) === "col") {
           navMap.totalCollections = numberWithCommas(data.records.length);
         } else {
           navMap.totalCollections = numberWithCommas(d3.sum(data.records, function(d) { return d.nco }));
