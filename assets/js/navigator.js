@@ -272,39 +272,6 @@ var paleo_nav = (function() {
         return;
       });
 
-      // $('input#universalAutocompleteInput').keypress(function (e) { //if the user hits enter instead of clicking
-      //   if (e.which === 13 & $("#universalAutocompleteInput").val().length > 2) {
-      //     var selectedValue = $('input#universalAutocompleteInput').data().ttView.dropdownView.getFirstSuggestion();
-
-      //     switch (selectedValue.dataset) {
-      //       case 'contribs':
-      //         navMap.filterByPerson(selectedValue.datum);
-      //         document.activeElement.blur();
-      //         break;
-      //       case 'time':
-      //         timeScale.goTo(selectedValue.datum.nam);
-      //         navMap.filterByTime(selectedValue.datum.nam);
-      //         navMap.refresh("reset");
-      //         break;
-      //       case 'taxa':
-      //         navMap.filterByTaxon(selectedValue.datum.nam);
-      //         break;
-      //       case 'strat':
-      //         navMap.filterByStratigraphy(selectedValue.datum);
-      //         break;
-      //       default:
-      //         console.log("Default");
-      //         break;
-      //     }
-
-      //     document.activeElement.blur();
-      //     $("#universalAutocompleteInput").blur();
-      //     $("#universalAutocompleteInput").typeahead("setQuery", "");
-      //     $(".navbar-collapse").collapse("hide");
-
-      //   }
-      // });
-
       //attach window resize listener to the window
       d3.select(window).on("resize", function() {
         timeScale.resize();
