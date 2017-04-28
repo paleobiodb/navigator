@@ -289,7 +289,7 @@ var navMap = (function() {
 
         // If filters are applied to the map
         if (filtered) {
-          // If only a tim filter is applied...
+          // If only a time filter is applied...
           if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
             url += "&level=3";
             url = navMap.parseURL(url);
@@ -315,6 +315,7 @@ var navMap = (function() {
           } else {
             url += "&level=2";
             url = navMap.parseURL(url);
+            url = url.replace("touched_by", "colls_touched_by");
           }
         // If there are no filters
         } else {
@@ -444,8 +445,8 @@ var navMap = (function() {
         // If not filtered only by a time interval, refresh normally
         } else {
           var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
-
-          currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+          url = navMap.parseURL(url);
+          currentRequest = d3.json(url, function(error, data) {
             if (error) {
               return paleo_nav.hideLoading();
             }
@@ -455,8 +456,8 @@ var navMap = (function() {
 
       } else {
         var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all&show=ref,time,strat,geo,lith,entname,prot&markrefs';
-
-        currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+        url = navMap.parseURL(url) ;
+        currentRequest = d3.json(url, function(error, data) {
           if (error) {
             return paleo_nav.hideLoading();
           }
