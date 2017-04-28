@@ -210,7 +210,7 @@ var paleo_nav = (function() {
                   break;
                 case "txn": 
                   if ( currentType != "txn" ) { htmlResult += "<h4 class='autocompleteTitle'>Taxa</h4>"; currentType = "txn"; }
-                  htmlResult += "<div class='suggestion' data-string='" + d.nam + "' data-rtype='" + rtype + "'>"
+                  htmlResult += "<div class='suggestion' data-nam='" + d.nam + "' data-rtype='" + rtype + "'>"
                   if (d.tdf) { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small><br><small class=misspelling>" + d.tdf + " " + d.acn + "</small></p></div>"; }
                   else { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small></p></div>"; }
                   break;
@@ -455,7 +455,7 @@ var paleo_nav = (function() {
           }
         }
 
-        var url = dataUrl + dataService + '/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&count';
+        var url = dataUrl + dataService + '/occs/list.json' + '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=0&rowcount';
         url = navMap.parseURL(url);
 
         d3.json(url, function(err, results) {
