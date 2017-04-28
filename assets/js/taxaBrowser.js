@@ -78,31 +78,31 @@ var taxaBrowser = (function(){
     var parent_list = [],
         last_oid = 0;
 
-    if (taxon.kgt && taxon.kgn && taxon.kgn != taxon.gid) {
+    if (taxon.kgt && taxon.kgn && taxon.kgn != taxon.oid) {
       taxon.kgt.rnk = 'kingdom';
       parent_list.push(taxon.kgt);
       last_oid = taxon.kgn;
     }
 
-    if (taxon.phl && taxon.phn && taxon.phn != taxon.gid) {
+    if (taxon.phl && taxon.phn && taxon.phn != taxon.oid) {
       taxon.pht.rnk = 'phylum';
       parent_list.push(taxon.pht);
       last_oid = taxon.phn;
     }
 
-    if (taxon.cll && taxon.cln && taxon.cln != taxon.gid) {
+    if (taxon.cll && taxon.cln && taxon.cln != taxon.oid) {
       taxon.clt.rnk = 'class';
       parent_list.push(taxon.clt);
       last_oid = taxon.cln;
     }
 
-    if (taxon.odl && taxon.odn && taxon.odn != taxon.gid) {
+    if (taxon.odl && taxon.odn && taxon.odn != taxon.oid) {
       taxon.odt.rnk = 'order';
       parent_list.push(taxon.odt);
       last_oid = taxon.odn;
     }
 
-    if (taxon.fml && taxon.fmn && taxon.fmn != taxon.gid) {
+    if (taxon.fml && taxon.fmn && taxon.fmn != taxon.oid) {
       taxon.fmt.rnk = 'family';
       parent_list.push(taxon.fmt);
       last_oid = taxon.fmn;
@@ -130,7 +130,7 @@ var taxaBrowser = (function(){
       .attr("class", function(d, i) {
         // If the current data point being bound is the last one...
         if (i === parent_list.length - 1) {
-          // If extint, add that class
+          // If extinct, add that class
           if (d.ext === 0) {
             return "immediateParent extinct parents";
           } else {
@@ -158,32 +158,32 @@ var taxaBrowser = (function(){
     }
 
     if (taxon.phs) {
-        section_list.push({ section: "phyla", size: taxon.phc, rank: 20,
+        section_list.push({ section: "phyla", size: taxon.phs.length, rank: 20,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.phs });
     }
 
     if (taxon.cls) {
-        section_list.push({ section: "classes", size: taxon.clc, rank: 17,
+        section_list.push({ section: "classes", size: taxon.cls.length, rank: 17,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.cls });
     }
 
     if (taxon.ods) {
-        section_list.push({ section: "orders", size: taxon.odc, rank: 13,
+        section_list.push({ section: "orders", size: taxon.ods.length, rank: 13,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.ods });
     }
 
     if (taxon.fms) {
-        section_list.push({ section: "families", size: taxon.fmc, rank: 9,
+        section_list.push({ section: "families", size: taxon.fms.length, rank: 9,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.fms });
     }
 
     if (taxon.gns) {
-        section_list.push({ section: "genera", size: taxon.gnc, rank: 5,
+        section_list.push({ section: "genera", size: taxon.gns.length, rank: 5,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.gns });
     }
 
     if (taxon.sgs && taxon.sgs.length > 0) {
-        section_list.push({ section: "subgenera", size: taxon.gnc, rank: 4,
+        section_list.push({ section: "subgenera", size: taxon.sgs.length, rank: 4,
           offset: 0, max: 10, order: 'size.desc', taxa: taxon.sgs });
     }
 
