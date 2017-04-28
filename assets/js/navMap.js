@@ -1695,11 +1695,13 @@ var navMap = (function() {
     },
 
     "filterByPerson": function(person, norefresh) {
+      // person is = {"id": , "nam": "M. Uhen" }
       if (person) {
         // Update map filters
         filters.exist.personFilter = true;
         filters.personFilter.id = (person.oid) ? person.oid : person.id;
         filters.personFilter.name = (person.name) ? person.name : person.nam;
+        console.log(filters.personFilter);
         navMap.updateFilterList("personFilter");
 
         // Refresh either the reconstruction map or the regular one
@@ -1712,7 +1714,7 @@ var navMap = (function() {
     },
 
     "filterByStratigraphy": function(rock) {
-      // rock is = {"name": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
+      // rock is = {"nam": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
       if (rock) {
         filters.exist.stratigraphy = true;
         filters.stratigraphy.name = rock.nam;
@@ -1762,7 +1764,7 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&show=comments,ent,entname,crmod&showsource";
+      url += "&show=comments,ent,entname,crmod&datainfo";
 
       window.open(url);
     },
@@ -1795,7 +1797,7 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&showsource";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&datainfo";
 
       window.open(url);
     },
@@ -1884,7 +1886,7 @@ var navMap = (function() {
 
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&datainfo";
 
       return url;
     },
