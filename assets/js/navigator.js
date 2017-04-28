@@ -649,7 +649,7 @@ var paleo_nav = (function() {
         ne.lat = 90;
       }
 
-      var prevalenceURL = navMap.parseURL(testUrl + dataService + "/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+      var prevalenceURL = navMap.parseURL(dataUrl + dataService + "/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
       prevalenceURL = prevalenceURL.replace("touched_by", "occs_touched_by");
       currentPrevRequest = d3.json(prevalenceURL, function(error, data) {
         var scale = d3.scale.linear()
