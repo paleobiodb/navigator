@@ -617,7 +617,7 @@ var paleo_nav = (function() {
       }
 
       var prevalenceURL = navMap.parseURL(dataUrl + dataService + "/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
-      prevalenceURL = prevalenceURL.replace("touched_by", "occs_touched_by");
+      prevalenceURL = prevalenceURL.replace("authent_by", "occs_authent_by");
       currentPrevRequest = d3.json(prevalenceURL, function(error, data) {
         var scale = d3.scale.linear()
           .domain([d3.min(data.records, function(d) {
