@@ -315,7 +315,7 @@ var navMap = (function() {
           } else {
             url += "&level=2";
             url = navMap.parseURL(url);
-            url = url.replace("authent_by", "colls_authent_by");
+            url = url.replace("authent_by", "occs_authent_by");
           }
         // If there are no filters
         } else {
