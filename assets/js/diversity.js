@@ -14,6 +14,9 @@ var diversityPlot = (function() {
         diversityPlot.currentRequest = {};
       }
     }
+    if(url.match('authent_by')){
+      url = url.replace('/quickdiv.json','/diversity.json');
+    }
     diversityPlot.currentRequest = d3.json(url, function(error, data) {
       if (error) {
         alert("Error retrieving diversity data");

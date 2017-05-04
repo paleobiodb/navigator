@@ -285,11 +285,11 @@ var navMap = (function() {
           }
         }
 
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
+        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time';
 
         // If filters are applied to the map
         if (filtered) {
-          // If only a tim filter is applied...
+          // If only a time filter is applied...
           if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
             url += "&level=3";
             url = navMap.parseURL(url);
@@ -408,7 +408,7 @@ var navMap = (function() {
 
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
       if (zoom < 5 && filtered === false) {
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
+        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           if (error) {
@@ -421,7 +421,7 @@ var navMap = (function() {
 
         // If filtered only by a time interval...
         if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time&level=3';
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time&level=3';
           url = navMap.parseURL(url);
 
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -443,9 +443,9 @@ var navMap = (function() {
           }
         // If not filtered only by a time interval, refresh normally
         } else {
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
-
-          currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&show=time';
+          url = navMap.parseURL(url);
+          currentRequest = d3.json(url, function(error, data) {
             if (error) {
               return paleo_nav.hideLoading();
             }
@@ -454,9 +454,9 @@ var navMap = (function() {
         }
 
       } else {
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all&show=ref,time,strat,geo,lith,entname,prot&markrefs';
-
-        currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&show=ref,time,strat,geo,lith,entname,prot&markrefs';
+        url = navMap.parseURL(url) ;
+        currentRequest = d3.json(url, function(error, data) {
           if (error) {
             return paleo_nav.hideLoading();
           }
@@ -1252,7 +1252,7 @@ var navMap = (function() {
                 url += '&interval_id=' + filters.selectedInterval.oid;
                 break;
               case "personFilter":
-                url += '&touched_by=' + filters.personFilter.id;
+                url += '&occs_authent_by=' + filters.personFilter.id;
                 break;
               case "taxon":
                 url += '&base_id=';
@@ -1695,6 +1695,7 @@ var navMap = (function() {
     },
 
     "filterByPerson": function(person, norefresh) {
+      // person is = {"id": , "nam": "M. Uhen" }
       if (person) {
         // Update map filters
         filters.exist.personFilter = true;
@@ -1712,7 +1713,7 @@ var navMap = (function() {
     },
 
     "filterByStratigraphy": function(rock) {
-      // rock is = {"name": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
+      // rock is = {"nam": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
       if (rock) {
         filters.exist.stratigraphy = true;
         filters.stratigraphy.name = rock.nam;
@@ -1751,18 +1752,18 @@ var navMap = (function() {
       }
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        url += "?limit=all";
+        url += "?";
       } else {
         sw.lat = sw.lat.toFixed(4);
         sw.lng = sw.lng.toFixed(4);
         ne.lat = ne.lat.toFixed(4);
         ne.lng = ne.lng.toFixed(4);
-        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
       }
 
       url = navMap.parseURL(url);
 
-      url += "&show=comments,ent,entname,crmod&showsource";
+      url += "&show=comments,ent,entname,crmod&datainfo";
 
       window.open(url);
     },
@@ -1784,19 +1785,23 @@ var navMap = (function() {
       }
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        url += "?limit=all";
+        url += "?";
       } else {
         sw.lat = sw.lat.toFixed(4);
         sw.lng = sw.lng.toFixed(4);
         ne.lat = ne.lat.toFixed(4);
         ne.lng = ne.lng.toFixed(4);
-        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
       }
 
       url = navMap.parseURL(url);
+      
+      if (url == paleo_nav.dataUrl + paleo_nav.dataService + "/occs/list.csv?") {
+        url += '&all_records';
+      }
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&showsource";
-
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&datainfo";
+      
       window.open(url);
     },
 
@@ -1873,18 +1878,18 @@ var navMap = (function() {
           url = paleo_nav.dataUrl + paleo_nav.dataService + '/occs/list.json';
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        url += "?limit=all";
+        url += "?";
       } else {
         sw.lat = sw.lat.toFixed(4);
         sw.lng = sw.lng.toFixed(4);
         ne.lat = ne.lat.toFixed(4);
         ne.lng = ne.lng.toFixed(4);
-        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
       }
 
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&datainfo";
 
       return url;
     },
@@ -2028,7 +2033,7 @@ var navMap = (function() {
 
     "summarize" : function(data) {
       if (data.records.length > 0) {
-        if (data.records[0].typ === "col") {
+        if (data.records[0].oid.substr(0,3) === "col") {
           navMap.totalCollections = numberWithCommas(data.records.length);
         } else {
           navMap.totalCollections = numberWithCommas(d3.sum(data.records, function(d) { return d.nco }));
