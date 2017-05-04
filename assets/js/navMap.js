@@ -315,7 +315,6 @@ var navMap = (function() {
           } else {
             url += "&level=2";
             url = navMap.parseURL(url);
-            url = url.replace("authent_by", "occs_authent_by");
           }
         // If there are no filters
         } else {
@@ -1253,7 +1252,7 @@ var navMap = (function() {
                 url += '&interval_id=' + filters.selectedInterval.oid;
                 break;
               case "personFilter":
-                url += '&authent_by=' + filters.personFilter.id;
+                url += '&occs_authent_by=' + filters.personFilter.id;
                 break;
               case "taxon":
                 url += '&base_id=';
