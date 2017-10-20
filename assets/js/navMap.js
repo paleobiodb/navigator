@@ -949,30 +949,26 @@ var navMap = (function() {
       var occurrenceTree = {"phyla": []};
 
       data.records.forEach(function(d) {
-        // Some preproccessing
-        d.rank = (d.mra) ? taxaBrowser.rankMap(d.mra) : (d.rank) ?  taxaBrowser.rankMap(d.rnk) : "Unknown";
+        // Some preprocessing
+        d.rank = (d.rnk) ?  taxaBrowser.rankMap(d.rnk) : (d.idr) ? taxaBrowser.rankMap(d.idr) : "Unknown";
         d.italics = (d.rnk < 6) ? "italics" : "";
         if (typeof d.tna === 'undefined') { d.tna = d.idn; }
-        d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
-        d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : (d.tid > 0) ? d.idt : "";
+        d.old_name = (d.tna.split(" ")[0] != d.idg) ? d.tna : "";
+        // d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : (d.tid > 0) ? d.idt : "";
+        d.url = (d.rank === "species") ? (d.idg + " " + d.ids) : (d.tid) ? ((d.tid.split(':')[1] > 0) ? d.idg : "") : "";
 
         // If it has a genus name...
-        if (d.idt) {
+        if (d.idg) {
+          var genusRes = (d.rsg) ? d.rsg + " " : "",
+              speciesRes = (d.rss) ? " " + d.rss + " " : " ";
+          d.genusRes = genusRes;
           // If it's a species...
           if (d.rank === "species") {
-            var genusRes = (d.rst) ? d.rst + " " : "",
-                speciesRes = (d.rss) ? " " + d.rss + " " : " ";
-            d.genusRes = genusRes;
-            //d.display_name1 = d.idt + " " + d.ids;
-            // d.display_name2 = "";
-            d.display_name1 = d.mna;
-            d.display_name2 = (d.mna != (d.idt + " " + d.ids)) ? ("(" + d.tna + ")") : "";
+            d.display_name1 = d.tna;
+            d.display_name2 = (d.tna != (d.idg + " " + d.ids)) ? ("(" + d.tna + ")") : "";
             d.display_name3 = "";
           } else {
-            var genusRes = (d.rst) ? d.rst + " " : "",
-                speciesRes = (d.rss) ? " " + d.rss + " " : "";
-            d.genusRes = genusRes;
-            d.display_name1 = d.idt;
+            d.display_name1 = d.idg;
             d.display_name2 = speciesRes;
             d.display_name3 = d.ids;
           }
@@ -1631,12 +1627,20 @@ var navMap = (function() {
     },
 
 
-    "filterByTaxon": function(name, preventRefresh, isPhylo) {
+    "filterByTaxon": function(name, preventRefresh) {
       if (!name) {
         var name = $("#taxonInput").val();
       }
 
-      d3.json(paleo_nav.dataUrl + paleo_nav.dataService + '/taxa/list.json?name=' + name + '&show=seq', function(err, data) {
+      var selector;
+      
+      if (name.match(/^txn:|^var:/)) {
+        selector = "id=" + name;
+      } else {
+        selector = "name=" + name;
+      }
+
+      d3.json(paleo_nav.dataUrl + paleo_nav.dataService + '/taxa/list.json?' + selector + '&show=seq', function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
           return paleo_nav.hideLoading();

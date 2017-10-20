@@ -16,10 +16,19 @@ var taxaBrowser = (function(){
     if (!name) {
       var name = $("#taxonInput").val();
     }
+
+    var selector;
+      
+    if (name.match(/^txn:|^var:/)) {
+      selector = "id=" + name;
+    } else {
+      selector = "name=" + name;
+    }
+
     // If there is a taxon to search for...
     if (name.length > 0) {
       // Ask the API for the taxon oid
-      d3.json(paleo_nav.dataUrl + paleo_nav.dataService + '/taxa/list.json?status=all&name=' + name, function(err, data) {
+      d3.json(paleo_nav.dataUrl + paleo_nav.dataService + '/taxa/list.json?status=all&' + selector, function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
           paleo_nav.hideLoading();
