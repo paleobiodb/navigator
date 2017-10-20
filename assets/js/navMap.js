@@ -285,11 +285,11 @@ var navMap = (function() {
           }
         }
 
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time';
+        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time';
 
         // If filters are applied to the map
         if (filtered) {
-          // If only a tim filter is applied...
+          // If only a time filter is applied...
           if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
             url += "&level=3";
             url = navMap.parseURL(url);
@@ -408,7 +408,7 @@ var navMap = (function() {
 
       // Depending on the zoom level, call a different service from PaleoDB, feed it a bounding box, and pass it to the proper point parsing function
       if (zoom < 5 && filtered === false) {
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&limit=all&show=time';
+        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&show=time';
 
         currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
           if (error) {
@@ -421,7 +421,7 @@ var navMap = (function() {
 
         // If filtered only by a time interval...
         if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&limit=all&show=time&level=3';
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time&level=3';
           url = navMap.parseURL(url);
 
           if (typeof(timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -443,9 +443,9 @@ var navMap = (function() {
           }
         // If not filtered only by a time interval, refresh normally
         } else {
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&limit=all&show=time';
-
-          currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&show=time';
+          url = navMap.parseURL(url);
+          currentRequest = d3.json(url, function(error, data) {
             if (error) {
               return paleo_nav.hideLoading();
             }
@@ -454,9 +454,9 @@ var navMap = (function() {
         }
 
       } else {
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all&show=ref,time,strat,geo,lith,entname,prot&markrefs';
-
-        currentRequest = d3.json(navMap.parseURL(url), function(error, data) {
+        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&show=ref,time,strat,geo,lith,entname,prot&markrefs';
+        url = navMap.parseURL(url) ;
+        currentRequest = d3.json(url, function(error, data) {
           if (error) {
             return paleo_nav.hideLoading();
           }
@@ -807,6 +807,7 @@ var navMap = (function() {
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
+          d.oid = d.oid.replace(":","");          
         });
 
         var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
@@ -856,7 +857,7 @@ var navMap = (function() {
           url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/list.json?clust_id=" + id;
 
       url = navMap.parseURL(url);
-      url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20";
+      url += "&show=ref,loc,time,strat,geo,lith,entname,prot&markrefs&limit=20&rowcount";
 
       d3.json(url, function(err, data) {
         if (err) {
@@ -867,6 +868,7 @@ var navMap = (function() {
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
+          d.oid = d.oid.replace("col:","");
         });
 
         var output = Mustache.render(stackedCollectionPartial, {"members": data.records });
@@ -881,11 +883,11 @@ var navMap = (function() {
         $(".collectionCollapse").on("show.bs.collapse", function(d) {
           var id = d.target.id;
           id = id.replace("collapse", "");
-        /* Placeholder for data service fix
-          var url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
-          url = navMap.parseURL(url);
-          d3.json(url, function(err, data) {
-        */
+          /* Placeholder for data service fix
+            var url = paleo_nav.dataUrl + paleo_nav.dataService + "/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs";
+            url = navMap.parseURL(url);
+            d3.json(url, function(err, data) {
+          */
           d3.json(paleo_nav.dataUrl + paleo_nav.dataService + "/colls/single.json?id=" + id + "&show=ref,time,strat,geo,lith,entname,prot&markrefs", function(err, data) {
             if (err) {
               return paleo_nav.hideLoading();
@@ -895,33 +897,33 @@ var navMap = (function() {
         });
 
         $(".occurrenceTab").on("show.bs.tab", function(d) {
-            var id = d.target.id;
-            id = id.replace("occToggle", "");
+          var id = d.target.id;
+          id = id.replace("occToggle", "");
 
-            var url = navMap.parseURL(paleo_nav.dataUrl + paleo_nav.dataService + "/occs/list.json?coll_id=" + id + "&show=phylo,ident");
+          var url = navMap.parseURL(paleo_nav.dataUrl + paleo_nav.dataService + "/occs/list.json?coll_id=" + id + "&show=phylo,ident");
 
-            d3.json(url, function(err, data) {
-              if (err) {
-                return paleo_nav.hideLoading();
-              }
-              if (data.records.length > 0) {
-                var taxonHierarchy = navMap.buildTaxonHierarchy(data);
+          d3.json(url, function(err, data) {
+            if (err) {
+              return paleo_nav.hideLoading();
+            }
+            if (data.records.length > 0) {
+              var taxonHierarchy = navMap.buildTaxonHierarchy(data);
 
-                var output = Mustache.render(occurrencePartial, taxonHierarchy);
-                $("#occurrences" + id).html(output);
+              var output = Mustache.render(occurrencePartial, taxonHierarchy);
+              $("#occurrences" + id).html(output);
 
-                $(".filterByOccurrence").click(function(event) {
-                  event.preventDefault();
-                  navMap.filterByTaxon($(this).attr("data-name"));
-                  $("#collectionModal").modal("hide");
-                });
+              $(".filterByOccurrence").click(function(event) {
+                event.preventDefault();
+                navMap.filterByTaxon($(this).attr("data-name"));
+                $("#collectionModal").modal("hide");
+              });
 
-              } else {
-                var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
-                $("#occurrences" + id).html(output);
-              }
-            });
+            } else {
+              var output = Mustache.render(occurrencePartial, {"error": "No occurrences found for this collection"});
+              $("#occurrences" + id).html(output);
+            }
           });
+        });
 
         // Handle showing/hiding "show more collections"
         if (data.records_found <= data.records_returned) {
@@ -949,7 +951,8 @@ var navMap = (function() {
       data.records.forEach(function(d) {
         // Some preproccessing
         d.rank = (d.mra) ? taxaBrowser.rankMap(d.mra) : (d.rank) ?  taxaBrowser.rankMap(d.rnk) : "Unknown";
-        d.itallics = (d.rnk < 6) ? "itallics" : "";
+        d.italics = (d.rnk < 6) ? "italics" : "";
+        if (typeof d.tna === 'undefined') { d.tna = d.idn; }
         d.old_name = (d.tna.split(" ")[0] != d.idt) ? d.tna : "";
         d.url = (d.rank === "species") ? (d.idt + " " + d.ids) : (d.tid > 0) ? d.idt : "";
 
@@ -1080,6 +1083,7 @@ var navMap = (function() {
           d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
           d.lat = Math.round(d.lat * 10000) / 10000;
           d.lng = Math.round(d.lng * 10000) / 10000;
+          d.oid = d.oid.replace("col:","");
         });
 
         var output = Mustache.render(collectionModalPartial, data);
@@ -1150,6 +1154,7 @@ var navMap = (function() {
         d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
         d.lat = Math.round(d.lat * 10000) / 10000;
         d.lng = Math.round(d.lng * 10000) / 10000;
+        d.oid = d.oid.replace("col:","");
       });
 
       var output = Mustache.render(stackedCollectionPartial, data);
@@ -1247,7 +1252,7 @@ var navMap = (function() {
                 url += '&interval_id=' + filters.selectedInterval.oid;
                 break;
               case "personFilter":
-                url += '&touched_by=' + filters.personFilter.id;
+                url += '&occs_authent_by=' + filters.personFilter.id;
                 break;
               case "taxon":
                 url += '&base_id=';
@@ -1690,6 +1695,7 @@ var navMap = (function() {
     },
 
     "filterByPerson": function(person, norefresh) {
+      // person is = {"id": , "nam": "M. Uhen" }
       if (person) {
         // Update map filters
         filters.exist.personFilter = true;
@@ -1707,7 +1713,7 @@ var navMap = (function() {
     },
 
     "filterByStratigraphy": function(rock) {
-      // rock is = {"name": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
+      // rock is = {"nam": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
       if (rock) {
         filters.exist.stratigraphy = true;
         filters.stratigraphy.name = rock.nam;
@@ -1746,18 +1752,18 @@ var navMap = (function() {
       }
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        url += "?limit=all";
+        url += "?";
       } else {
         sw.lat = sw.lat.toFixed(4);
         sw.lng = sw.lng.toFixed(4);
         ne.lat = ne.lat.toFixed(4);
         ne.lng = ne.lng.toFixed(4);
-        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
       }
 
       url = navMap.parseURL(url);
 
-      url += "&show=comments,ent,entname,crmod&showsource";
+      url += "&show=comments,ent,entname,crmod&datainfo";
 
       window.open(url);
     },
@@ -1779,19 +1785,23 @@ var navMap = (function() {
       }
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        url += "?limit=all";
+        url += "?";
       } else {
         sw.lat = sw.lat.toFixed(4);
         sw.lng = sw.lng.toFixed(4);
         ne.lat = ne.lat.toFixed(4);
         ne.lng = ne.lng.toFixed(4);
-        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
       }
 
       url = navMap.parseURL(url);
+      
+      if (url == paleo_nav.dataUrl + paleo_nav.dataService + "/occs/list.csv?") {
+        url += '&all_records';
+      }
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&showsource";
-
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod,paleoloc&datainfo";
+      
       window.open(url);
     },
 
@@ -1868,18 +1878,18 @@ var navMap = (function() {
           url = paleo_nav.dataUrl + paleo_nav.dataService + '/occs/list.json';
 
       if (d3.select("#reconstructMap").style("display") === "block" || d3.select("#svgMap").style("display") === "block") {
-        url += "?limit=all";
+        url += "?";
       } else {
         sw.lat = sw.lat.toFixed(4);
         sw.lng = sw.lng.toFixed(4);
         ne.lat = ne.lat.toFixed(4);
         ne.lng = ne.lng.toFixed(4);
-        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&limit=all';
+        url += '?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat;
       }
 
       url = navMap.parseURL(url);
 
-      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&showsource";
+      url += "&show=coords,attr,loc,prot,time,strat,stratext,lith,lithext,geo,rem,ent,entname,crmod&datainfo";
 
       return url;
     },
@@ -2023,7 +2033,7 @@ var navMap = (function() {
 
     "summarize" : function(data) {
       if (data.records.length > 0) {
-        if (data.records[0].typ === "col") {
+        if (data.records[0].oid.substr(0,3) === "col") {
           navMap.totalCollections = numberWithCommas(data.records.length);
         } else {
           navMap.totalCollections = numberWithCommas(d3.sum(data.records, function(d) { return d.nco }));

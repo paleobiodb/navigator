@@ -791,11 +791,28 @@ br {
   box-shadow: none;
   -webkit-box-shadow: none;
 }
+
 .autocompleteTitle {
   margin: 0 10px 5px;
   padding: 7px 0;
   border-bottom: 1px solid #ccc;
 }
+.autocompleteError {
+  color: #aaa;
+  font-style: italic;
+}
+.tt-suggestion {
+  margin-bottom: 0;
+}
+.suggestion {
+  display: block;
+  cursor: pointer;
+}
+.suggestion:hover {
+  background-color: rgb(66, 139, 202);
+  color: white;
+}
+
 .navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
   background-color:#000;
 }
@@ -822,7 +839,7 @@ br {
 .occurrenceTabRow {
   width: 100%;
 }
-.itallics {
+.italics {
   font-style: italic;
 }
 
