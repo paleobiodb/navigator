@@ -1627,12 +1627,20 @@ var navMap = (function() {
     },
 
 
-    "filterByTaxon": function(name, preventRefresh, isPhylo) {
+    "filterByTaxon": function(name, preventRefresh) {
       if (!name) {
         var name = $("#taxonInput").val();
       }
 
-      d3.json(paleo_nav.dataUrl + paleo_nav.dataService + '/taxa/list.json?name=' + name + '&show=seq', function(err, data) {
+      var selector;
+      
+      if (name.match(/^txn:|^var:/)) {
+        selector = "id=" + name;
+      } else {
+        selector = "name=" + name;
+      }
+
+      d3.json(paleo_nav.dataUrl + paleo_nav.dataService + '/taxa/list.json?' + selector + '&show=seq', function(err, data) {
         if (err) {
           alert("Error retrieving from list.json - ", err);
           return paleo_nav.hideLoading();
