@@ -210,7 +210,7 @@ var paleo_nav = (function() {
                   break;
                 case "txn": 
                   if ( currentType != "txn" ) { htmlResult += "<h4 class='autocompleteTitle'>Taxa</h4>"; currentType = "txn"; }
-                  htmlResult += "<div class='suggestion' data-nam='" + d.nam + "' data-rtype='" + rtype + "'>"
+                  htmlResult += "<div class='suggestion' data-oid='" + d.oid + "' data-rtype='" + rtype + "'>"
                   if (d.tdf) { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small><br><small class=misspelling>" + d.tdf + " " + d.acn + "</small></p></div>"; }
                   else { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small></p></div>"; }
                   break;
@@ -240,7 +240,7 @@ var paleo_nav = (function() {
                 document.activeElement.blur();
                 break;
               case "txn": 
-                navMap.filterByTaxon($(this).attr("data-nam"));
+                navMap.filterByTaxon($(this).attr("data-oid"));
                 break;
               default: //do nothing           
             }
