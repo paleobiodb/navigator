@@ -1638,10 +1638,11 @@ var navMap = (function() {
 
       var selector;
       
-      if ( name.match(/^txn:|^var:/) )
+      if (name.match(/^txn:|^var:/)) {
         selector = "id=" + name;
-      else
+      } else {
         selector = "name=" + name;
+      }
 
       d3.json(paleo_nav.dataUrl + paleo_nav.dataService + '/taxa/list.json?' + selector + '&show=seq', function(err, data) {
         if (err) {

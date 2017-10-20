@@ -19,10 +19,11 @@ var taxaBrowser = (function(){
 
     var selector;
       
-    if ( name.match(/^txn:|^var:/) )
+    if (name.match(/^txn:|^var:/)) {
       selector = "id=" + name;
-    else
+    } else {
       selector = "name=" + name;
+    }
 
     // If there is a taxon to search for...
     if (name.length > 0) {
