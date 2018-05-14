@@ -329,7 +329,7 @@ var paleo_nav = (function() {
       $("#advstatsBox").on('show.bs.modal', function() {
         $(".advstatsContent").height(window.innerHeight - 70);
         $(".advdiversityContainer").height(window.innerHeight - 380)
-        $("#diversityWait").css("display", "block");
+        $("#advdiversityWait").css("display", "block");
         // Remove any old ones...
         d3.select("#advdiversity").select("svg").remove();
 

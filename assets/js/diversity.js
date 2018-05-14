@@ -94,10 +94,18 @@ var diversityPlot = (function() {
     // Calculate origination, extinction, and rangethrough diversity
     if (full) {
       data.map(function(d) {
-        d.origination = -Math.log((d.xbt)/(d.xbt+d.xft))/(d.eag-d.lag);
+        if (d.eag > 0.5) {
+          d.origination = -Math.log((d.xbt)/(d.xbt+d.xft))/(d.eag-d.lag);
+        } else {
+          d.origination = NaN;
+        };
       });
       data.map(function(d) {
-        d.extinction = -Math.log((d.xbt)/(d.xbt+d.xbl))/(d.eag-d.lag);
+        if (d.eag > 0.5) {
+          d.extinction = -Math.log((d.xbt)/(d.xbt+d.xbl))/(d.eag-d.lag);
+        } else {
+          d.origination = NaN;
+        };
       });
       data.map(function(d) {
         d.rangethroughYes = d.xft+d.xbl+d.xfl+d.xbt;
@@ -108,6 +116,7 @@ var diversityPlot = (function() {
       var origination = $('[name="extant"]').is(":checked");
       var extinction = $('[name="extant"]').is(":checked");
     };
+
 
     // Define a scale for the x axis
     var x = d3.scale.linear()
