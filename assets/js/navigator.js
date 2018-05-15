@@ -290,7 +290,7 @@ var paleo_nav = (function() {
     // Fires when the "quick diversity plot" modal opens
       $("#statsBox").on('show.bs.modal', function() {
         $(".statsContent").height(window.innerHeight - 70);
-        $(".diversityContainer").height(window.innerHeight - 380)
+        $(".diversityContainer").height(window.innerHeight - 140)
         $("#diversityWait").css("display", "block");
         // Remove any old ones...
         d3.select("#diversity").select("svg").remove();
@@ -328,7 +328,7 @@ var paleo_nav = (function() {
     // Fires when the "full diversity plot" modal opens
       $("#advstatsBox").on('show.bs.modal', function() {
         $(".advstatsContent").height(window.innerHeight - 70);
-        $(".advdiversityContainer").height(window.innerHeight - 380)
+        $(".advdiversityContainer").height(window.innerHeight - 140)
         $("#advdiversityWait").css("display", "block");
         // Remove any old ones...
         d3.select("#advdiversity").select("svg").remove();
