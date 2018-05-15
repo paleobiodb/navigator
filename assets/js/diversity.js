@@ -465,9 +465,10 @@ var diversityPlot = (function() {
   }
 
   function resize(full) {
+    console.log("resize function runs")
     var modalPrefix = full?"adv":"";
 
-    $("." + modalPrefix + "statsContent").height("auto");
+    // $("." + modalPrefix + "statsContent").height("auto");
     var containerHeight = $("." + modalPrefix + "diversityContainer").height() - 50,
         containerWidth = $("." + modalPrefix + "diversityContainer").width() ;
 
