@@ -1,6 +1,6 @@
 var diversityPlot = (function() {
-  var margin = {top: 0, right: 20, bottom: 80, left: 20},
-      padding = {top: 0, right: 80, bottom: 0, left: 80},
+  var margin = {top: 0, right: 20, bottom: 80, left: 80},
+      padding = {top: 0, right: 0, bottom: 0, left: 80},
       width = 960,
       height = 800 - margin.top - margin.bottom,
       currentRequest;
@@ -490,7 +490,7 @@ var diversityPlot = (function() {
       .attr("transform", "scale(" + scale + ")translate(" + (margin.left - 80) + "," + margin.top + ")");
     } else {
       d3.select("#" + modalPrefix + "diversityGraphGroup")
-      .attr("transform", "scale(" + scale + ")translate(" + (margin.left - 20) + "," + margin.top + ")");
+      .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.top + ")");
     }
 
     var computedWidth = d3.select("#" + modalPrefix + "diversityGraphGroup").node().getBBox().width;
