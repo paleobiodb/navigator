@@ -181,7 +181,7 @@
               <div class="row col-sm-3 diversityControls">
                 <div class="col-sm-12 diversityControl">
                   <p>Map bounds:</p>
-                  <p><strong id="divMapBounds">-180 to 180 N, -90 to 90 E</strong></p>
+                  <p><strong class="divMapBounds">-180 to 180 N, -90 to 90 E</strong></p>
                 </div>
                 <div class="col-sm-12 diversityControl">
                   <p>Change taxonomic level</p>
@@ -238,8 +238,12 @@
               </div>
               <div class="row col-sm-3 diversityControls">
                 <div class="col-sm-12 diversityControl">
+                  <p>Map bounds:</p>
+                  <p><strong class="divMapBounds">-180 to 180 N, -90 to 90 E</strong></p>
                   <p>Taxonomic level: <strong id="advtaxonLevel">Genus</strong></p>
                   <p>Temporal resolution: <strong id="advtimeLevel">Age</strong></p>
+                </div>
+                <div class="col-sm-12 diversityControl">
                   <p>Choose data to display</p>
                   <form>
                     <input type="checkbox" name="sampledLine" onchange="diversityPlot.toggleLine('sampledLine')" checked> Sampled-in-bin diversity<br>

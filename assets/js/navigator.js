@@ -312,7 +312,7 @@ var paleo_nav = (function() {
         var diversityURL = navMap.parseURL(testUrl + dataService + "/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         $(".diversityDownload").attr("href", diversityURL);
         // console.log(sw.lng.toFixed(1) + "° to " + ne.lng.toFixed(1) + "° N, " + sw.lat.toFixed(1) + "° to " + ne.lat.toFixed(1) + "° E");
-        $("#divMapBounds").html(sw.lng.toFixed(1) + "° to " + ne.lng.toFixed(1) + "° N, " + sw.lat.toFixed(1) + "° to " + ne.lat.toFixed(1) + "° E");
+        $(".divMapBounds").html(sw.lng.toFixed(1) + "° to " + ne.lng.toFixed(1) + "° N, " + sw.lat.toFixed(1) + "° to " + ne.lat.toFixed(1) + "° E");
         diversityPlot.plot(diversityURL,false);
 
       });
