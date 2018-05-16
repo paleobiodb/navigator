@@ -1,5 +1,5 @@
 var diversityPlot = (function() {
-  var margin = {top: 20, right: 20, bottom: 80, left: 80},
+  var margin = {top: 0, right: 20, bottom: 80, left: 20},
       padding = {top: 0, right: 80, bottom: 0, left: 80},
       width = 960,
       height = 800 - margin.top - margin.bottom,
@@ -521,6 +521,9 @@ var diversityPlot = (function() {
     var taxonLevel = $("[name=taxonLevel]").val();
     var timeLevel = $("[name=timeLevel]").val();
     var url=paleo_nav.dataUrl;
+
+    $("#advtaxonLevel").html(taxonLevel);
+    $("#advtimeLevel").html(timeLevel);
 
     var bounds = map.getBounds(),
       sw = bounds._southWest,

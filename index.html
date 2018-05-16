@@ -182,7 +182,7 @@
                 <div class="col-sm-12 diversityControl">
                   <p>Change taxonomic level</p>
                   <select name="taxonLevel" onchange="diversityPlot.updateQuickdiv()">
-                    <option value="genera">Genus </option>
+                    <option value="genera">Genus</option>
                     <option value="families">Family</option>
                     <option value="orders">Order</option>
                   </select>
@@ -234,6 +234,8 @@
               </div>
               <div class="row col-sm-3 diversityControls">
                 <div class="col-sm-12 diversityControl">
+                  <p>Taxonomic level: <strong id="advtaxonLevel">Genus</strong></p>
+                  <p>Temporal resolution: <strong id="advtimeLevel">Age</strong></p>
                   <p>Choose data to display</p>
                   <form>
                     <input type="checkbox" name="sampledLine" onchange="diversityPlot.toggleLine('sampledLine')" checked> Sampled-in-bin diversity<br>
