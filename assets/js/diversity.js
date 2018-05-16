@@ -117,7 +117,6 @@ var diversityPlot = (function() {
       var extinction = $('[name="extant"]').is(":checked");
     };
 
-
     // Define a scale for the x axis
     var x = d3.scale.linear()
       .domain([d3.max(eras, function(d) { return d.eag; }), d3.min(eras, function(d) { return d.lag; }) - 1])
