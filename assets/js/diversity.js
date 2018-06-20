@@ -1,5 +1,5 @@
 var diversityPlot = (function() {
-  var margin = {top: 20, right: 20, bottom: 80, left: 80},
+  var margin = {top: 0, right: 20, bottom: 80, left: 80},
       padding = {top: 0, right: 0, bottom: 0, left: 80},
       width = 960,
       height = 800 - margin.top - margin.bottom,
@@ -94,10 +94,18 @@ var diversityPlot = (function() {
     // Calculate origination, extinction, and rangethrough diversity
     if (full) {
       data.map(function(d) {
-        d.origination = -Math.log((d.xbt)/(d.xbt+d.xft))/(d.eag-d.lag);
+        if (d.eag > 0.5) {
+          d.origination = -Math.log((d.xbt)/(d.xbt+d.xft))/(d.eag-d.lag);
+        } else {
+          d.origination = NaN;
+        };
       });
       data.map(function(d) {
-        d.extinction = -Math.log((d.xbt)/(d.xbt+d.xbl))/(d.eag-d.lag);
+        if (d.eag > 0.5) {
+          d.extinction = -Math.log((d.xbt)/(d.xbt+d.xbl))/(d.eag-d.lag);
+        } else {
+          d.origination = NaN;
+        };
       });
       data.map(function(d) {
         d.rangethroughYes = d.xft+d.xbl+d.xfl+d.xbt;
@@ -460,7 +468,7 @@ var diversityPlot = (function() {
 
     $("." + modalPrefix + "statsContent").height("auto");
     var containerHeight = $("." + modalPrefix + "diversityContainer").height() - 50,
-        containerWidth = $("." + modalPrefix + "diversityContainer").width() ;
+        containerWidth = $("." + modalPrefix + "diversityContainer").width() - 50;
 
     if (containerHeight > containerWidth) {
       var scale = containerWidth / width;
@@ -471,6 +479,7 @@ var diversityPlot = (function() {
     } else {
       // width > height
       var scale = containerHeight / height;
+
       if ((scale * width) > containerWidth) {
         scale = containerWidth / width;
       }
@@ -478,16 +487,16 @@ var diversityPlot = (function() {
 
     if (full) {
       d3.select("#" + modalPrefix + "diversityGraphGroup")
-      .attr("transform", "scale(" + scale + ")translate(" + (margin.left - 80) + "," + margin.right + ")");
+      .attr("transform", "scale(" + scale + ")translate(" + (margin.left - 80) + "," + margin.top + ")");
     } else {
       d3.select("#" + modalPrefix + "diversityGraphGroup")
-      .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.right + ")");
+      .attr("transform", "scale(" + scale + ")translate(" + margin.left + "," + margin.top + ")");
     }
 
     var computedWidth = d3.select("#" + modalPrefix + "diversityGraphGroup").node().getBBox().width;
     d3.select("#" + modalPrefix + "diversityGraph")
       .attr("height", containerHeight + margin.bottom)
-      .attr("width", computedWidth * scale + margin.left + 20);
+      .attr("width", computedWidth * scale + margin.left);
 
     positionLabels(true);
   }
@@ -511,6 +520,9 @@ var diversityPlot = (function() {
     var taxonLevel = $("[name=taxonLevel]").val();
     var timeLevel = $("[name=timeLevel]").val();
     var url=paleo_nav.dataUrl;
+
+    $("#advtaxonLevel").html(taxonLevel);
+    $("#advtimeLevel").html(timeLevel);
 
     var bounds = map.getBounds(),
       sw = bounds._southWest,

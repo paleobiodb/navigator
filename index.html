@@ -180,9 +180,13 @@
               </div>
               <div class="row col-sm-3 diversityControls">
                 <div class="col-sm-12 diversityControl">
+                  <p>Map bounds:</p>
+                  <p><strong class="divMapBounds">-180 to 180 N, -90 to 90 E</strong></p>
+                </div>
+                <div class="col-sm-12 diversityControl">
                   <p>Change taxonomic level</p>
                   <select name="taxonLevel" onchange="diversityPlot.updateQuickdiv()">
-                    <option value="genera">Genus </option>
+                    <option value="genera">Genus</option>
                     <option value="families">Family</option>
                     <option value="orders">Order</option>
                   </select>
@@ -215,8 +219,6 @@
               </div>
             </div>
           </div>
-          <div class="modal-footer">
-          </div>
         </div>
       </div>
     </div><!-- end stats modal -->
@@ -235,6 +237,12 @@
                 <div id="advdiversity"></div>
               </div>
               <div class="row col-sm-3 diversityControls">
+                <div class="col-sm-12 diversityControl">
+                  <p>Map bounds:</p>
+                  <p><strong class="divMapBounds">-180 to 180 N, -90 to 90 E</strong></p>
+                  <p>Taxonomic level: <strong id="advtaxonLevel">Genus</strong></p>
+                  <p>Temporal resolution: <strong id="advtimeLevel">Age</strong></p>
+                </div>
                 <div class="col-sm-12 diversityControl">
                   <p>Choose data to display</p>
                   <form>
@@ -263,8 +271,7 @@
                   <p class="general" id="advdiversityExplainer" style="display:none;">
                     Sampled-in-bin diversity is the number of taxa actually found in each time interval, just as in the basic diversity method.<br>
                     Rangethrough diversity shows each taxon as present from its first occurrence to its last occurrence, whether or not it was ever found in the fossil record in the intervening intervals.<br>
-                    Origination and extinction rates are estimated here using the "per-capita rate" method of <a href="http://dx.doi.org/10.1666/0094-8373(2000)26[74:OAECOT]2.0.CO;2">Foote (2000) (Table 1)</a>. This method compares the number of taxa which exist both before and after each interval are compared to those that either originate or go extinct during it. In terms of the values returned by the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html">diversity API method</a>, origination=-ln((xbt)/(xbt+xft))/(eag-lag) and extinction=-ln((xbt)/(xbt+xbl))/(eag-lag).<br>
-                    Note that many other methods exist for calculating diversity and origination/extinction rates; those given here are among the simplest.</p>
+                    Origination and extinction rates are estimated here using the "per-capita rate" method of <a href="http://dx.doi.org/10.1666/0094-8373(2000)26[74:OAECOT]2.0.CO;2">Foote (2000) (Table 1)</a>. This method compares the number of taxa which exist both before and after each interval are compared to those that either originate or go extinct during it. In terms of the values returned by the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html">diversity API method</a>, origination = -ln((xbt)/(xbt+xft))/(eag-lag) and extinction = -ln((xbt)/(xbt+xbl))/(eag-lag). Values for the Late Pleistocene and Holocene are not calculated, because these very short intervals are poorly suited to comparison with the rest. Note that many other methods exist for calculating diversity and origination/extinction rates; those given here are among the simplest.</p>
                 </div>
                 <br>
                 <div class="col-sm-12 diversityControl">
@@ -272,8 +279,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="modal-footer">
           </div>
         </div>
       </div>

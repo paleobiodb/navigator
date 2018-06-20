@@ -391,7 +391,7 @@ color: rgb(245,245,245);
   color:#000;
   text-decoration: none;
 }
-#diversityWait {
+#diversityWait, #advdiversityWait {
   position: absolute;
   margin-left: 40%;
   margin-top: 10%;
@@ -929,16 +929,12 @@ br {
 }
 
 /* Diversity curve styles */
-#diversity {
-  margin-left: -40px;
+#diversity, #advdiversity {
   text-align: center;
 }
-#diversityGraph {
+
+#diversityGraph, #advdiversityGraph {
   padding-top: 20px;
-  /*font-family: Helvetica,sans-serif;*/
-  /*font-weight: 100;*/
-  /*font-size: .8em;*/
-  /*color: #333;*/
 }
 
 .diversityControls {
