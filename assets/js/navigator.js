@@ -3,7 +3,6 @@ var paleo_nav = (function() {
      If developing locally default to paleobiodb.org, otherwise use localhost */
   var dataUrl = window.location.origin,
       testUrl = "https://paleobiodb.org",
-      stateUrl = "https://paleobiodb.org",
       dataService = "/data1.2";
 
   if ( window.location.search.indexOf("local") > -1 ) {
@@ -369,7 +368,7 @@ var paleo_nav = (function() {
       $("#saveBox").on('show.bs.modal', function() {
         if ($("#urlTab").hasClass("active")) {
           var request = $.ajax({
-            url: stateUrl + "/larkin/app-state",
+            url: "/larkin/app-state",
             async: false,
             type: "POST",
             data: {
@@ -380,7 +379,7 @@ var paleo_nav = (function() {
           });
 
           request.success(function(result) {
-            $("#url").val(stateUrl + "/navigator/#/" + result.id);
+            $("#url").val(window.location.origin + "/navigator/#/" + result.id);
             // For some reason this won't work without a small timeout
             setTimeout(function() {
               $("#url").focus();
@@ -458,7 +457,7 @@ var paleo_nav = (function() {
 
       $("#getAppUrl").on("click", function() {
         var request = $.ajax({
-          url: stateUrl + "/larkin/app-state",
+          url: "/larkin/app-state",
           async: false,
           type: "POST",
           data: {
@@ -469,7 +468,7 @@ var paleo_nav = (function() {
         });
 
         request.success(function(result) {
-          $("#appUrl").val(stateUrl + "/navigator/#/" + result.id);
+          $("#appUrl").val(window.location.origin + "/navigator/#/" + result.id);
           // For some reason this won't work without a small timeout
           setTimeout(function() {
             $("#appUrl").focus();
@@ -869,7 +868,6 @@ var paleo_nav = (function() {
 
     "dataUrl": dataUrl,
     "testUrl": testUrl,
-    "stateUrl": stateUrl,
     "dataService": dataService
   }
 
