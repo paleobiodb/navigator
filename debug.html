@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PBDB Navigator</title>
+
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Language" content="en" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+    <meta name="author" content="John J Czaplewski"/>
+
+    <meta property="og:image" content="https://paleobiodb.org/navigator/build/img/wegener_med.png"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" sizes="120x120" href="build/img/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="build/img/touch-icon-ipad-retina.png">
+
+    <link rel="stylesheet" href="assets/css/lib/leaflet.css" type="text/css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" type="text/css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway:200" type="text/css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="build/css/navigator.min.css" type="text/css"/>
+    
+    <!-- <link rel="stylesheet" href="assets/css/lib/bootstrapRC2.min.css" type="text/css"/> -->
+    <!-- <link rel="stylesheet" href="assets/css/lib/typeahead.css" type="text/css"/> -->
+    <!-- <link rel="stylesheet" href="assets/css/lib/timescale.css" type="text/css"/> -->
+    <!-- <link rel="stylesheet" href="assets/css/lib/taxaBrowser.css" type="text/css"/> -->
+    <!-- <link rel="stylesheet" href="assets/css/lib/navigator.css" type="text/css"/> -->
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46265774-1', 'paleobiodb.org');
+      ga('send', 'pageview');
+    </script>
+
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="navbar navbar-default navbar-static-top">
+        <div class="navbar-home">
+          <a href="/"><img src="build/img/logo_white.png" alt="front page"></a>
+        </div>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/navigator"><t class="brand-small">PBDB</t> Navigator</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+             <li>
+              <div class="universalSearch col-sm-4">
+                <form class="form-search universalSearchForm">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Time, taxa, authorizer, stratigraphy " id="universalAutocompleteInput">
+                    <span class="input-group-btn">
+                      <button type="submit" class="btn btn-primary" id="universalSearchButton"><i class="fa fa-search"></i></button>
+                    </span>
+                  </div>
+                </form>
+                <div id="universalSearchResult" class="tt-dropdown-menu" style="display: none;"></div>
+              </div>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="navbar-text about"><a data-toggle="modal" href="#aboutModal" class="navbar-link">About</a></li>
+            <li class="navbar-text help"><a data-toggle="modal" href="#helpModal" class="navbar-link">Help</a></li>
+            <li class="navbar-text help"><a data-toggle="modal" target="_blank" href="https://www.youtube.com/watch?v=n_FkX4Vf_8I" class="navbar-link">Walkthrough</a></li>
+            <li class="navbar-text" id="taxaBrowserNavbar"><a href="#" class="navbar-link">Taxa Browser</a></li>
+            <li class="navbar-text" id="getUrlNavbar"><a data-toggle="modal" href="#saveBox" class="navbar-link">Get URL</a></li>
+          </ul>
+        </div>
+      </div> <!-- end navbar -->
+
+      <div id="waiting">
+        <h2>Initializing application...</h2>
+        <p>Please be patient. It may take a moment.</p>
+      </div>
+
+      <div class="row" id="graphicRow">
+
+        <div class="col-sm-3" id="taxaBrowser">
+          <div class="browser">
+            <form id="taxaSearch">
+              <input type="text" class="form-control" id="taxonInput" autocorrect="off" placeholder="Enter a taxonomic name:"/>
+            </form>
+
+            <div name="focal_taxon_box">
+              <table class="table table-hover">
+                <tbody id="focalTaxonParents"></tbody>
+              </table>
+            </div>
+
+            <div class="focalTaxon" name="focal_taxon_box">
+              <table class="table table-hover">
+                <tr class="active">
+                  <td>
+                    <a href="#" class="taxonTitle"></a><br>
+                    <p class="taxonAttr"></p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="taxonChildren">
+              <table class="table table-hover table-condensed">
+                <tbody id="focal_taxon_children"></tbody>
+              </table>
+            </div>
+          </div>
+          <p class="taxaBrowserToggle" id="collapseTaxaBrowser"><i class="fa fa-angle-double-left"></i>Collapse taxa browser</p>
+        </div>
+
+      	<div class="col-sm-12" id="graphics">
+          <i class="fa fa-spinner fa-3x fa-spin" id="loading"></i>
+
+          <div id="infoContainer">
+            <div class="info leaflet-control"></div>
+          </div>
+
+          <div class="col-sm-12 prevalence-row">
+            <div class="prevalence-summary"></div>
+          </div>
+
+          <div class="filters">
+            <p><strong id="filterTitle">Filters</strong></p>
+            <div id="selectedInterval" class="filter"></div>
+            <div id="personFilter" class="filter"></div>
+            <div id="taxon" class="filter"></div>
+            <div id="stratFilter" class="filter"></div>
+          </div>
+          <div id="mapControls">
+            <div class="customControl buttons leaflet-control">
+              <div class="zoom-in mapCtrl" title="Zoom in"><i class="fa fa-plus ctrlButton"></i></div>
+              <div class="zoom-out mapCtrl" title="Zoom out"><i class="fa fa-minus ctrlButton"></i></div>
+              <div class="rotate mapCtrl" title="Toggle paleogeography"><div id="rotateIcon"></div></div>
+              <div class="taxa mapCtrl" title="Toggle taxa browser"><i class="fa fa-bug fa-2x ctrlButton"></i></div>
+              <div class="stats mapCtrl" title="Toggle stats"><a data-toggle="modal" href="#statsBox"><i class="fa fa-line-chart fa-2x ctrlButton"></i></a></div>
+              <div class="save mapCtrl" title="Save map data"><a data-toggle="modal" href="#saveBox"><i class="fa fa-download fa-2x ctrlButton"></i></a></div>
+              <div class="save mapCtrl" title="See examples"><a data-toggle="modal" href="#helpModal"><i class="fa fa-hand-o-right fa-2x ctrlButton"></i></a></div>
+            </div>
+          </div>
+
+          <div id="mapContainer">
+            <div id="svgMap"></div>
+            <div id="map"></div>
+            <div id="reconstructMap">
+              <div id="reconstructMapRefContainerContainer">
+                <div id="reconstructMapRefContainer">
+                  <div id="reconstructMapReference">
+                    <div id="reconstructMapStats">
+                      <a id="gPlatesLogoLink" data-toggle="modal" href="#gPlatesBox">
+                        <img id="gplatesLogo" src="build/img/gplates_icon.jpg">
+                      </a>
+                      <h5 id="interval"></h5>
+                      <p id="age"></p>
+                      <a id="mapSwitch" href="#"><i class="fa fa-arrow-circle-left"></i> Back to main map</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="time"></div>
+        </div> <!-- End col-12 -->
+      </div> <!-- End row -->
+    </div>
+
+    <div class="modal fade" id="statsBox" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" id="statsDialogue">
+        <div class="modal-content statsContent">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            Sampled-in-bin diversity for current view data
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-9 diversityContainer">
+                <i class="fa fa-spinner fa-3x fa-spin" id="diversityWait"></i>
+                <div id="diversity"></div>
+              </div>
+              <div class="row col-sm-3 diversityControls">
+                <div class="col-sm-12 diversityControl">
+                  <p>Map bounds:</p>
+                  <p><strong class="divMapBounds">-180 to 180 N, -90 to 90 E</strong></p>
+                </div>
+                <div class="col-sm-12 diversityControl">
+                  <p>Change taxonomic level</p>
+                  <select name="taxonLevel" onchange="diversityPlot.updateQuickdiv()">
+                    <option value="genera">Genus</option>
+                    <option value="families">Family</option>
+                    <option value="orders">Order</option>
+                  </select>
+                </div> 
+                <div class="col-sm-12 diversityControl" onchange="diversityPlot.updateQuickdiv()">
+                  <p>Change temporal resolution</p>
+                  <select name="timeLevel">
+                    <option value="stage" selected="selected">Age (e.g. "Famennian")</option>
+                    <option value="epoch">Epoch (e.g. "Eocene")</option>
+                    <option value="period">Period (e.g. "Cretaceous")</option>
+                    <option value="era">Era (e.g. "Paleozoic")</option>
+                  </select>
+                </div>
+                <br><br><br>
+                <div id="svgdataurl" style="display:none;"></div>
+                <canvas style="display:none;"></canvas>
+                <div id="pngdataurl" style="display:none;"></div>
+                <div class="col-sm-12 diversityControl"> 
+                  <button class="saveButton" onclick="diversityPlot.saveImg(false)">Save this image</button>
+                </div>
+                <div class="col-sm-12 diversityControl">
+                  <button class="saveButton" data-dismiss="modal" data-toggle="modal" data-target="#saveBox">Download these data</button>
+                </div>
+                <div class="col-sm-12 diversityControl general explainer">
+                  <h5><a onclick="showHide('diversityExplainer')"><i class="fa fa-question-circle fa-2x"></i> What's in this plot?</a></h5>
+                  <p class="general" id="diversityExplainer" style="display:none;">This plot displays the "sampled-in-bin" diversity; that is, it counts the number of occurrences of the selected taxa in each time bin within the selected geographic extent. Sampled-in-bin genus diversity is approximate and based on the <a href="https://paleobiodb.org/data1.2/occs/quickdiv_doc.html" target="_blank">quick_div API route</a>. The advanced diversity curve generator displays a more complete diversity summary, based on the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html" target="_blank">full diversity API route</a>.</p>
+                  <p><strong>Before switching to the advanced diversity curve window, choose the taxonomic and temporal resolution you want to use.</strong></p>
+                  <button class="modeSwitch" data-dismiss="modal" data-toggle="modal" href="#advstatsBox">Use advanced diversity curve generator</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end stats modal -->
+
+    <div class="modal fade" id="advstatsBox" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" id="advstatsDialogue">
+        <div class="modal-content advstatsContent">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            Advanced diversity metrics for current view data
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-9 advdiversityContainer">
+                <i class="fa fa-spinner fa-3x fa-spin" id="advdiversityWait"></i>
+                <div id="advdiversity"></div>
+              </div>
+              <div class="row col-sm-3 diversityControls">
+                <div class="col-sm-12 diversityControl">
+                  <p>Map bounds:</p>
+                  <p><strong class="divMapBounds">-180 to 180 N, -90 to 90 E</strong></p>
+                  <p>Taxonomic level: <strong id="advtaxonLevel">Genus</strong></p>
+                  <p>Temporal resolution: <strong id="advtimeLevel">Age</strong></p>
+                </div>
+                <div class="col-sm-12 diversityControl">
+                  <p>Choose data to display</p>
+                  <form>
+                    <input type="checkbox" name="sampledLine" onchange="diversityPlot.toggleLine('sampledLine')" checked> Sampled-in-bin diversity<br>
+                    <input type="checkbox" name="rangethroughLine" onchange="diversityPlot.toggleLine('rangethroughLine')"> Rangethrough diversity<br>
+                    <input type="checkbox" name="singletons" onchange="diversityPlot.toggleLine('rangethroughLine')" checked style="margin-left: 2em;"> Include singletons<br>
+                    <input type="checkbox" name="originationLine" onchange="diversityPlot.toggleLine('originationLine')"> Origination rate<br>
+                    <input type="checkbox" name="extinctionLine" onchange="diversityPlot.toggleLine('extinctionLine')"> Extinction rate<br>
+                  </form>
+                </div>
+<!--                 <div class="col-sm-12 diversityControl">
+                  <input type="checkbox" name="extant" onchange="diversityPlot.updateFulldiv()"> Extend range of extant taxa to Present<br>
+                </div> -->
+                <br><br><br>
+                <div id="advsvgdataurl" style="display:none;"></div>
+                <canvas style="display:none;"></canvas>
+                <div id="advpngdataurl" style="display:none;"></div>
+                <div class="col-sm-12 diversityControl"> 
+                  <button class="saveButton" onclick="diversityPlot.saveImg(true)">Save this image</button>
+                </div>
+                <div class="col-sm-12 diversityControl">
+                  <button class="saveButton" data-dismiss="modal" data-toggle="modal" data-target="#saveBox">Download these data</button>
+                </div>
+                <div class="col-sm-12 diversityControl general explainer">
+                  <h5><a onclick="showHide('advdiversityExplainer')"><i class="fa fa-question-circle fa-2x"></i> How are these calculated?</a></h5>
+                  <p class="general" id="advdiversityExplainer" style="display:none;">
+                    Sampled-in-bin diversity is the number of taxa actually found in each time interval, just as in the basic diversity method.<br>
+                    Rangethrough diversity shows each taxon as present from its first occurrence to its last occurrence, whether or not it was ever found in the fossil record in the intervening intervals.<br>
+                    Origination and extinction rates are estimated here using the "per-capita rate" method of <a href="http://dx.doi.org/10.1666/0094-8373(2000)26[74:OAECOT]2.0.CO;2">Foote (2000) (Table 1)</a>. This method compares the number of taxa which exist both before and after each interval are compared to those that either originate or go extinct during it. In terms of the values returned by the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html">diversity API method</a>, origination = -ln((xbt)/(xbt+xft))/(eag-lag) and extinction = -ln((xbt)/(xbt+xbl))/(eag-lag). Values for the Late Pleistocene and Holocene are not calculated, because these very short intervals are poorly suited to comparison with the rest. Note that many other methods exist for calculating diversity and origination/extinction rates; those given here are among the simplest.</p>
+                </div>
+                <br>
+                <div class="col-sm-12 diversityControl">
+                  <button class="modeSwitch" data-dismiss="modal" data-toggle="modal" data-target="#statsBox">Back to basic diversity window</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end advanced stats modal -->
+
+    <div class="modal fade" id="saveBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" id="downloadModalHeader">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <ul class="nav nav-tabs">
+              <li class="active downloadTab" id="downloadDataTab"><a href="#downloadData" data-toggle="tab"><i class="fa fa-download"></i> Download Data</a></li>
+              <li class="downloadTab" id="urlTab"><a href="#getURL" data-toggle="tab" id="fetchURL"><i class="fa fa-link"></i>Get URL</a></li>
+            </ul>
+          </div>
+          <div class="modal-body">
+            <div class="tab-content" id="downloadModalContent">
+              <div class="tab-pane active" id="downloadData">
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="col-sm-12">
+                      <h4>Filters:</h4>
+                      <ul id="filterList"></ul>
+                    </div>
+                    
+                    <div class="col-sm-12">
+                      <h4>Format:</h4>
+                      <div class="downloadOptions">
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="csv" checked>
+                            CSV
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="tsv">
+                            TSV
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="json">
+                            JSON
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="format" id="ris">
+                            RIS <small>(<i>References only</i>)</small>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-12">
+                      <h4>Type:</h4>
+                      <div class="downloadOptions">
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="occs" checked>
+                            <p id="occsLabel">Occurrences</p>
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="refs">
+                            References
+                          </label>
+                        </div>
+                       <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="diver">
+                            Diversity summary
+                          </label>
+                        </div>
+                       <div class="radio">
+                          <label>
+                            <input type="radio" name="downloadType" id="fulldiv">
+                            Full diversity method
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <a type="button" class="btn btn-link downloadButton" href="https://paleobiodb.org/classic/displayDownloadGenerator?a=displayDownloadGenerator" target="_blank">Go to full download form</a>
+                    <div class="col-sm-12">
+                      <button type="button" class="btn btn-primary downloadButton" onclick="return navMap.download()">Download</button>
+                      <button type="button" class="btn btn-warning downloadButton" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-12">
+                    <hr>
+                    <i id="licenseDownload">All PBDB data is released under a <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0 International</a> license. For more information about citing the database or requesting an official publication number, please see the <a href="http://paleobiodb.org/#/faq/citations" target="_blank">FAQ page</a>.</i>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane" id="getURL">
+                <div class="row">
+                  <div class="col-sm-10">
+                    <div class="form-group">
+                      <label for="appUrl">Application state URL:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="appUrl">
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" type="button" id="getAppUrl">Get URL</button>
+                        </span>
+                      </div>
+                      <p class="help-block">Provides a sharable link that preserves all aspects of the application state</p>
+                    </div>
+                    <div class="form-group">
+                      <label for="apiUrl">Data URL:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="apiUrl">
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" type="button" id="getApiUrl">Get URL</button>
+                        </span>
+                      </div>
+                      <p class="help-block">The API data URL for taxonomic occurrence data. For use with external services and scripts, such as R or Python. See the <a href="/data1.2">data service documentation</a> for additional information.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div><!-- end download modal -->
+
+    <div class="modal fade" id="collectionBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="collectionName"></h4>
+          </div>
+          <div class="modal-body" id="collectionModalBody"></div>
+          <div class="modal-footer warningText">
+            <p class="warning general"><i class="fa fa-warning fa-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
+
+            <p class="warning nationalParks"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from <a href="http://www.nature.nps.gov/geology/planning/index.cfm" target="_blank">US National Parks and Monuments</a> is strictly prohibited by law.</p>
+
+            <p class="warning federalLands"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from <a href="http://www.blm.gov/wo/st/en/prog/more/CRM/paleontology/fossil_collecting.html" target="_blank">public lands</a> is regulated by state and federal laws and regulations.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- end collectionBox modal -->
+
+    <div class="modal fade" id="gPlatesBox" tabindex="-1" role="dialog" aria-labelledby="GPlatesInfo" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">About GPlates</h4>
+            <p class="text-muted"><a href="http://www.gplates.org">www.gplates.org</a></p>
+          </div>
+          <div class="modal-body">
+            <h4>Current rotation:</h4>
+            <table class="table">
+              <tr>
+                <td class="gplatesRotationInterval"><strong>Rotation interval</strong></td>
+                <td id="rotationInterval" class="gplatesRotationInterval"></td>
+              </tr>
+              <tr>
+                <td><strong>Rotation year</strong></td>
+                <td id="rotationYear"></td>
+              </tr>
+              <tr>
+                <td><strong>Reference</strong></td>
+                <td id="rotationReference"></td>
+              </tr>
+            </table>
+
+          </div>
+        </div>
+      </div>
+    </div><!-- end gPlatesBox modal -->
+
+    <div class="modal fade" id="collectionModal" tabindex="-1" role="dialog" aria-labelledby="BinInfo" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="binID"></h4>
+          </div>
+          <div class="modal-body">
+            <div class="panel-group" id="accordion"></div>
+          </div>
+          <div class="modal-footer warningText">
+            <p class="warning general"><i class="fa fa-warning fa-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
+
+            <p class="warning nationalParks"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from <a href="http://www.nature.nps.gov/geology/planning/index.cfm" target="_blank">US National Parks and Monuments</a> is strictly prohibited by law.</p>
+
+            <p class="warning federalLands"><i class="fa fa-warning fa-2x"></i>Removal of natural objects from public lands is regulated by state and federal laws and regulations.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- end collectionModal -->
+
+    <div class="modal fade" id="binModal" tabindex="-1" role="dialog" aria-labelledby="BinInfo" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="binNumber">Summary bin <small>Zoom in to see fossil collections</small></h4>
+          </div>
+          <div class="modal-body">
+            <h5 id="collectionCount"></h5>
+            <div class="panel-group" id="collectionAccordion"></div>
+            <div class="show-more-collections" data-offset="0" data-total-collections="0" data-shown-collections="0">
+              <i class="fa fa-spinner fa-3x fa-spin" id="collectionLoading"></i><br>
+              <i class="fa fa-angle-double-down"></i>   Show more collections...   <i class="fa fa-angle-double-down"></i>
+            </div>
+          </div>
+          <div class="modal-footer warningText">
+            <p class="warning"><i class="fa fa-warning fa-2x"></i><a href="http://en.wikipedia.org/wiki/Fossil_collecting#Collecting_ethics" target="_blank">Responsible field study</a> of fossils requires <a href="http://vertpaleo.org/Membership/Member-Ethics/Member-Bylaw-on-Ethics-Statement.aspx" target="_blank">proper safety, permission, and conservation approaches</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- end binModal -->
+
+    <div class="modal fade" id="subtaxaModal" tabindex="-1" role="dialog" aria-labelledby="Subtaxa" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header" id="subtaxaModalHeader">
+            <input class="form-control" type="text" onkeyup="taxaBrowser.filter(this)" placeholder="Type to filter..." id="taxaFilterInput"/>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p class="subtaxaModalLegend">Taxon name (number of occurrences in the database)</p>
+            <div id="subTaxaModalList">
+              <ol class="list-unstyled" id="subtaxa"></ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end subtaxaModal -->
+
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="About" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">PBDB Navigator 1.0</h4>
+          </div>
+          <div class="modal-body">
+            <h4>The Application</h4>
+            <p>Built on the <a href="http://paleobiodb.org/data1.2/" target="_blank">PBDB API</a>, PBDB Navigator allows users to explore the <a href="/" target="_blank">Paleobiology Database</a> through space, time, and taxonomy. All code unique to the PBDB Navigator interface uses a <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0 1.0 Universal</a> Public Domain Dedication, and can be found on <a href="https://github.com/paleobiodb/navigator" target="_blank">Github</a>.</p><br>
+            <h4>Data Sources</h4>
+            <div class="row">
+              <div class="col-xs-4 dataSource">
+                <a href="/" target="_blank"><img src="build/img/logo_clear_color.png"/></a>
+                <p class="dataSourceTitle">Paleobiology Database</p>
+                <p class="text-muted"><a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0 International</a></p>
+              </div>
+              <div class="col-xs-4 dataSource">
+                <a href="http://www.gplates.org" target="_blank"><img src="build/img/gplates_icon.jpg"/></a>
+                <p class="dataSourceTitle">GPlates</p>
+                <p class="text-muted"><a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_blank">GNU GPL, version 2</a></p>
+              </div>
+              <div class="col-xs-4 dataSource">
+                <a href="http://phylopic.org/" target="_blank"><img src="build/img/trilobita.png"/></a>
+                <p class="dataSourceTitle">Phylopic</p>
+                <p class="text-muted"><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank">CC BY</a> or <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0</a></p>
+              </div>
+            </div>
+            <br>
+            <h4>Project Funding</h4>
+            <p>Current development of the PBDB database, API, website, and example applications is being carried out in the <a href="http://geoscience.wisc.edu/geoscience/" target="_blank">Department of Geoscience</a> at the <a href="http://wisc.edu" target="_blank">University of Wisconsin-Madison</a>. It is supported by the UW-Madison Deptartment of Geoscience and the U.S. National Science Foundation EAR Geoinformatics grant 0949416.</p><br>
+            <h4>Project Team</h4>
+            <div class="row">
+              <div class="col-sm-3 mugshot">
+                <a href="http://paleobiodb.org/#/people"><img src="build/img/people.png"/></a>
+                <p>PBDB Contributors</p>
+                <p class="text-muted">Data entry & vetting</p>
+              </div>
+              <div class="col-sm-3 mugshot">
+                <a href="http://strata.geology.wisc.edu"><img src="build/img/shanan.jpg"/></a>
+                <p>Shanan Peters</p>
+                <p class="text-muted">Principal Investigator</p>
+              </div>
+              <div class="col-sm-3 mugshot">
+                <a href="http://strata.geology.wisc.edu/Home/Team.html"><img src="build/img/michael.jpg"/></a>
+                <p>Michael McClennen</p>
+                <p class="text-muted">Chief Informaticist</p>
+              </div>
+              <div class="col-sm-3 mugshot">
+                <a href="http://twitter.com/johnjcz"><img src="build/img/john.jpg"/></a>
+                <p>John Czaplewski</p>
+                <p class="text-muted">Web developer / designer / cartographer</p>
+              </div>
+            </div>
+            <br>
+            <h4>Issues</h4>
+            <p>If you notice any issues or oddities with Navigator, you can help us improve it by filing a new issue or commenting on an existing one on the <a href="https://github.com/paleobiodb/navigator/issues" target="_blank">issues page</a>. For general questions about the Paleobiology Database or PBDB Navigator, please email <a href="mailto:admin@paleobiodb.org">admin@paleobiodb.org</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- end aboutModal -->
+
+    <div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="Help" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" id="helpModalContent">
+          <div class="modal-body">
+            <div class="helpModalClose">
+              <i class="fa fa-remove fa-2x"></i>
+            </div>
+            <div class="helpModalTitle">
+              <h2>Welcome to PBDB Navigator!</h2>
+            </div>
+            <div class="row exampleRow" id="exampleRowOne">
+              <div class="col-sm-12">
+                <h3>Get started with an example</h3>
+              </div>
+            </div>
+
+            <div class="row exampleRow">
+              <div class="col-sm-12">
+                <div class="col-sm-4 examples">
+                  <button type="button" class="btn btn-primary btn-lg" id="trilobita">
+                    <img src="build/img/trilobita.png" alt="Trilobita"/>
+                    <p>Cambrian Trilobites<br> Eastern China</p>
+                  </button>
+                </div>
+                <div class="col-sm-4 examples">
+                  <button type="button" class="btn btn-primary btn-lg" id="dinosauria">
+                    <img src="build/img/dinosauria.png" alt="Dinosauria"/>
+                    <p>Jurassic Dinosaurs<br> Western USA</p>
+                  </button>
+                </div>
+                <div class="col-sm-4 examples">
+                  <button type="button" class="btn btn-primary btn-lg" id="plantae">
+                    <img src="build/img/plantae.png" alt="Plantae"/>
+                    <p>Permian Plants<br> Paleogeography</p>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="row exampleRow goToApp">
+              <div class="col-sm-12 goToApp">
+                <p>or</p>
+                <button class="btn btn-primary" id="goToApp">Go to application</button>
+              </div>
+            </div>
+            <div class="helpModalControls">
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>Zoom in</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>Zoom out</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>Paleo view</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>Taxa browser</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>View diversity</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>Save data</p>
+              </div>
+              <div class="helpModalControlLabel">
+                <i class="fa fa-angle-left"></i><p>Show examples</p>
+              </div>
+            </div>
+            <div class="helpModalControls right">
+              <div class="helpModalControlLabel">
+                <p>Most prevalent taxa</p><i class="fa fa-angle-right"></i>
+              </div>
+            </div>
+            <div class="helpModalTimescaleLabel click">
+              <p>Click/tap a time interval to filter the map</p><i class="fa fa-angle-down"></i>
+            </div>
+            <div class="helpModalTimescaleLabel dblclick">
+              <p>Double click/tap a time interval to zoom the time scale</p><i class="fa fa-angle-down"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end helpModal -->
+    
+    <script>
+      function showHide(divID) {
+        var $x = $('#'+divID);
+        $x.css("display", $x.css("display") === 'none' ? '' : 'none');
+      }
+    </script>
+    
+    <script src="build/js/lib/leaflet.js"></script>
+    <script src="build/js/lib/d3.v3.min.js" charset="utf-8"></script>
+    <script src="build/js/lib/topojson.v1.min.js"></script>
+    <script src="build/js/lib/d3.geo.projection.v0.min.js" charset="utf-8"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="build/js/lib/jquery-2.0.3.min.js">\x3C/script>')</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/1.0.5/jquery.hammer.min.js"></script>
+    <script>window.Hammer || document.write('<script src="build/js/lib/jquery.hammer.min.js">\x3C/script>')</script>
+
+    <script src="assets/js/navigator.js"></script>
+    <script src="assets/js/navMap.js"></script>
+    <script src="assets/js/timescale.js"></script>
+    <script src="assets/js/reconstruct.js"></script>
+    <script src="assets/js/taxaBrowser.js"></script>
+    <script src="assets/js/diversity.js"></script>
+    <script src="assets/js/lib/bootstrap.min.js"></script>
+    <script src="assets/js/lib/typeahead.js"></script>
+    <script src="assets/js/lib/mustache.js"></script>
+  </body>
+</html>
