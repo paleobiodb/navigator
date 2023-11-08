@@ -31,7 +31,7 @@ To:
 
 
 ## Contributing
-PBDB Navigator is an open-source project and welcomes feedback/contributions from the community. If you see a bug and would like to fix it, please submit a pull request. If you see a bug or have a suggestion but do not know how to fix it, please open a new issue or contact John Czaplewski at jczaplewski@wisc.edu
+PBDB Navigator is an open-source project and welcomes feedback/contributions from the community. If you see a bug and would like to fix it, please submit a pull request. If you see a bug or have a suggestion but do not know how to fix it, please open a new issue.
 
 ## License
 Paleobiology Database data is used under a [CC-BY 4.0](http://creativecommons.org/licenses/by/4.0/) Creative Commons license. Plate and collection rotation data from [GPlates](http://www.gplates.org) is used under a GNU [General Public License (GPL), version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.html), and taxonomic images from [Phylopic.org](http://phylopic.org/) are used under either a Public Domain or Creative Commons license.
