@@ -37,9 +37,9 @@ var diversityPlot = (function() {
         minAge = data[0].lag;
 
     var eras = [
-      {"nam": "Neoproterozoic", "lag": 541, "eag": 1000},
-      {"nam": "Paleozoic", "lag": 252.17, "eag": 541},
-      {"nam": "Mesozoic", "lag": 66, "eag": 252.17},
+      {"nam": "Neoproterozoic", "lag": 538.8, "eag": 1000},
+      {"nam": "Paleozoic", "lag": 251.902, "eag": 538.8},
+      {"nam": "Mesozoic", "lag": 66, "eag": 251.902},
       {"nam": "Cenozoic", "lag": 0, "eag": 66}
     ];
 
@@ -63,7 +63,7 @@ var diversityPlot = (function() {
       .done(function(timeData) {
         // Filter for eras and periods
         var timescale = timeData.records.filter(function(d) {
-          if (d.lvl === 2 || d.lvl === 3) {
+          if (d.lvl === 2 || d.lvl === 3 || d.itp == 'era' || d.itp == 'period' ) {
             d.totalTime = d.eag - d.lag;
             return d;
           }
@@ -80,13 +80,13 @@ var diversityPlot = (function() {
 
     // Filter out the periods and eras for drawing purposes
     var periods = timescale.filter(function(d) {
-      if (d.lvl === 3) {
+      if (d.lvl === 3 || d.itp == 'period' ) {
         return d;
       }
     });
 
     var eras = timescale.filter(function(d) {
-      if (d.lvl === 2) {
+      if (d.lvl === 2 || d.itp == 'era' ) {
         return d;
       }
     });
@@ -158,7 +158,7 @@ var diversityPlot = (function() {
 
     // Define a scale for scaling the periods
     var periodX = d3.scale.linear()
-      .domain([0, d3.sum(timescale, function(d) { if (d.lvl === 2) { return d.totalTime; } })])
+      .domain([0, d3.sum(timescale, function(d) { if (d.lvl === 2 || d.itp == 'era') { return d.totalTime; } })])
       .range([0, width - margin.left - margin.right]);
 
     // Define a scale for positioning the periods
