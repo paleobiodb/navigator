@@ -13,7 +13,7 @@
   "author": "John J Czaplewski || jczaplewski@wisc.edu",
   "license": "CC0",
   "devDependencies": {
-    "grunt": "^0.4.5",
+    "grunt": "^1.5.3",
     "grunt-contrib-cssmin": "^5.0.0",
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
