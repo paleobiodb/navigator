@@ -1,20 +1,11 @@
 module.exports = function(grunt) {
 
-    require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
-
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
-        htmlhint: {
-            build: {
+        htmllint: {
+            all: {
                 options: {
-                    'tag-pair': true,
-                    'tagname-lowercase': true,
-                    'attr-lowercase': true,
-                    'attr-value-double-quotes': true,
-                    'doctype-first': true,
-                    'spec-char-escape': true,
-                    'id-unique': true
                 },
                 src: ['index.html']
             }
@@ -90,7 +81,11 @@ module.exports = function(grunt) {
             }
         }
     });
-
-    grunt.registerTask('default', ['htmlhint', 'uglify', 'cssmin']);
-
+    
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-html');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    
+    grunt.registerTask('default', ['uglify', 'cssmin']);
 };

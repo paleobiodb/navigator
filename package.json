@@ -13,17 +13,15 @@
   "author": "John J Czaplewski || jczaplewski@wisc.edu",
   "license": "CC0",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-cssmin": "^5.0.0",
-    "grunt-contrib-uglify": "^5.2.2",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-cssc": "0.2.x",
-    "grunt-htmlhint": "^0.9.13",
-    "grunt-shell": "^4.0.0",
-    "matchdep": "^2.0.0",
     "topojson": "1.4.x"
   },
   "dependencies": {
-    "grunt-cli": "^1.4.3"
+    "grunt": "^1.6.1",
+    "grunt-contrib-cssmin": "^5.0.0",
+    "grunt-contrib-jshint": "^3.2.0",
+    "grunt-contrib-uglify": "^5.2.2",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-html": "^17.0.0",
+    "matchdep": "^2.0.0"
   }
 }
