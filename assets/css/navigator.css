@@ -33,7 +33,7 @@ nav {
   font-family: 'Raleway', sans-serif;
   font-weight: 400;
   padding: 0 .5em;
-}}
+}
 
 .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus {
   background-color: rgba(71,76,80,0.93);
