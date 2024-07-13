@@ -65,6 +65,15 @@ var timeScale = (function() {
     };
     return d3.rebind(cc, event, 'on');
   }
+    
+  function num_level(interval_type) {
+      if (interval_type == 'eon' ) return 1;
+      else if ( interval_type == 'era' ) return 2;
+      else if ( interval_type == 'period' ) return 3;
+      else if ( interval_type == 'epoch' ) return 4;
+      else if ( interval_type == 'age' ) return 5;
+      else return 0;
+  }
 
   function init(div, height, callbackFunc) {
     var width = 960,
@@ -112,7 +121,7 @@ var timeScale = (function() {
         var r = {
           "id": result.records[i].oid.replace("int:",""),
           "pid": result.records[i].pid?result.records[i].pid.replace("int:",""):0,
-          "level": result.records[i].lvl,
+          "level": num_level(result.records[i].itp),
           "color": result.records[i].col,
           "name": result.records[i].nam,
           "abbr": result.records[i].abr || result.records[i].nam.charAt(0),
