@@ -45,7 +45,7 @@ var timeScale = (function() {
             last = +new Date();
         });
         selection.on('mouseup', function(d) {
-            if (dist(down, d3.mouse(document.body)) > tolerance) {
+            if (down != undefined && dist(down, d3.mouse(document.body)) > tolerance) {
                 return;
             } else {
                 if (wait) {

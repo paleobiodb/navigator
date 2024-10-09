@@ -736,7 +736,8 @@ var navMap = (function () {
 
     clusters
       .attr("id", function (d) { return "p" + d.members[0].cxi; })
-      .style("fill", function (d) { return d.cxi ? timeScale.interval_hash[d.cxi].color :
+      .style("fill", function (d) { return d.cxi && timeScale.interval_hash[d.cxi] ? 
+				    timeScale.interval_hash[d.cxi].color :
 				    timeScale.interval_hash[0].color; })
       .on("mouseover", function (d) {
         d3.select(".info")
@@ -853,7 +854,13 @@ var navMap = (function () {
       if (offset >= $(".show-more-collections").data("total-collections")) {
         $(".show-more-collections").hide();
       }
-
+      
+      $(".filterByStrat").click(function (event) {
+        event.preventDefault();
+        navMap.filterByStratigraphy({ "nam": $(this).attr("data-name"), "type": $(this).attr("data-rank") });
+        $("#collectionModal").modal("hide");
+      });      
+      
       $(".occurrenceTab").on("show.bs.tab", function (d) {
         var id = d.target.id;
         id = id.replace("occToggle", "");
@@ -974,7 +981,13 @@ var navMap = (function () {
             navMap.getOffsetCollections(id, $(".show-more-collections").data()["offset"]);
           });
       }
-
+      	
+      $(".filterByStrat").click(function (event) {
+        event.preventDefault();
+        navMap.filterByStratigraphy({ "nam": $(this).attr("data-name"), "type": $(this).attr("data-rank") });
+        $("#binModal").modal("hide");
+      });	
+      
       $("#binModal").modal();
       $("#loading").hide();
     });
@@ -1120,7 +1133,7 @@ var navMap = (function () {
       var output = Mustache.render(collectionModalPartial, data);
       $("#collectionName").html(data.records[0].nam);
       $("#collectionModalBody").html(output);
-
+      
       switch (data.records[0].ptd) {
         case "NPS":
           $(".nationalParks").css("display", "block");
