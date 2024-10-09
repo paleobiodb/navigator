@@ -3,27 +3,21 @@
   <head>
     <title>PBDB Navigator</title>
 
-    <meta charset="utf-8"/>
+    <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
-    <meta name="author" content="John J Czaplewski"/>
+    <meta name="author" content="John J Czaplewski">
 
-    <meta property="og:image" content="https://paleobiodb.org/navigator/build/img/wegener_med.png"/>
+    <meta property="og:image" content="https://paleobiodb.org/navigator/build/img/wegener_med.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" sizes="120x120" href="build/img/touch-icon-iphone-retina.png">
     <link rel="apple-touch-icon" sizes="152x152" href="build/img/touch-icon-ipad-retina.png">
 
-    <link rel="stylesheet" href="assets/css/lib/leaflet.css" type="text/css"/>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" type="text/css"/>
+    <link rel="stylesheet" href="assets/css/lib/leaflet.css" type="text/css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" type="text/css">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway:200" type="text/css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- <link rel="stylesheet" href="build/css/navigator.min.css" type="text/css"/> -->
-    
-    <link rel="stylesheet" href="assets/css/lib/bootstrapRC2.min.css" type="text/css"/>
-    <link rel="stylesheet" href="assets/css/lib/typeahead.css" type="text/css"/>
-    <link rel="stylesheet" href="assets/css/lib/timescale.css" type="text/css"/>
-    <link rel="stylesheet" href="assets/css/lib/taxaBrowser.css" type="text/css"/>
-    <link rel="stylesheet" href="assets/css/lib/navigator.css" type="text/css"/>
-    
+    <link rel="stylesheet" href="build/css/navigator.min.css" type="text/css">
+
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -48,7 +42,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/navigator"><t class="brand-small">PBDB</t> Navigator</a>
+          <a class="navbar-brand" href="/navigator"><span class="brand-small">PBDB</span> Navigator</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -86,16 +80,16 @@
         <div class="col-sm-3" id="taxaBrowser">
           <div class="browser">
             <form id="taxaSearch">
-              <input type="text" class="form-control" id="taxonInput" autocorrect="off" placeholder="Enter a taxonomic name:"/>
+              <input type="text" class="form-control" id="taxonInput" autocorrect="off" placeholder="Enter a taxonomic name:">
             </form>
 
-            <div name="focal_taxon_box">
+            <div>
               <table class="table table-hover">
                 <tbody id="focalTaxonParents"></tbody>
               </table>
             </div>
 
-            <div class="focalTaxon" name="focal_taxon_box">
+            <div class="focalTaxon">
               <table class="table table-hover">
                 <tr class="active">
                   <td>
@@ -144,7 +138,7 @@
               <div class="save mapCtrl" title="See examples"><a data-toggle="modal" href="#helpModal"><i class="fa fa-hand-o-right fa-2x ctrlButton"></i></a></div>
             </div>
           </div>
-
+NOushinnoushin
           <div id="mapContainer">
             <div id="svgMap"></div>
             <div id="map"></div>
@@ -154,7 +148,7 @@
                   <div id="reconstructMapReference">
                     <div id="reconstructMapStats">
                       <a id="gPlatesLogoLink" data-toggle="modal" href="#gPlatesBox">
-                        <img id="gplatesLogo" src="build/img/gplates_icon.jpg">
+                        <img id="gplatesLogo" src="build/img/gplates_icon.jpg" alt="GPlates logo">
                       </a>
                       <h5 id="interval"></h5>
                       <p id="age"></p>
@@ -165,7 +159,7 @@
               </div>
             </div>
           </div>
-          <div id="time"></div>
+          <div id="time">QAZ</div>
         </div> <!-- End col-12 -->
       </div> <!-- End row -->
     </div>
@@ -276,7 +270,7 @@
                   <p class="general" id="advdiversityExplainer" style="display:none;">
                     Sampled-in-bin diversity is the number of taxa actually found in each time interval, just as in the basic diversity method.<br>
                     Rangethrough diversity shows each taxon as present from its first occurrence to its last occurrence, whether or not it was ever found in the fossil record in the intervening intervals.<br>
-                    Origination and extinction rates are estimated here using the "per-capita rate" method of <a href="http://dx.doi.org/10.1666/0094-8373(2000)26[74:OAECOT]2.0.CO;2">Foote (2000) (Table 1)</a>. This method compares the number of taxa which exist both before and after each interval are compared to those that either originate or go extinct during it. In terms of the values returned by the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html">diversity API method</a>, origination = -ln((xbt)/(xbt+xft))/(eag-lag) and extinction = -ln((xbt)/(xbt+xbl))/(eag-lag). Values for the Late Pleistocene and Holocene are not calculated, because these very short intervals are poorly suited to comparison with the rest. Note that many other methods exist for calculating diversity and origination/extinction rates; those given here are among the simplest.</p>
+                    Origination and extinction rates are estimated here using the "per-capita rate" method of <a target="_blank" href="http://dx.doi.org/10.1666/0094-8373(2000)26[74:OAECOT]2.0.CO;2">Foote (2000) (Table 1)</a>. This method compares the number of taxa which exist both before and after each interval are compared to those that either originate or go extinct during it. In terms of the values returned by the <a href="https://paleobiodb.org/data1.2/occs/diversity_doc.html">diversity API method</a>, origination = -ln((xbt)/(xbt+xft))/(eag-lag) and extinction = -ln((xbt)/(xbt+xbl))/(eag-lag). Values for the Late Pleistocene and Holocene are not calculated, because these very short intervals are poorly suited to comparison with the rest. Note that many other methods exist for calculating diversity and origination/extinction rates; those given here are among the simplest.</p>
                 </div>
                 <br>
                 <div class="col-sm-12 diversityControl">
@@ -344,7 +338,7 @@
                         <div class="radio">
                           <label>
                             <input type="radio" name="downloadType" id="occs" checked>
-                            <p id="occsLabel">Occurrences</p>
+                            <span id="occsLabel">Occurrences</span>
                           </label>
                         </div>
                         <div class="radio">
@@ -367,7 +361,7 @@
                         </div>
                       </div>
                     </div>
-                    <a type="button" class="btn btn-link downloadButton" href="https://paleobiodb.org/classic/displayDownloadGenerator?a=displayDownloadGenerator" target="_blank">Go to full download form</a>
+                    <a class="btn btn-link downloadButton" href="https://paleobiodb.org/classic/displayDownloadGenerator?a=displayDownloadGenerator" target="_blank">Go to full download form</a>
                     <div class="col-sm-12">
                       <button type="button" class="btn btn-primary downloadButton" onclick="return navMap.download()">Download</button>
                       <button type="button" class="btn btn-warning downloadButton" data-dismiss="modal">Cancel</button>
@@ -511,7 +505,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header" id="subtaxaModalHeader">
-            <input class="form-control" type="text" onkeyup="taxaBrowser.filter(this)" placeholder="Type to filter..." id="taxaFilterInput"/>
+            <input class="form-control" type="text" onkeyup="taxaBrowser.filter(this)" placeholder="Type to filter..." id="taxaFilterInput">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           </div>
           <div class="modal-body">
@@ -537,17 +531,17 @@
             <h4>Data Sources</h4>
             <div class="row">
               <div class="col-xs-4 dataSource">
-                <a href="/" target="_blank"><img src="build/img/logo_clear_color.png"/></a>
+                <a href="/" target="_blank"><img src="build/img/logo_clear_color.png" alt="PBDB Logo"></a>
                 <p class="dataSourceTitle">Paleobiology Database</p>
                 <p class="text-muted"><a href="http://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0 International</a></p>
               </div>
               <div class="col-xs-4 dataSource">
-                <a href="http://www.gplates.org" target="_blank"><img src="build/img/gplates_icon.jpg"/></a>
+                <a href="http://www.gplates.org" target="_blank"><img src="build/img/gplates_icon.jpg" alt="GPlates Logo"></a>
                 <p class="dataSourceTitle">GPlates</p>
                 <p class="text-muted"><a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_blank">GNU GPL, version 2</a></p>
               </div>
               <div class="col-xs-4 dataSource">
-                <a href="http://phylopic.org/" target="_blank"><img src="build/img/trilobita.png"/></a>
+                <a href="http://phylopic.org/" target="_blank"><img src="build/img/trilobita.png" alt="Phylopic Logo"></a>
                 <p class="dataSourceTitle">Phylopic</p>
                 <p class="text-muted"><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank">CC BY</a> or <a href="http://creativecommons.org/publicdomain/zero/1.0/" target="_blank">CC0</a></p>
               </div>
@@ -558,22 +552,22 @@
             <h4>Project Team</h4>
             <div class="row">
               <div class="col-sm-3 mugshot">
-                <a href="http://paleobiodb.org/#/people"><img src="build/img/people.png"/></a>
+                <a href="http://paleobiodb.org/#/people"><img src="build/img/people.png" alt="Abstract image of people"></a>
                 <p>PBDB Contributors</p>
                 <p class="text-muted">Data entry & vetting</p>
               </div>
               <div class="col-sm-3 mugshot">
-                <a href="http://strata.geology.wisc.edu"><img src="build/img/shanan.jpg"/></a>
+                <a href="http://strata.geology.wisc.edu"><img src="build/img/shanan.jpg" alt="Picture of Shanan Peters"></a>
                 <p>Shanan Peters</p>
                 <p class="text-muted">Principal Investigator</p>
               </div>
               <div class="col-sm-3 mugshot">
-                <a href="http://strata.geology.wisc.edu/Home/Team.html"><img src="build/img/michael.jpg"/></a>
+                <a href="http://strata.geology.wisc.edu/Home/Team.html"><img src="build/img/michael.jpg" alt="Picture of Michael McClennen"></a>
                 <p>Michael McClennen</p>
                 <p class="text-muted">Chief Informaticist</p>
               </div>
               <div class="col-sm-3 mugshot">
-                <a href="http://twitter.com/johnjcz"><img src="build/img/john.jpg"/></a>
+                <a href="http://twitter.com/johnjcz"><img src="build/img/john.jpg" alt="Picture of John Czaplewski"></a>
                 <p>John Czaplewski</p>
                 <p class="text-muted">Web developer / designer / cartographer</p>
               </div>
@@ -606,19 +600,19 @@
               <div class="col-sm-12">
                 <div class="col-sm-4 examples">
                   <button type="button" class="btn btn-primary btn-lg" id="trilobita">
-                    <img src="build/img/trilobita.png" alt="Trilobita"/>
+                    <img src="build/img/trilobita.png" alt="Trilobita">
                     <p>Cambrian Trilobites<br> Eastern China</p>
                   </button>
                 </div>
                 <div class="col-sm-4 examples">
                   <button type="button" class="btn btn-primary btn-lg" id="dinosauria">
-                    <img src="build/img/dinosauria.png" alt="Dinosauria"/>
+                    <img src="build/img/dinosauria.png" alt="Dinosauria">
                     <p>Jurassic Dinosaurs<br> Western USA</p>
                   </button>
                 </div>
                 <div class="col-sm-4 examples">
                   <button type="button" class="btn btn-primary btn-lg" id="plantae">
-                    <img src="build/img/plantae.png" alt="Plantae"/>
+                    <img src="build/img/plantae.png" alt="Plantae">
                     <p>Permian Plants<br> Paleogeography</p>
                   </button>
                 </div>
@@ -675,7 +669,6 @@
         $x.css("display", $x.css("display") === 'none' ? '' : 'none');
       }
     </script>
-    
     <script src="build/js/lib/leaflet.js"></script>
     <script src="build/js/lib/d3.v3.min.js" charset="utf-8"></script>
     <script src="build/js/lib/topojson.v1.min.js"></script>
@@ -687,14 +680,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/1.0.5/jquery.hammer.min.js"></script>
     <script>window.Hammer || document.write('<script src="build/js/lib/jquery.hammer.min.js">\x3C/script>')</script>
 
-    <script src="assets/js/navigator.js"></script>
+    <!-- <script src="build/js/script.min.js"></script> -->
+
+    <script src="assets/js/lib/bootstrap.min2.js"></script>
+    <script src="assets/js/lib/typeahead.js"></script>
+    <script src="assets/js/lib/mustache.js"></script>
     <script src="assets/js/navMap.js"></script>
+    <script src="assets/js/navigator.js"></script>
     <script src="assets/js/timescale.js"></script>
     <script src="assets/js/reconstruct.js"></script>
     <script src="assets/js/taxaBrowser.js"></script>
     <script src="assets/js/diversity.js"></script>
-    <script src="assets/js/lib/bootstrap.min.js"></script>
-    <script src="assets/js/lib/typeahead.js"></script>
-    <script src="assets/js/lib/mustache.js"></script>
-  </body>
+ </body>
 </html>

@@ -736,7 +736,8 @@ var navMap = (function () {
 
     clusters
       .attr("id", function (d) { return "p" + d.members[0].cxi; })
-      .style("fill", function (d) { return timeScale.interval_hash[d.cxi].color; })
+      .style("fill", function (d) { return d.cxi ? timeScale.interval_hash[d.cxi].color :
+				    timeScale.interval_hash[0].color; })
       .on("mouseover", function (d) {
         d3.select(".info")
           .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
@@ -1137,7 +1138,7 @@ var navMap = (function () {
 
       $(".filterByStrat").click(function (event) {
         event.preventDefault();
-        navMap.filterByStratigraphy({ "name": $(this).attr("data-name"), "type": $(this).attr("data-rank") });
+        navMap.filterByStratigraphy({ "nam": $(this).attr("data-name"), "type": $(this).attr("data-rank") });
         $("#collectionBox").modal("hide");
       });
 
@@ -1254,7 +1255,7 @@ var navMap = (function () {
 
     $(".filterByStrat").click(function (event) {
       event.preventDefault();
-      navMap.filterByStratigraphy({ "name": $(this).attr("data-name"), "type": $(this).attr("data-rank") });
+      navMap.filterByStratigraphy({ "nam": $(this).attr("data-name"), "type": $(this).attr("data-rank") });
       $("#collectionModal").modal("hide");
     });
 
@@ -1293,15 +1294,16 @@ var navMap = (function () {
               url = url.slice(0, -1);
               break;
             case "stratigraphy":
-              if (filters.stratigraphy.rank === "Fm") {
-                url += '&formation=' + filters.stratigraphy.name;
-              } else if (filters.stratigraphy.rank === "Gp") {
-                url += '&stratgroup=' + filters.stratigraphy.name;
-              } else if (filters.stratigraphy.rank === "Mbr") {
-                url += '&member=' + filters.stratigraphy.name;
-              } else {
-                // ?
-              }
+	      url += '&strat=' + filters.stratigraphy.name + ' ' + filters.stratigraphy.rank;
+              // if (filters.stratigraphy.rank === "Fm") {
+              //   url += '&formation=' + filters.stratigraphy.name;
+              // } else if (filters.stratigraphy.rank === "Gp") {
+              //   url += '&stratgroup=' + filters.stratigraphy.name;
+              // } else if (filters.stratigraphy.rank === "Mbr") {
+              //   url += '&member=' + filters.stratigraphy.name;
+              // } else {
+              //   // ?
+              // }
           }
           count += 1;
         }
@@ -1600,7 +1602,7 @@ var navMap = (function () {
       case "stratigraphy":
         d3.select("#stratFilter")
           .style("display", "block")
-          .html(filters.stratigraphy.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
+          .html(filters.stratigraphy.name + ' ' + filters.stratigraphy.rank + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
         navMap.refreshFilterHandlers();
         break;
     }
@@ -1751,13 +1753,13 @@ var navMap = (function () {
   },
 
   "filterByStratigraphy": function(rock) {
-    // rock is = {"nam": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
+    // rock is = {"name": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
     if (rock) {
-      filters.exist.stratigraphy = true;
-      filters.stratigraphy.name = rock.nam;
-      filters.stratigraphy.rank = (rock.type) ? rock.type : rock.rank;
-      navMap.updateFilterList("stratigraphy");
-      navMap.refresh("reset");
+	filters.exist.stratigraphy = true;
+	filters.stratigraphy.name = rock.nam;
+	filters.stratigraphy.rank = (rock.type) ? rock.type : rock.rank;
+	navMap.updateFilterList("stratigraphy");
+	navMap.refresh("reset");
     }
   },
 
