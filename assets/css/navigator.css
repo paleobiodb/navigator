@@ -83,6 +83,10 @@ nav {
 .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
   color: rgb(245,245,245);
 }
+.navbar-display {
+  color: rgb(245,245,245);
+  margin: 14px;  
+}
 #aboutModal > .modal-dialog > .modal-content > .modal-header > .modal-title {
   font-family: 'Raleway', sans-serif;
   color: #000;

@@ -96,14 +96,24 @@ var navMap = (function () {
       function mapSelection(zoom) {
         // If viewing the projected map...
         var newBounds = map.getBounds();
-        if (Math.abs(newBounds._northEast.lng) + Math.abs(newBounds._southWest.lng) > 360) {
-          var changeMaps = true;
-        }
+	  while ( newBounds._northEast.lng > 180 ) 
+	      newBounds._northEast.lng = newBounds._northEast.lng - 180;
+	  while ( newBounds._southWest.lng > 180 )
+	      newBounds._southWest.lng = newBounds._southWest.lng - 180;
+	  while ( newBounds._northEast.lng < -180 )
+	      newBounds._northEast.lng = newBounds._northEast.lng + 180;
+	  while ( newBounds._southWest.lng < -180 )
+	      newBounds._southWest.lng = newBounds._southWest.lng + 180;
+          if (Math.abs(newBounds._northEast.lng) + Math.abs(newBounds._southWest.lng) > 360) {
+            var changeMaps = true;
+          }
         if (zoom < 3 || zoom > 3 && changeMaps || prevzoom === 4 && zoom === 3 && changeMaps) {
           if (window.innerWidth > 700) {
             prevzoom = 2;
             d3.select("#map").style("height", 0);
             d3.select("#svgMap").style("display", "block");
+            $("#latdisplay").text("");
+            $("#lngdisplay").text("");
             //setTimeout(navMap.resizeSvgMap, 400);
           }
         }
@@ -371,11 +381,23 @@ var navMap = (function () {
         ne = bounds._northEast,
         zoom = map.getZoom();
 
+	var midlat = (ne.lat + sw.lat) / 2;
+	var midlng = (ne.lng + sw.lng) / 2;
+	
+	if ( midlng > 180 ) midlng = midlng - 360;
+	else if ( midlng < -180 ) midlng = midlng + 360;
+	
+	var lattext = Math.abs(midlat).toFixed(2) + (midlat < 0 ? 'º S' : 'º N');
+	var lngtext = Math.abs(midlng).toFixed(2) + (midlng < 0 ? 'º W' : 'º E');
+	
+	$("#latdisplay").text(lattext);
+	$("#lngdisplay").text(lngtext);
+	
       sw.lat = sw.lat.toFixed(4);
       sw.lng = sw.lng.toFixed(4);
       ne.lat = ne.lat.toFixed(4);
       ne.lng = ne.lng.toFixed(4);
-
+	
       if (!reset) {
         // Check if new points are needed from the server
         // If the new bounding box is a subset of the old one...
@@ -843,7 +865,7 @@ var navMap = (function () {
         d.strat = (d.sfm || d.sgr || d.smb) ? true : false;
         d.lat = Math.round(d.lat * 10000) / 10000;
         d.lng = Math.round(d.lng * 10000) / 10000;
-        d.oid = d.oid.replace(":", "");
+        d.oid = d.oid.replace("col:", "");
       });
 
       var output = Mustache.render(stackedCollectionPartial, { "members": data.records });
