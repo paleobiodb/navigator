@@ -35,7 +35,7 @@ var diversityPlot = (function() {
     // Figure out how much timescale we need
     var maxAge = data[data.length - 1].eag,
         minAge = data[0].lag;
-
+    
     var eras = [
       {"nam": "Neoproterozoic", "lag": 538.8, "eag": 1000},
       {"nam": "Paleozoic", "lag": 251.902, "eag": 538.8},
@@ -54,7 +54,9 @@ var diversityPlot = (function() {
         requestedMinAge = eras[i].lag;
       }
     }
-
+    
+    if ( maxAge > 538.8 ) requestedMaxAge = "538.8";
+    
     // Request timescale data
     $.ajax(paleo_nav.dataUrl + paleo_nav.dataService + "/intervals/list.json?scale=1&order=age.desc&max_ma=" + requestedMaxAge + "&min_ma=" + requestedMinAge )
       .fail(function(error) {

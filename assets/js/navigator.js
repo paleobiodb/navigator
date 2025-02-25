@@ -183,7 +183,7 @@ var paleo_nav = (function() {
           $("#universalSearchResult").css("display","none");
           return;
         }
-        d3.json(dataUrl + dataService + '/combined/auto.json?show=countries&name=' + autocompleteInput, function(error,result){
+        d3.json(dataUrl + dataService + '/combined/auto.json?type=nav&name=' + autocompleteInput, function(error,result){
           var htmlResult = "";
           if (error) {htmlResult += "<div class='autocompleteError'>Error: server did not respond</div>"} //server is down or something
           else if (result.records.length == 0) {htmlResult += "<div class='autocompleteError'>No matching results for \"" + autocompleteInput + "\"</div>"} //no matches
@@ -208,11 +208,32 @@ var paleo_nav = (function() {
                   htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.ist + "</small></p></div>"
                   break;
                 case "txn": 
-                  if ( currentType != "txn" ) { htmlResult += "<h4 class='autocompleteTitle'>Taxa</h4>"; currentType = "txn"; }
+                  if ( currentType != "txn" ) { 
+		    htmlResult += "<h4 class='autocompleteTitle'>Taxa</h4>"; 
+		    currentType = "txn";
+		  }
                   htmlResult += "<div class='suggestion' data-oid='" + d.oid + "' data-rtype='" + rtype + "'>"
                   if (d.tdf) { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small><br><small class=misspelling>" + d.tdf + " " + d.acn + "</small></p></div>"; }
                   else { htmlResult += "<p class='tt-suggestion'>" + d.nam + " <small class=taxaRank>" + d.rnk + " in " + d.htn + "</small></p></div>"; }
                   break;
+                case "cou":
+                  if ( currentType != "cou" ) {
+                    htmlResult += "<h4 class='autocompleteTitle'>Country or Ocean</h4>";
+                    currentType = "cou";
+                  }
+                  htmlResult += "<div class='suggestion' data-nam='" + d.nam + "' data-cc2='" + d.cc2 + "' data-rtype='cou'>";
+                  htmlResult += "<p class='tt-suggestion'>" + d.nam + "</p></div>";
+                  break;
+	        case "rgp":
+		  if ( currentType != "rgp" ) {
+		    htmlResult += "<h4 class='autocompleteTitle'>Research Groups</h4>";
+		    currentType = "rgp";
+		  }
+		  htmlResult += "<div class='suggestion' data-nam='" + d.nam + "' data-rtype='rgp'>";
+		  htmlResult += "<p class='tt-suggestion'>Only " + d.nam + "</p></div>";
+		  htmlResult += "<div class='suggestion' data-nam='!" + d.nam + "' data-rtype='rgp'>";
+		  htmlResult += "<p class='tt-suggestion'>Exclude " + d.nam + "</p></div>";
+		  break;
                 default: //do nothing 
                 }
               })
@@ -240,6 +261,12 @@ var paleo_nav = (function() {
                 break;
               case "txn": 
                 navMap.filterByTaxon($(this).attr("data-oid"));
+                break;
+	      case "rgp":
+                navMap.filterByResearchGroup($(this).attr("data-nam"));
+                break;
+              case "cou":
+                navMap.filterByCountry($(this).attr("data-nam"), $(this).attr("data-cc2"));
                 break;
               default: //do nothing           
             }
@@ -308,7 +335,7 @@ var paleo_nav = (function() {
           ne.lat = 90;
         }
 
-        var diversityURL = navMap.parseURL(testUrl + dataService + "/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+        var diversityURL = navMap.parseURL(dataUrl + dataService + "/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
         $(".diversityDownload").attr("href", diversityURL);
         // console.log(sw.lng.toFixed(1) + "° to " + ne.lng.toFixed(1) + "° N, " + sw.lat.toFixed(1) + "° to " + ne.lat.toFixed(1) + "° E");
         $(".divMapBounds").html(sw.lng.toFixed(1) + "° to " + ne.lng.toFixed(1) + "° N, " + sw.lat.toFixed(1) + "° to " + ne.lat.toFixed(1) + "° E");
@@ -617,7 +644,7 @@ var paleo_nav = (function() {
         ne.lat = 90;
       }
 
-      var prevalenceURL = navMap.parseURL(dataUrl + dataService + "/occs/prevalence.json?limit=50&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
+      var prevalenceURL = navMap.parseURL(dataUrl + dataService + "/occs/prevalence.json?limit=10&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
       currentPrevRequest = d3.json(prevalenceURL, function(error, data) {
         var scale = d3.scale.linear()
           .domain([d3.min(data.records, function(d) {

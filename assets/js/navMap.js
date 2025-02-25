@@ -30,11 +30,20 @@ var navMap = (function () {
       "name": "",
       "rank": ""
     },
+    "researchGroup": {
+      "name": ""
+    },
+    "country": {
+      "name": "",
+      "cc2": ""
+    },
     "exist": {
       "selectedInterval": false,
       "personFilter": false,
       "taxon": false,
-      "stratigraphy": false
+      "stratigraphy": false,
+      "researchGroup": false,
+      "country": false
     }
   };
 
@@ -334,8 +343,8 @@ var navMap = (function () {
         // If filters are applied to the map
         if (filtered) {
           // If only a time filter is applied...
-          if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
-            url += "&level=3";
+          if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup) {
+            url += "&level=1";
             url = navMap.parseURL(url);
 
             if (typeof (timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
@@ -357,7 +366,7 @@ var navMap = (function () {
             }
 
           } else {
-            url += "&level=2";
+            url += "&level=1";
             url = navMap.parseURL(url);
           }
           // If there are no filters
@@ -426,7 +435,7 @@ var navMap = (function () {
           }
         } else if (prevzoom > 2 && zoom < 7) {
           if (filtered) {
-            if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
+            if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup) {
               if (d3.select("#binHolder").selectAll("circle")[0].length < 1) {
                 // refresh
               } else if (prevzoom < 7 && zoom > 6 || prevzoom > 6 && zoom < 7) {
@@ -476,7 +485,7 @@ var navMap = (function () {
       } else if (zoom > 4 && zoom < 7 || zoom < 5 && filtered === true) {
 
         // If filtered only by a time interval...
-        if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy) {
+        if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup) {
           var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time&level=3';
           url = navMap.parseURL(url);
 
@@ -532,22 +541,22 @@ var navMap = (function () {
         // Scale for level 3 or filtered + clusters
         var scale = d3.scale.log()
           .domain([1, 400])
-          .range([4, 30]);
+          .range([4, 20]);
       } else {
         // Scale for level 2
         var scale = d3.scale.linear()
           .domain([1, 3140])
-          .range([4, 30]);
+          .range([4, 20]);
       }
     } else if (zoom > 4 && zoom < 7) {
       // Scale for level 3
       var scale = d3.scale.log()
-        .domain([1, 400])
+        .domain([1, 1000])
         .range([4, 30]);
     } else {
       // Scale for collections
       var scale = d3.scale.linear()
-        .domain([1, 50])
+        .domain([1, 400])
         .range([12, 30]);
     }
     points.attr("cx", function (d) { return map.latLngToLayerPoint([d.lat, d.lng]).x });
@@ -1320,6 +1329,12 @@ var navMap = (function () {
             case "personFilter":
               url += '&occs_authent_by=' + filters.personFilter.id;
               break;
+            case "researchGroup":
+              url += '&research_group=' + filters.researchGroup.name;
+	      break;
+            case "country":
+              url += '&cc=' + filters.country.cc2;
+              break;
             case "taxon":
               url += '&base_id=';
               filters.taxa.forEach(function (d) {
@@ -1343,6 +1358,9 @@ var navMap = (function () {
           count += 1;
         }
       }
+    }
+    if ( typeof rgFilter !== 'undefined' && rgFilter ) {
+      url += '&research_group=' + rgFilter;
     }
     if (count > 0 && d3.select("#reconstructMap").style("display") === "none") {
       d3.select(".filters").style("display", "block");
@@ -1571,6 +1589,24 @@ var navMap = (function () {
           }
           break;
 
+        case "researchGroup":
+          parent.style("display", "none").html("");
+          filters.exist["researchGroup"] = false;
+          var keys = Object.keys(filters[type]);
+          for (var i = 0; i < keys.length; i++) {
+            filters[type][keys[i]] = "";
+          }
+          break;
+        
+        case "countryFilter":
+          parent.style("display", "none").html("");
+          filters.exist["country"] = false;
+          var keys = Object.keys(filters.country);
+          for (var i = 0; i < keys.length; i++) {
+            filters.country[keys[i]] = "";
+          }
+          break;
+
         case "taxon":
           parent.remove();
           navMap.removeTaxonFilters([id]);
@@ -1612,6 +1648,19 @@ var navMap = (function () {
           .style("display", "block")
           .html(filters.personFilter.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
         d3.select(".userFilter").style("box-shadow", "inset 3px 0 0 #ff992c");
+        navMap.refreshFilterHandlers();
+        break;
+      case "researchGroup":
+        d3.select("#researchGroup")
+          .style("display", "block")
+          .html(filters.researchGroup.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
+        d3.select(".rgFilter").style("box-shadow", "inset 3px 0 0 #ff992c");
+        navMap.refreshFilterHandlers();
+        break;
+      case "country":
+        d3.select("#countryFilter")
+          .style("display", "block")
+          .html(filters.country.name + '<button type="button" class="close removeFilter" aria-hidden="true">&times;</button>');
         navMap.refreshFilterHandlers();
         break;
       case "taxon":
@@ -1777,7 +1826,7 @@ var navMap = (function () {
       filters.personFilter.id = (person.oid) ? person.oid : person.id;
       filters.personFilter.name = (person.name) ? person.name : person.nam;
       navMap.updateFilterList("personFilter");
-
+      
       // Refresh either the reconstruction map or the regular one
       if (d3.select("#reconstructMap").style("display") === "block") {
         reconstructMap.rotate(filters.selectedInterval);
@@ -1786,7 +1835,38 @@ var navMap = (function () {
       }
     }
   },
-
+    
+  "filterByResearchGroup": function(group) {
+    if ( group ) {
+      filters.exist.researchGroup = true;
+      filters.researchGroup.name = group;
+      navMap.updateFilterList("researchGroup");
+      
+      // Refresh either the reconstruction map or the regular one
+      if (d3.select("#reconstructMap").style("display") === "block") {
+        reconstructMap.rotate(filters.selectedInterval);
+      } else {
+        navMap.refresh("reset");
+      }
+    }
+  },
+    
+  "filterByCountry" : function(country, cc2) {
+    if ( cc2 ) {
+      filters.exist.country = true;
+      filters.country.name = country;
+      filters.country.cc2 = cc2;
+      navMap.updateFilterList("country");
+      
+      // Refresh either the reconstruction map or the regular one
+      if (d3.select("#reconstructMap").style("display") === "block") {
+        reconstructMap.rotate(filters.selectedInterval);
+      } else {
+        navMap.refresh("reset");
+      }
+    }      
+  },
+  
   "filterByStratigraphy": function(rock) {
     // rock is = {"name": "stratName", "type": "Fm, Gr, or Mb", "display_name": "Awesome Gr"}
     if (rock) {
@@ -1908,7 +1988,7 @@ var navMap = (function () {
 
     url = navMap.parseURL(url);
 
-    url += "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val();
+    url += "&count=" + $('[name="taxonLevel"]').val() + "&time_reso=" + $('[name="timeLevel"]').val();
 
     window.open(url);
   },
@@ -1941,7 +2021,7 @@ var navMap = (function () {
 
     url = navMap.parseURL(url);
 
-    url += "&count=" + $('[name="taxonLevel"]').val() + "&reso=" + $('[name="timeLevel"]').val() + "&recent=" + $('[name="extant"]').is(":checked");
+    url += "&count=" + $('[name="taxonLevel"]').val() + "&time_reso=" + $('[name="timeLevel"]').val() + "&recent=" + $('[name="extant"]').is(":checked");
 
     window.open(url);
   },
@@ -2108,7 +2188,7 @@ var navMap = (function () {
 
   "summarize" : function(data) {
     if (data.records.length > 0) {
-      if (data.records[0].oid.substr(0, 3) === "col") {
+      if (typeof data.records[0].oid == 'string' && data.records[0].oid.substr(0, 3) === "col") {
         navMap.totalCollections = numberWithCommas(data.records.length);
       } else {
         navMap.totalCollections = numberWithCommas(d3.sum(data.records, function (d) { return d.nco }));
