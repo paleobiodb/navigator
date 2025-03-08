@@ -1,0 +1,4 @@
+html: ../../*.html
+js: *.js
+css: ../css/*.css
+all: ../../*.html ../css/*.css *.js
