@@ -343,7 +343,7 @@ var navMap = (function () {
         // If filters are applied to the map
         if (filtered) {
           // If only a time filter is applied...
-          if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup) {
+          if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup && !filters.exist.country) {
             url += "&level=1";
             url = navMap.parseURL(url);
 
@@ -435,7 +435,7 @@ var navMap = (function () {
           }
         } else if (prevzoom > 2 && zoom < 7) {
           if (filtered) {
-            if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup) {
+            if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup && !filters.exist.country) {
               if (d3.select("#binHolder").selectAll("circle")[0].length < 1) {
                 // refresh
               } else if (prevzoom < 7 && zoom > 6 || prevzoom > 6 && zoom < 7) {
@@ -485,7 +485,7 @@ var navMap = (function () {
       } else if (zoom > 4 && zoom < 7 || zoom < 5 && filtered === true) {
 
         // If filtered only by a time interval...
-        if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup) {
+        if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup && !filters.exist.country) {
           var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time&level=3';
           url = navMap.parseURL(url);
 
@@ -537,22 +537,22 @@ var navMap = (function () {
 
     var zoom = map.getZoom();
     if (zoom < 5) {
-      if (navMap.checkFilters()) {
-        // Scale for level 3 or filtered + clusters
-        var scale = d3.scale.log()
-          .domain([1, 400])
-          .range([4, 20]);
-      } else {
+      // if (navMap.checkFilters()) {
+      //   // Scale for level 3 or filtered + clusters
+      //   var scale = d3.scale.log()
+      //     .domain([1, 400])
+      //     .range([4, 20]);
+      // } else {
         // Scale for level 2
         var scale = d3.scale.linear()
-          .domain([1, 3140])
-          .range([4, 20]);
-      }
+          .domain([1, 3000])
+          .range([4, 8]);
+      // }
     } else if (zoom > 4 && zoom < 7) {
       // Scale for level 3
       var scale = d3.scale.log()
-        .domain([1, 1000])
-        .range([4, 30]);
+        .domain([1, 1500])
+        .range([4, 10]);
     } else {
       // Scale for collections
       var scale = d3.scale.linear()
@@ -583,8 +583,8 @@ var navMap = (function () {
     navMap.summarize(data);
 
     var scale = d3.scale.linear()
-      .domain([1, 4240])
-      .range([4, 15]);
+      .domain([1, 6000])
+      .range([4, 10]);
 
     var hammer = d3.select("#svgMap").select("svg").select("g"),
       zoom = 2;
@@ -875,6 +875,7 @@ var navMap = (function () {
         d.lat = Math.round(d.lat * 10000) / 10000;
         d.lng = Math.round(d.lng * 10000) / 10000;
         d.oid = d.oid.replace("col:", "");
+        d.country = (paleo_nav.country_name && d.cc2 ? paleo_nav.country_name[d.cc2] || '?' : '');
       });
 
       var output = Mustache.render(stackedCollectionPartial, { "members": data.records });
@@ -942,6 +943,7 @@ var navMap = (function () {
         d.lat = Math.round(d.lat * 10000) / 10000;
         d.lng = Math.round(d.lng * 10000) / 10000;
         d.oid = d.oid.replace("col:", "");
+        d.country = (paleo_nav.country_name && d.cc2 ? paleo_nav.country_name[d.cc2] || '?' : '');
       });
 
       var output = Mustache.render(stackedCollectionPartial, { "members": data.records });
@@ -1159,6 +1161,7 @@ var navMap = (function () {
         d.lat = Math.round(d.lat * 10000) / 10000;
         d.lng = Math.round(d.lng * 10000) / 10000;
         d.oid = d.oid.replace("col:", "");
+        d.country = (paleo_nav.country_name && d.cc2 ? paleo_nav.country_name[d.cc2] || '?' : '');
       });
 
       var output = Mustache.render(collectionModalPartial, data);
@@ -1230,6 +1233,7 @@ var navMap = (function () {
       d.lat = Math.round(d.lat * 10000) / 10000;
       d.lng = Math.round(d.lng * 10000) / 10000;
       d.oid = d.oid.replace("col:", "");
+      d.country = (paleo_nav.country_name && d.cc2 ? paleo_nav.country_name[d.cc2] || '?' : '');
     });
 
     var output = Mustache.render(stackedCollectionPartial, data);
@@ -1324,7 +1328,8 @@ var navMap = (function () {
         if (filters.exist[key] === true) {
           switch (key) {
             case "selectedInterval":
-              url += '&interval_id=' + filters.selectedInterval.oid;
+              if ( filters.selectedInterval.oid && filters.selectedInterval.oid > 0 )
+                url += '&interval_id=' + filters.selectedInterval.oid;
               break;
             case "personFilter":
               url += '&occs_authent_by=' + filters.personFilter.id;

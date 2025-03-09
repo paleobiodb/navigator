@@ -3,7 +3,8 @@ var paleo_nav = (function() {
      If developing locally default to paleobiodb.org, otherwise use localhost */
   var dataUrl = window.location.origin,
       testUrl = "https://paleobiodb.org",
-      dataService = "/data1.2";
+      dataService = "/data1.2",
+      country_name;
 
   if ( window.location.search.indexOf("local") > -1 ) {
     dataUrl = window.location.origin + ":3000";
@@ -48,7 +49,17 @@ var paleo_nav = (function() {
         taxaBrowser.init();
       });
 
-
+      // Initialize the country map
+      d3.json(paleo_nav.dataUrl + paleo_nav.dataService + "/config.json?show=countries", function(error, result) {
+        if ( error ) return;
+        paleo_nav.country_name = { };
+        for(var i = 0; i < result.records.length; i++) {
+          if ( result.records[i] && result.records[i].cod ) {
+            paleo_nav.country_name[result.records[i].cod] = result.records[i].nam;
+          }
+        }
+      });
+	
       // Handler for the zoom-in button
       var zoomInButton = $(".zoom-in").hammer();
 
@@ -218,7 +229,7 @@ var paleo_nav = (function() {
                   break;
                 case "cou":
                   if ( currentType != "cou" ) {
-                    htmlResult += "<h4 class='autocompleteTitle'>Country or Ocean</h4>";
+                    htmlResult += "<h4 class='autocompleteTitle'>Geographic Regions</h4>";
                     currentType = "cou";
                   }
                   htmlResult += "<div class='suggestion' data-nam='" + d.nam + "' data-cc2='" + d.cc2 + "' data-rtype='cou'>";
@@ -334,8 +345,11 @@ var paleo_nav = (function() {
           sw.lat = -90,
           ne.lat = 90;
         }
-
-        var diversityURL = navMap.parseURL(dataUrl + dataService + "/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=genera&reso=stage");
+	  
+	var taxonLevel = $("[name=taxonLevel]").val();
+        var timeLevel = $("[name=timeLevel]").val();
+	  
+        var diversityURL = navMap.parseURL(dataUrl + dataService + "/occs/quickdiv.json?lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1) + "&count=" + taxonLevel + "&reso=" + timeLevel);
         $(".diversityDownload").attr("href", diversityURL);
         // console.log(sw.lng.toFixed(1) + "° to " + ne.lng.toFixed(1) + "° N, " + sw.lat.toFixed(1) + "° to " + ne.lat.toFixed(1) + "° E");
         $(".divMapBounds").html(sw.lng.toFixed(1) + "° to " + ne.lng.toFixed(1) + "° N, " + sw.lat.toFixed(1) + "° to " + ne.lat.toFixed(1) + "° E");
@@ -646,6 +660,7 @@ var paleo_nav = (function() {
 
       var prevalenceURL = navMap.parseURL(dataUrl + dataService + "/occs/prevalence.json?limit=10&lngmin=" + sw.lng.toFixed(1) + "&lngmax=" + ne.lng.toFixed(1) + "&latmin=" + sw.lat.toFixed(1)  + "&latmax=" + ne.lat.toFixed(1));
       currentPrevRequest = d3.json(prevalenceURL, function(error, data) {
+        if ( error ) return;
         var scale = d3.scale.linear()
           .domain([d3.min(data.records, function(d) {
             return d.noc

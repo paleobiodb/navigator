@@ -14,9 +14,14 @@ var diversityPlot = (function() {
         diversityPlot.currentRequest = {};
       }
     }
-    if(url.match('authent_by')){
-      url = url.replace('/quickdiv.json','/diversity.json');
-    }
+    // if(url.match('authent_by')){
+    //   url = url.replace('/quickdiv.json','/diversity.json');
+    // }
+    
+    // Show the spinner and remove the existing plot
+    $("#diversityWait").css("display", "block");
+    d3.select("#diversity").select("svg").remove();
+    
     diversityPlot.currentRequest = d3.json(url, function(error, data) {
       if (error) {
         alert("Error retrieving diversity data");
@@ -43,7 +48,8 @@ var diversityPlot = (function() {
       {"nam": "Cenozoic", "lag": 0, "eag": 66}
     ];
 
-    var requestedMaxAge, requestedMinAge;
+    var requestedMaxAge = 538.8;
+    var requestedMinAge = 0;
     for (var i = 0; i < eras.length; i++) {
       // Get early era
       if (maxAge >= eras[i].lag && maxAge <= eras[i].eag) {
@@ -65,7 +71,7 @@ var diversityPlot = (function() {
       .done(function(timeData) {
         // Filter for eras and periods
         var timescale = timeData.records.filter(function(d) {
-          if (d.lvl === 2 || d.lvl === 3 || d.itp == 'era' || d.itp == 'period' ) {
+          if ( d.itp == 'era' || d.itp == 'period' ) {
             d.totalTime = d.eag - d.lag;
             return d;
           }
@@ -82,13 +88,13 @@ var diversityPlot = (function() {
 
     // Filter out the periods and eras for drawing purposes
     var periods = timescale.filter(function(d) {
-      if (d.lvl === 3 || d.itp == 'period' ) {
+      if ( d.itp == 'period' ) {
         return d;
       }
     });
 
     var eras = timescale.filter(function(d) {
-      if (d.lvl === 2 || d.itp == 'era' ) {
+      if ( d.itp == 'era' ) {
         return d;
       }
     });

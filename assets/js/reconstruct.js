@@ -4,6 +4,8 @@ var reconstructMap = (function() {
   var reconstructing = false,
       currentReconstruction = {"name":"", "taxa": [], "person": ""},
       rotatedPoints;
+  
+  var currentURL = '';
 
   var height = 500,
       width = 960;
@@ -69,40 +71,57 @@ var reconstructMap = (function() {
     
     },
     "rotate": function(interval) {
-      // If nothing has changed since the last reconstruct, do nothing
       var name = (interval.nam) ? interval.nam : interval.name;
-      if (name === reconstructMap.currentReconstruction.name && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person && navMap.filters.stratigraphy.name === reconstructMap.currentReconstruction.stratigraphy) {
+      // If nothing has changed since the last reconstruct, do nothing
+      // if (name === reconstructMap.currentReconstruction.name && navMap.filters.personFilter.name === reconstructMap.currentReconstruction.person && navMap.filters.stratigraphy.name === reconstructMap.currentReconstruction.stratigraphy) {
 
-        var taxaChange = 0;
+      //   var taxaChange = 0;
 
-        if (navMap.filters.taxa.length === reconstructMap.currentReconstruction.taxa.length) {
-          navMap.filters.taxa.forEach(function(d) {
-            var found = false;
-            reconstructMap.currentReconstruction.taxa.forEach(function(j) {
-              if (d.name === j.name) {
-                found = true;
-              }
-            });
-            if (!found) {
-              taxaChange += 1;
-            }
-          });
-          // If no taxa have changed, don't refresh
-          if (taxaChange === 0) {
-            // Make sure the time interval filter remove button is hidden
-            d3.select("#selectedInterval")
-              .select("button")
-                .style("display", "none");
-            return;
-          }
-        }
+      //   if (navMap.filters.taxa.length === reconstructMap.currentReconstruction.taxa.length) {
+      //     navMap.filters.taxa.forEach(function(d) {
+      //       var found = false;
+      //       reconstructMap.currentReconstruction.taxa.forEach(function(j) {
+      //         if (d.name === j.name) {
+      //           found = true;
+      //         }
+      //       });
+      //       if (!found) {
+      //         taxaChange += 1;
+      //       }
+      //     });
+      //     // If no taxa have changed, don't refresh
+      //     if (taxaChange === 0) {
+      //       // Make sure the time interval filter remove button is hidden
+      //       d3.select("#selectedInterval")
+      //         .select("button")
+      //           .style("display", "none");
+      //       return;
+      //     }
+      //   }
+      // }
+      
+      navMap.filterByTime(name);
+      
+      // Determine the URL necessary to fetch the rotated summary clusters. If the URL
+      // hasn't changed since the last reconstruction, do nothing.
+      
+      var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=2&show=paleoloc';
+      
+      url = navMap.parseURL(url); 
+      
+      if ( url == currentURL )
+      {
+        return;
       }
-
-      //navMap.filterByTime(name);
-
+      
+      else
+      {
+        currentURL = url;
+      }
+      
       reconstructing = true;
       reconstructMap.reset();
-
+      
       paleo_nav.showLoading();
 
       // Listener for whether or not a previous bounding box should be shown
@@ -116,7 +135,7 @@ var reconstructMap = (function() {
 
       d3.select('#age').text("(" + interval.mid + " Ma)");
       d3.select("#rotationYear").html(interval.mid + " Ma");
-
+      
       // Depending on the age of the reconstruction use different references
       if (interval.mid < 201) {
         d3.select("#rotationReference").html("<p>Seton, M., R.D. Müller, S. Zahirovic, C. Gaina, T.H. Torsvik, G. Shephard, A. Talsma, M. Gurnis, M. Turner, S. Maus, M. Chandler. 2012. Global continental and ocean basin reconstructions since 200 Ma. <i>Earth-Science Reviews </i>113:212-270.</p>");
@@ -132,24 +151,50 @@ var reconstructMap = (function() {
       var svg = d3.select("#reconstructGroup")
           .append("g")
           .attr("id", "reconstructContent");
-
+      
+      // New code by Michael M.
+      
       var filename = name.split(' ').join('_');
-
-      // Load the unrotated level2 bins associated with the selected interval
-      d3.json("build/js/collections/" + filename + ".json", function(error, response) {
-
+      
+      var reconstructed_clusters = [];
+      
+      d3.json(url, function(error, data) {
+        
+        var total_colls = 0,
+            total_occs = 0;
+        
+        data.records.forEach(function(d) {
+          
+          if ( d.pla || d.pln )
+          {
+            var point = { "type": "Feature",
+                          "geometry": { "type": "Point",
+                                        "coordinates": [ d.pln, d.pla ] },
+                          "properties": { "PLATE_ID": d.gpl,
+                                          "NAME": d.oid,
+                                          "oid": Number(d.oid.replace('clu:', '')),
+                                          "nco": d.nco,
+                                          "noc": d.noc } };
+            
+            reconstructed_clusters.push(point);
+            
+            if ( d.nco ) total_colls += d.nco;
+            if ( d.noc ) total_occs += d.noc;
+          }
+        });
+        
         // Load the rotated plates
         d3.json("build/js/plates/" + filename + ".json", function(er, plates) {
-
+          
           // Add the rotated plates to the map
           svg.selectAll(".plateLines")
             .data(topojson.feature(plates, plates.objects[filename]).features)
-          .enter().append("path")
+            .enter().append("path")
             .attr("class", "plates")
             .attr("d", path);
-
+          
           timeScale.highlight(name);
-
+          
           // Load the coastlines
           d3.json("build/js/coastlines/" + filename + ".json", function(er, coastlines) {
             svg.selectAll(".coastlines")
@@ -158,12 +203,12 @@ var reconstructMap = (function() {
               .attr("class", "coastlines")
               .attr("d", path);
           });
-
+          
           // Switch to reconstruct map now
           if(parseInt(d3.select("#map").style("height")) > 1) {
             d3.select("#map").style("display", "none");
           }
-
+          
           d3.select("#svgMap").style("display", "none");
 
           d3.select("#reconstructMap").style("display", "block");
@@ -177,72 +222,82 @@ var reconstructMap = (function() {
             .style("display", "none");
 
           // Load the rotated intervals
-          d3.json("build/js/rotatedIntervals/" + filename + ".json", function(err, result) {
-          //TODO: Double check that the key is unpredictable...using filename might work
-            var keys = Object.keys(result.objects),
-                key = keys[0];
+          // d3.json("build/js/rotatedIntervals/" + filename + ".json", function(err, result) {
+          // //TODO: Double check that the key is unpredictable...using filename might work
+          //   var keys = Object.keys(result.objects),
+          //       key = keys[0];
             
-            rotatedPoints = topojson.feature(result, result.objects[key]);
+          //   rotatedPoints = topojson.feature(result, result.objects[key]);
 
             /* If there is a taxon or contributor filter applied to the map, ask the API
                for all the level2 bins with those filters applied. */
-            if (navMap.filters.exist.taxon || navMap.filters.exist.personFilter || navMap.filters.exist.stratigraphy) {
-              var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=3&limit=99999';
+            // if (navMap.filters.exist.taxon || navMap.filters.exist.personFilter || navMap.filters.exist.stratigraphy) {
+            //   var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&level=3&limit=99999';
 
-              url = navMap.parseURL(url); 
+            //   url = navMap.parseURL(url); 
 
-              d3.json(url, function(wrong, right) {
-                // var pbdbData = right.records;
-                var pbdbData = right.records.map(function(d) {d.oid = d.oid.replace('clu:',''); return d;}); //return to previous version once we rebuild rotated intervals from new data service with abbreviations in oids
-                /* Instead of having to ask GPlates to rotate a ton of points, we'll simply
-                   compare our filtered, non-rotated dataset with our unfiltered, rotated
-                   dataset */
-                var matches = [];
-                pbdbData.forEach(function(d) {
-                  rotatedPoints.features.forEach(function(e) {
-                    if (d.oid == e.properties.NAME) {
-                      matches.push(e);
-                    }
-                  });
-                });
+            //   d3.json(url, function(wrong, right) {
+            //     // var pbdbData = right.records;
+            //     var pbdbData = right.records.map(function(d) {d.oid = d.oid.replace('clu:',''); return d;}); //return to previous version once we rebuild rotated intervals from new data service with abbreviations in oids
+            //     /* Instead of having to ask GPlates to rotate a ton of points, we'll simply
+            //        compare our filtered, non-rotated dataset with our unfiltered, rotated
+            //        dataset */
+            //     var matches = [];
+            //     pbdbData.forEach(function(d) {
+            //       rotatedPoints.features.forEach(function(e) {
+            //         if (d.oid == e.properties.NAME) {
+            //           matches.push(e);
+            //         }
+            //       });
+            //     });
 
-                matches.forEach(function(d) {
-                  for (var i=0;i<response.records.length;i++) {
-                    if (parseInt(d.properties.NAME) == response.records[i].oid) {
-                      d.properties.nco = response.records[i].nco;
-                      d.properties.noc = response.records[i].noc;
-                      d.properties.oid = response.records[i].oid;
-                    }
-                  }
-                });
+            //     matches.forEach(function(d) {
+            //       for (var i=0;i<response.records.length;i++) {
+            //         if (parseInt(d.properties.NAME) == response.records[i].oid) {
+            //           d.properties.nco = response.records[i].nco;
+            //           d.properties.noc = response.records[i].noc;
+            //           d.properties.oid = response.records[i].oid;
+            //         }
+            //       }
+            //     });
 
-                // Now that we know which bins to display, add them to the map
-                reconstructMap.addToMap(matches, interval);
-                navMap.summarize(right);
-              });
-            } else {
+            //     // Now that we know which bins to display, add them to the map
+            //     reconstructMap.addToMap(matches, interval);
+            //     navMap.summarize(right);
+            //   });
+            // } else {
               /* If there is only a time filter applied, simply match the rotated points to the
                  unrotated points so that they have useful data bound to them */
-              rotatedPoints.features.forEach(function(d) {
-                for (var i=0;i<response.records.length;i++) {
-                  if (parseInt(d.properties.NAME) == response.records[i].oid) {
-                    d.properties.nco = response.records[i].nco;
-                    d.properties.noc = response.records[i].noc;
-                    d.properties.oid = response.records[i].oid;
-                  }
-                }
-              });
-
+              // rotatedPoints.features.forEach(function(d) {
+              //   for (var i=0;i<response.records.length;i++) {
+              //     if (parseInt(d.properties.NAME) == response.records[i].oid) {
+              //       d.properties.nco = response.records[i].nco;
+              //       d.properties.noc = response.records[i].noc;
+              //       d.properties.oid = response.records[i].oid;
+              //     }
+              //   }
+              // });
+              // rotatedPoints.features.forEach(function(d) {
+              //   for (var i=0;i<data.records.length;i++) {
+              //     if ('clu:' + d.properties.NAME == data.records[i].oid) {
+              //       d.properties.nco = data.records[i].nco;
+              //       d.properties.noc = data.records[i].noc;
+              //       d.properties.oid = data.records[i].oid;
+              //     }
+              //   }
+              // });
+            
               // Now that the data is bound, add them to the reconstruction map
-              reconstructMap.addToMap(rotatedPoints.features, interval);
-              navMap.summarize(response);
-            }
-          }); // End plate callback
-        }); // End rotated points callback
-      
+              // reconstructMap.addToMap(rotatedPoints.features, interval);
+          reconstructMap.addToMap(reconstructed_clusters, interval);
+          
+              // navMap.summarize(response);
+            // }
+        }); // End plate callback
+            
       }); // end nonrotated point callback
     },
-
+    
     "addToMap": function(data, interval) {
       var svg = d3.select("#reconstructContent");
 
