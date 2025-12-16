@@ -211,7 +211,7 @@ var paleo_nav = (function() {
                 case "str": 
                   if ( currentType != "str" ) { htmlResult += "<h4 class='autocompleteTitle'>Stratigraphic Units</h4>"; currentType = "str"; }
                   htmlResult += "<div class='suggestion' data-nam='" + d.nam + "' data-rnk='" + d.rnk + "' data-rtype='" + rtype + "'>"
-                  htmlResult += "<p class='tt-suggestion'>" + d.nam + " " + stratRankMap[d.rnk] + " <small class=taxaRank>in " + d.cc2 + "</small></p></div>";
+                  htmlResult += "<p class='tt-suggestion'>" + d.nam + " " + d.rnk + " <small class=taxaRank>in " + d.cc2 + "</small></p></div>";
                   break;
                 case "prs": 
                   if ( currentType != "prs" ) { htmlResult += "<h4 class='autocompleteTitle'>Authorizers</h4>"; currentType = "prs"; }
@@ -262,11 +262,11 @@ var paleo_nav = (function() {
                 navMap.refresh("reset");
                 break;
               case "str": 
-                var rock = {"nam":$(this).attr("data-nam"), "type":stratRankMap[$(this).attr("data-rnk")]}
+                var rock = {"nam": $(this).attr("data-nam"), "type": $(this).attr("data-rnk")}
                 navMap.filterByStratigraphy(rock);
                 break;
               case "prs": 
-                var person = {"id":$(this).attr("data-oid") ,"nam":$(this).attr("data-nam")}
+                var person = {"id": $(this).attr("data-oid") ,"nam": $(this).attr("data-nam")}
                 navMap.filterByPerson(person);
                 document.activeElement.blur();
                 break;
