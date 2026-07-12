@@ -60,31 +60,26 @@ var paleo_nav = (function() {
         }
       });
 	
-      // Handler for the zoom-in button
-      var zoomInButton = $(".zoom-in").hammer();
-
-      zoomInButton.on("tap", function(event) {
+      function handleZoomIn(event) {
         event.preventDefault();
-        if (parseInt(d3.select("#map").style("height")) < 1) {
-
-          d3.select("#svgMap").style("display", "none");
-          d3.select("#map").style("height", function() {
-            return ((window.innerHeight * 0.70) - 70) + "px";
-          });
-          map.setView([7,0], 3, {animate:false});
-          navMap.refresh("reset");
-          map.invalidateSize();
+        if (reconstructMap.visible) {
+          reconstructMap.zoomIn();
         } else {
-          map.zoomIn();
+          navMap.zoomIn();
         }
-      });
+      }
 
-      // Handler for the zoom-out button
-      var zoomOutButton = $(".zoom-out").hammer();
-      zoomOutButton.on("tap", function(event) {
+      function handleZoomOut(event) {
         event.preventDefault();
-        map.zoomOut();
-      });
+        if (reconstructMap.visible) {
+          reconstructMap.zoomOut();
+        } else {
+          navMap.zoomOut();
+        }
+      }
+
+      $(".zoom-in").on("click", handleZoomIn);
+      $(".zoom-out").on("click", handleZoomOut);
 
       // Handler for the rotation/reconstruct UI button
       var rotateButton = $(".rotate").hammer();
@@ -804,14 +799,6 @@ var paleo_nav = (function() {
 
       reconstructMap.resize();
 
-      $(".zoom-in").hammer()
-        .off("tap")
-        .css("color", "#ccc");
-
-      $(".zoom-out").hammer()
-        .off("tap")
-        .css("color", "#ccc");
-
       if (navMap.filters.exist.selectedInterval) {
         reconstructMap.rotate(navMap.filters.selectedInterval);
       } else {
@@ -859,31 +846,6 @@ var paleo_nav = (function() {
 
       d3.select("#reconstructMap").style("display","none");
       timeScale.unhighlight();
-
-      $(".zoom-in").hammer()
-        .on("tap", function(event) {
-          event.preventDefault();
-          if (parseInt(d3.select("#map").style("height")) < 1) {
-            d3.select("#svgMap").style("display", "none");
-            d3.select("#map").style("height", function() {
-              return ((window.innerHeight * 0.70) - 70) + "px";
-            });
-            map.setView([7,0], 3, {animate:false});
-            navMap.refresh("reset");
-            map.invalidateSize();
-          } else {
-            map.zoomIn();
-          }
-        })
-        .css("color", "#000");
-
-      // Handler for the zoom-out button
-      $(".zoom-out").hammer()
-        .on("tap", function(event) {
-          event.preventDefault();
-          map.zoomOut();
-        })
-        .css("color", "#000");
 
       d3.select(".prevalence-row").style("display", "block");
       paleo_nav.getPrevalence();

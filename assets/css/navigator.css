@@ -527,6 +527,7 @@ color: rgb(245,245,245);
   border-bottom: 1px solid #ccc;
   line-height: 1;
   padding:2px;
+  pointer-events: auto;
 }
 .mapCtrl {
   height:45px;
@@ -535,6 +536,7 @@ color: rgb(245,245,245);
   position: relative;
   text-align: center;
   cursor: pointer;
+  pointer-events: auto;
 }
 .mapCtrl:hover {
   /*background-color:#ccc;

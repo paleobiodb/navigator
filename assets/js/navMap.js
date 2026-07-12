@@ -49,16 +49,167 @@ var navMap = (function () {
 
   // Variables used thoughout
   var width = 960,
-    height = 500;
+    height = 500,
+    baseProjectionScale = 165,
+    svgZoomBehavior,
+    svgZoomScale = 1,
+    svgZoomTranslate = [0, 0],
+    svgRefreshTimer;
 
-  var projection = d3.geo.hammer()
+  var projection = d3.geo.naturalEarth()
     .scale(165)
     .translate([width / 2, height / 2])
-    .rotate([1e-6, 0])
     .precision(.1);
 
   var path = d3.geo.path()
     .projection(projection);
+
+  function isSvgMapActive() {
+    return d3.select("#reconstructMap").style("display") === "none" &&
+      d3.select("#svgMap").style("display") !== "none" &&
+      parseInt(d3.select("#map").style("height"), 10) < 1;
+  }
+
+  function applySvgViewportTransform() {
+    d3.select("#svgMapViewport")
+      .attr("transform", "translate(" + svgZoomTranslate + ")scale(" + svgZoomScale + ")");
+  }
+
+  function getSvgContainerSize() {
+    var containerWidth = parseInt(d3.select("#graphics").style("width"), 10) - 15,
+      containerHeight;
+
+    if (d3.select(".timeScale").style("visibility") === "hidden") {
+      containerHeight = window.innerHeight - 60;
+    } else {
+      var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+      containerHeight = window.innerHeight - timeHeight - 60;
+    }
+
+    return {
+      width: containerWidth,
+      height: containerHeight
+    };
+  }
+
+  function fitProjectionToContainer(containerWidth, containerHeight) {
+    var scaleFactor = Math.min(containerWidth / width, containerHeight / height);
+    projection
+      .scale(baseProjectionScale * scaleFactor)
+      .translate([containerWidth / 2, containerHeight / 2]);
+  }
+
+  function redrawSvgMapLayers() {
+    d3.select("#svgMapViewport").select("#mapSphere").attr("d", path);
+    d3.select("#svgMapViewport").select(".countries").attr("d", path);
+    d3.selectAll("#svgBinHolder circle").each(function (d) {
+      if (!d || typeof d.lng === "undefined") {
+        return;
+      }
+      var coords = projection([d.lng, d.lat]);
+      if (coords) {
+        d3.select(this).attr("cx", coords[0]).attr("cy", coords[1]);
+      }
+    });
+  }
+
+  function svgZoomCenter() {
+    var size = getSvgContainerSize();
+    return [size.width / 2, size.height / 2];
+  }
+
+  function svgZoomBy(factor) {
+    var center = svgZoomCenter(),
+      newScale = Math.max(1, Math.min(8, svgZoomScale * factor)),
+      newTranslate = [
+        center[0] - (center[0] - svgZoomTranslate[0]) * (newScale / svgZoomScale),
+        center[1] - (center[1] - svgZoomTranslate[1]) * (newScale / svgZoomScale)
+      ];
+
+    svgZoomScale = newScale;
+    svgZoomTranslate = newTranslate;
+    if (svgZoomBehavior) {
+      svgZoomBehavior.scale(newScale).translate(newTranslate);
+    }
+    applySvgViewportTransform();
+    scheduleSvgRefresh();
+  }
+
+  function scheduleSvgRefresh() {
+    clearTimeout(svgRefreshTimer);
+    svgRefreshTimer = setTimeout(function () {
+      navMap.refresh("reset");
+      paleo_nav.getPrevalence();
+    }, 300);
+  }
+
+  function screenToLngLat(sx, sy) {
+    var svgNode = d3.select("#svgMap svg").node(),
+      viewportNode = d3.select("#svgMapViewport").node();
+
+    if (!svgNode || !viewportNode || !viewportNode.getScreenCTM) {
+      return null;
+    }
+
+    var pt = svgNode.createSVGPoint();
+    pt.x = sx;
+    pt.y = sy;
+    var local = pt.matrixTransform(viewportNode.getScreenCTM().inverse());
+    return projection.invert([local.x, local.y]);
+  }
+
+  function getSvgViewBounds() {
+    var size = getSvgContainerSize(),
+      corners = [[0, 0], [size.width, 0], [size.width, size.height], [0, size.height]],
+      lngs = [],
+      lats = [];
+
+    corners.forEach(function (c) {
+      var ll = screenToLngLat(c[0], c[1]);
+      if (ll && !isNaN(ll[0]) && !isNaN(ll[1])) {
+        lngs.push(ll[0]);
+        lats.push(ll[1]);
+      }
+    });
+
+    if (lngs.length < 2) {
+      return {
+        sw: { lng: -180, lat: -90 },
+        ne: { lng: 180, lat: 90 }
+      };
+    }
+
+    return {
+      sw: {
+        lng: Math.max(-180, d3.min(lngs)),
+        lat: Math.max(-90, d3.min(lats))
+      },
+      ne: {
+        lng: Math.min(180, d3.max(lngs)),
+        lat: Math.min(90, d3.max(lats))
+      }
+    };
+  }
+
+  function getSvgDetailLevel() {
+    if (svgZoomScale < 2.5) {
+      return 1;
+    }
+    if (svgZoomScale < 4) {
+      return 2;
+    }
+    if (svgZoomScale < 6.5) {
+      return 3;
+    }
+    return 4;
+  }
+
+  function leafletZoomToSvgScale(z) {
+    if (z <= 2) {
+      return 1;
+    }
+    return Math.min(8, 1 + (z - 2) * 0.85);
+  }
 
   // Load the partials once
   var binModalPartial,
@@ -165,36 +316,37 @@ var navMap = (function () {
          map is done by changing its height */
       d3.select("#map").style("height", 0);
 
-      // Set up the projected map
-      var zoom = d3.behavior.zoom()
+      svgZoomBehavior = d3.behavior.zoom()
+        .scaleExtent([1, 8])
         .on("zoom", function () {
-          if (d3.event.sourceEvent.wheelDelta > 0) {
-            navMap.changeMaps(d3.mouse(this));
-          } else if (d3.event.sourceEvent.type === "touchmove") {
-            navMap.changeMaps([d3.event.sourceEvent.pageX, d3.event.sourceEvent.pageY]);
-          }
+          svgZoomTranslate = d3.event.translate;
+          svgZoomScale = d3.event.scale;
+          applySvgViewportTransform();
+          scheduleSvgRefresh();
         });
 
-      var hammer = d3.select("#svgMap").append("svg")
+      var svgRoot = d3.select("#svgMap").append("svg")
         .attr("width", width)
         .attr("height", height)
-        .call(zoom)
-        .on("click", function () {
-          navMap.changeMaps(d3.mouse(this));
-        })
-        .append("g");
+        .call(svgZoomBehavior);
 
-      hammer.append("defs").append("path")
+      var svgMapViewport = svgRoot.append("g")
+        .attr("id", "svgMapViewport");
+
+      svgMapViewport.append("defs").append("path")
         .datum({ type: "Sphere" })
-        .attr("id", "sphere")
+        .attr("id", "mapSphere")
         .attr("d", path);
 
-      hammer.append("use")
+      svgMapViewport.append("use")
         .attr("class", "fill")
-        .attr("xlink:href", "#sphere");
+        .attr("xlink:href", "#mapSphere");
+
+      svgMapViewport.append("g")
+        .attr("id", "svgBinHolder");
 
       d3.json("build/js/countries_1e5.json", function (error, data) {
-        hammer.append("path")
+        svgMapViewport.append("path")
           .datum(topojson.feature(data, data.objects.countries))
           .attr("class", "countries")
           .attr("d", path);
@@ -225,6 +377,50 @@ var navMap = (function () {
       });
 
 
+    },
+
+    "zoomIn": function () {
+      if (isSvgMapActive()) {
+        svgZoomBy(1.5);
+      } else if (map) {
+        map.zoomIn();
+      }
+    },
+
+    "zoomOut": function () {
+      if (isSvgMapActive()) {
+        svgZoomBy(1 / 1.5);
+      } else if (map) {
+        map.zoomOut();
+      }
+    },
+
+    "resetSvgZoom": function () {
+      svgZoomScale = 1;
+      svgZoomTranslate = [0, 0];
+      if (svgZoomBehavior) {
+        svgZoomBehavior.scale(1).translate([0, 0]);
+      }
+      applySvgViewportTransform();
+    },
+
+    "focusOnPoint": function (lat, lng, zoomLevel) {
+      var pt = projection([lng, lat]);
+      if (!pt) {
+        return;
+      }
+
+      var center = svgZoomCenter(),
+        targetScale = zoomLevel ? leafletZoomToSvgScale(zoomLevel) : svgZoomScale,
+        cx = center[0],
+        cy = center[1];
+
+      svgZoomScale = targetScale;
+      svgZoomTranslate = [cx - pt[0] * targetScale, cy - pt[1] * targetScale];
+      if (svgZoomBehavior) {
+        svgZoomBehavior.scale(targetScale).translate(svgZoomTranslate);
+      }
+      applySvgViewportTransform();
     },
 
     "changeMaps": function (mouse) {
@@ -264,17 +460,10 @@ var navMap = (function () {
 
     // Given a [lat,lng] and a zoom level, adjust the map
     "goTo": function (coords, zoom) {
-      // If viewing Hammer, ignore
-      if (zoom < 3) {
-        return;
-      } else {
-        d3.select("#svgMap").style("display", "none");
-        d3.select("#map").style("height", function () {
-          return window.innerHeight * 0.70 + "px";
-        });
-
-        map._resetView(coords, zoom);
-      }
+      d3.select("#svgMap").style("display", "block");
+      d3.select("#map").style("height", 0);
+      navMap.focusOnPoint(coords[0], coords[1], zoom);
+      navMap.refresh("reset");
     },
 
     ///nshn///
@@ -327,8 +516,8 @@ var navMap = (function () {
 
       var filtered = navMap.checkFilters();
 
-      // Check which map is displayed - if hammer, skip the rest
-      if (parseInt(d3.select("#map").style("height")) < 1) {
+      // Check which map is displayed - if svg projection map, use bounds-based refresh
+      if (isSvgMapActive()) {
 
         // Abort any pending requests
         if (typeof (currentRequest) != 'undefined') {
@@ -338,51 +527,109 @@ var navMap = (function () {
           }
         }
 
-        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time';
+        var bounds = getSvgViewBounds(),
+          sw = bounds.sw,
+          ne = bounds.ne,
+          detailLevel = getSvgDetailLevel(),
+          midlat = (ne.lat + sw.lat) / 2,
+          midlng = (ne.lng + sw.lng) / 2;
 
-        // If filters are applied to the map
-        if (filtered) {
-          // If only a time filter is applied...
-          if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup && !filters.exist.country) {
-            url += "&level=1";
-            url = navMap.parseURL(url);
+        if (midlng > 180) {
+          midlng = midlng - 360;
+        } else if (midlng < -180) {
+          midlng = midlng + 360;
+        }
 
+        $("#latdisplay").text(Math.abs(midlat).toFixed(2) + (midlat < 0 ? 'º S' : 'º N'));
+        $("#lngdisplay").text(Math.abs(midlng).toFixed(2) + (midlng < 0 ? 'º W' : 'º E'));
+
+        if (detailLevel === 1) {
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time&level=1';
+          url = navMap.parseURL(url);
+
+          if (filtered && filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup && !filters.exist.country) {
             if (typeof (timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
-              // .. and if the level2 data for the selected interval hasn't been loaded...
               if (typeof (timeScale.interval_hash[filters.selectedInterval.oid].data) === "undefined") {
-                // ...load it...
                 currentRequest = d3.json(url, function (error, data) {
                   if (error) {
                     return paleo_nav.hideLoading();
                   }
-                  // ...and hold on to it
                   timeScale.interval_hash[filters.selectedInterval.oid].data = data;
-                  return navMap.refreshHammer(data);
+                  return navMap.refreshSvgBins(data, 1);
                 });
-                // If the level2 data for the selected interval has already been loaded, use that
               } else {
-                return navMap.refreshHammer(timeScale.interval_hash[filters.selectedInterval.oid].data);
+                return navMap.refreshSvgBins(timeScale.interval_hash[filters.selectedInterval.oid].data, 1);
               }
             }
-
-          } else {
-            url += "&level=1";
-            url = navMap.parseURL(url);
           }
-          // If there are no filters
-        } else {
-          url += "&level=1";
-          url = navMap.parseURL(url);
+
+          currentRequest = d3.json(url, function (error, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
+            navMap.refreshSvgBins(data, 1);
+          });
+          return;
         }
 
-        currentRequest = d3.json(url, function (error, data) {
+        sw.lat = Math.max(-90, sw.lat);
+        ne.lat = Math.min(90, ne.lat);
+        sw.lng = Math.max(-180, sw.lng);
+        ne.lng = Math.min(180, ne.lng);
+
+        if (detailLevel === 2 && filtered === false) {
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=2&show=time';
+          currentRequest = d3.json(navMap.parseURL(url), function (error, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
+            navMap.refreshSvgBins(data, 2);
+          });
+          return;
+        }
+
+        if (detailLevel === 3 || detailLevel === 2 && filtered === true) {
+          if (filters.exist.selectedInterval === true && !filters.exist.personFilter && !filters.exist.taxon && !filters.exist.stratigraphy && !filters.exist.researchGroup && !filters.exist.country) {
+            var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=-180&lngmax=180&latmin=-90&latmax=90&show=time&level=3';
+            url = navMap.parseURL(url);
+
+            if (typeof (timeScale.interval_hash[filters.selectedInterval.oid]) != "undefined") {
+              if (typeof (timeScale.interval_hash[filters.selectedInterval.oid].data) === "undefined") {
+                currentRequest = d3.json(url, function (error, data) {
+                  if (error) {
+                    return paleo_nav.hideLoading();
+                  }
+                  timeScale.interval_hash[filters.selectedInterval.oid].data = data;
+                  return navMap.refreshSvgBins(data, 3);
+                });
+              } else {
+                return navMap.refreshSvgBins(timeScale.interval_hash[filters.selectedInterval.oid].data, 3);
+              }
+            }
+          }
+
+          var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/summary.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&level=3&show=time';
+          currentRequest = d3.json(navMap.parseURL(url), function (error, data) {
+            if (error) {
+              return paleo_nav.hideLoading();
+            }
+            navMap.refreshSvgBins(data, 3);
+          });
+          return;
+        }
+
+        var url = paleo_nav.dataUrl + paleo_nav.dataService + '/colls/list.json?lngmin=' + sw.lng + '&lngmax=' + ne.lng + '&latmin=' + sw.lat + '&latmax=' + ne.lat + '&show=ref,time,strat,geo,lith,entname,prot&markrefs';
+        currentRequest = d3.json(navMap.parseURL(url), function (error, data) {
           if (error) {
             return paleo_nav.hideLoading();
           }
-          navMap.refreshHammer(data);
+          navMap.refreshSvgCollections(data);
         });
-
         return;
+      }
+
+      if (parseInt(d3.select("#map").style("height")) < 1) {
+        return paleo_nav.hideLoading();
       }
 
       var bounds = map.getBounds(),
@@ -579,17 +826,25 @@ var navMap = (function () {
     d3.select(".leaflet-zoom-hide").style("visibility", "visible");
   },
 
-  "refreshHammer": function(data) {
+  "refreshSvgBins": function(data, level) {
     navMap.summarize(data);
 
     var scale = d3.scale.linear()
       .domain([1, 6000])
       .range([4, 10]);
 
-    var hammer = d3.select("#svgMap").select("svg").select("g"),
-      zoom = 2;
+    if (level === 3) {
+      scale = d3.scale.log()
+        .domain([1, 1500])
+        .range([4, 10]);
+    }
 
-    var bins = hammer.selectAll("circle")
+    var g = d3.select("#svgBinHolder"),
+      zoomLevel = 2;
+
+    g.selectAll("circle").remove();
+
+    var bins = g.selectAll("circle")
       .data(data.records);
 
     bins.enter().append("circle")
@@ -597,20 +852,20 @@ var navMap = (function () {
       .attr("class", "binsHammer")
       .on("mouseout", function () {
         navMap.setInfoSummary();
-        timeScale.unhighlight()
+        timeScale.unhighlight();
       });
 
     bins
       .style("fill", function (d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
       .attr("id", function (d) { return "p" + d.cxi; })
-      .attr("r", function (d) { return scale(d.nco) * navMap.multiplier(zoom); })
+      .attr("r", function (d) { return scale(d.nco) * navMap.multiplier(zoomLevel); })
       .attr("cx", function (d) {
         var coords = projection([d.lng, d.lat]);
-        return coords[0];
+        return coords ? coords[0] : 0;
       })
       .attr("cy", function (d) {
         var coords = projection([d.lng, d.lat]);
-        return coords[1];
+        return coords ? coords[1] : 0;
       })
       .on("mouseover", function (d) {
         d3.select(".info")
@@ -619,7 +874,16 @@ var navMap = (function () {
         timeScale.highlight(this);
       })
       .on("click", function (d) {
-        navMap.changeMaps(d3.mouse(this));
+        if (level >= 3) {
+          d3.select(".info")
+            .html("<strong>" + d.nco + " collections</strong><br>" + d.noc + " occurrences")
+            .style("display", "block");
+          timeScale.highlight(this);
+          navMap.openBinModal(d);
+        } else {
+          navMap.focusOnPoint(d.lat, d.lng, 5);
+          scheduleSvgRefresh();
+        }
       });
 
     bins.exit().remove();
@@ -627,7 +891,59 @@ var navMap = (function () {
     if (!reconstructMap.reconstructing) {
       paleo_nav.hideLoading();
     }
+  },
 
+  "refreshSvgCollections": function(data) {
+    navMap.summarize(data);
+
+    var g = d3.select("#svgBinHolder"),
+      scale = d3.scale.linear()
+        .domain([1, 400])
+        .range([8, 20]);
+
+    g.selectAll("circle").remove();
+
+    var points = g.selectAll("circle")
+      .data(data.records);
+
+    points.enter().append("circle")
+      .attr("class", "binsHammer")
+      .on("mouseout", function () {
+        navMap.setInfoSummary();
+        timeScale.unhighlight();
+      });
+
+    points
+      .style("fill", function (d) { return (timeScale.interval_hash[d.cxi]) ? timeScale.interval_hash[d.cxi].color : "#000"; })
+      .attr("r", 10)
+      .attr("cx", function (d) {
+        var coords = projection([d.lng, d.lat]);
+        return coords ? coords[0] : 0;
+      })
+      .attr("cy", function (d) {
+        var coords = projection([d.lng, d.lat]);
+        return coords ? coords[1] : 0;
+      })
+      .on("mouseover", function (d) {
+        d3.select(".info")
+          .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+          .style("display", "block");
+        timeScale.highlight(this);
+      })
+      .on("click", function (d) {
+        d3.select(".info")
+          .html("<strong>" + d.nam + "</strong><br>" + d.noc + " occurrences")
+          .style("display", "block");
+        timeScale.highlight(this);
+        navMap.openCollectionModal(d);
+      });
+
+    points.exit().remove();
+    paleo_nav.hideLoading();
+  },
+
+  "refreshHammer": function(data) {
+    navMap.refreshSvgBins(data, 1);
   },
 
   "drawBins": function(data, level, zoom) {
@@ -1449,77 +1765,26 @@ var navMap = (function () {
   },
 
   "resizeSvgMap": function() {
-    var width = parseInt(d3.select("#graphics").style("width"));
+    var size = getSvgContainerSize();
 
-    var g = d3.select("#svgMap").select("svg");
-
-    d3.select("#svgMap").select("svg")
-      .select("g")
-      .attr("transform", function () {
-        /* Firefox hack via https://github.com/wout/svg.js/commit/ce1eb91fac1edc923b317caa83a3a4ab10e7c020 */
-        var box;
-        try {
-          box = g.node().getBBox()
-        } catch (err) {
-          box = {
-            x: g.node().clientLeft,
-            y: g.node().clientTop,
-            width: g.node().clientWidth,
-            height: g.node().clientHeight
-          }
-        }
-        var height = ((window.innerHeight * 0.70) - 70);
-
-        if (width > (box.width + 70)) {
-          return "scale(" + window.innerHeight / 680 + ")translate(" + ((width - box.width) / 3) + ",0)";
-        } else {
-          var svgHeight = ((window.innerHeight * 0.70) - 70),
-            mapHeight = (width / 970) * 500,
-            translate = (((svgHeight - mapHeight) / 2) > 0) ? (svgHeight - mapHeight) / 2 : 40;
-
-          return "scale(" + width / 970 + ")translate(0," + translate + ")";
-        }
-
-      });
+    fitProjectionToContainer(size.width, size.height);
+    redrawSvgMapLayers();
 
     d3.select("#svgMap").select("svg")
-      .style("height", function (d) {
-        if (d3.select(".timeScale").style("visibility") === "hidden") {
-          return (window.innerHeight - 60) + "px";
-        } else {
-          var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-          return (window.innerHeight - timeHeight - 60) + "px";
-        }
-      })
-      .style("width", function (d) {
-        return width - 15 + "px";
-      });
+      .style("height", size.height + "px")
+      .style("width", size.width + "px");
   },
 
   "resize": function() {
+    d3.select("#svgMap").style("display", "block");
+    d3.select("#map").style("height", 0);
+    navMap.resizeSvgMap();
+
     if (window.innerWidth < 700) {
-      d3.select("#svgMap").style("display", "none");
-      d3.select("#map").style("height", function () {
-        return (window.innerHeight - 55) + "px";
-      });
-      map.invalidateSize();
       $("#downloadDataTab").removeClass("active");
       $("#downloadData").removeClass("active");
       $("#urlTab").addClass("active");
       $("#getURL").addClass("active");
-    } else if (parseInt(d3.select("#map").style("height")) > 1) {
-      d3.select("#map")
-        .style("height", function (d) {
-          if (d3.select(".timeScale").style("visibility") === "hidden") {
-            return (window.innerHeight - 70) + "px";
-          } else {
-            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-            return (window.innerHeight - timeHeight - 54) + "px";
-          }
-        });
-      map.invalidateSize();
-    } else {
-      navMap.resizeSvgMap();
     }
 
     d3.select("#infoContainer")

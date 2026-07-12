@@ -8,39 +8,117 @@ var reconstructMap = (function() {
   var currentURL = '';
 
   var height = 500,
-      width = 960;
+      width = 960,
+      baseProjectionScale = 165,
+      zoomBehavior,
+      zoomScale = 1,
+      zoomTranslate = [0, 0];
 
-  var projection = d3.geo.hammer()
-    .scale(165)
+  var projection = d3.geo.naturalEarth()
+    .scale(baseProjectionScale)
     .translate([width / 2, height / 2])
-    .rotate([1e-6, 0])
     .precision(.3);
    
   var path = d3.geo.path()
     .projection(projection);
 
+  function getReconstructContainerSize() {
+    var containerWidth = parseInt(d3.select("#graphics").style("width"), 10) - 15,
+      containerHeight;
+
+    if (d3.select(".timeScale").style("visibility") === "hidden") {
+      containerHeight = window.innerHeight - 70;
+    } else {
+      var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
+      containerHeight = window.innerHeight - timeHeight - 70;
+    }
+
+    return {
+      width: containerWidth,
+      height: containerHeight
+    };
+  }
+
+  function fitProjectionToContainer(containerWidth, containerHeight) {
+    var scaleFactor = Math.min(containerWidth / width, containerHeight / height);
+    projection
+      .scale(baseProjectionScale * scaleFactor)
+      .translate([containerWidth / 2, containerHeight / 2]);
+  }
+
+  function redrawReconstructLayers() {
+    d3.select("#reconstructViewport").select("#reconstructSphere").attr("d", path);
+    d3.selectAll("#reconstructContent path").attr("d", path);
+    d3.selectAll("#reconstructContent circle").each(function (d) {
+      if (!d || !d.geometry) {
+        return;
+      }
+      var coords = projection(d.geometry.coordinates);
+      if (coords) {
+        d3.select(this).attr("cx", coords[0]).attr("cy", coords[1]);
+      }
+    });
+  }
+
+  function reconstructZoomCenter() {
+    var size = getReconstructContainerSize();
+    return [size.width / 2, size.height / 2];
+  }
+
+  function applyViewportTransform() {
+    d3.select("#reconstructViewport")
+      .attr("transform", "translate(" + zoomTranslate + ")scale(" + zoomScale + ")");
+  }
+
+  function zoomBy(factor) {
+    var center = reconstructZoomCenter(),
+        newScale = Math.max(1, Math.min(8, zoomScale * factor)),
+        newTranslate = [
+          center[0] - (center[0] - zoomTranslate[0]) * (newScale / zoomScale),
+          center[1] - (center[1] - zoomTranslate[1]) * (newScale / zoomScale)
+        ];
+
+    zoomScale = newScale;
+    zoomTranslate = newTranslate;
+    if (zoomBehavior) {
+      zoomBehavior.scale(newScale).translate(newTranslate);
+    }
+    applyViewportTransform();
+  }
+
   return {
     "init": function() {
 
-      var svg = d3.select("#reconstructMap")
+      var svgRoot = d3.select("#reconstructMap")
         .append("svg")
         .attr("height", height)
-        .attr("width", width)
-        .append("g")
-        .attr("id", "reconstructGroup");
+        .attr("width", width);
 
-      svg.append("defs").append("path")
+      var viewport = svgRoot.append("g")
+        .attr("id", "reconstructViewport");
+
+      viewport.append("defs").append("path")
         .datum({type: "Sphere"})
-        .attr("id", "sphere")
+        .attr("id", "reconstructSphere")
         .attr("d", path);
 
-      svg.append("use")
+      viewport.append("use")
         .attr("class", "stroke")
-        .attr("xlink:href", "#sphere");
+        .attr("xlink:href", "#reconstructSphere");
 
-      svg.append("use")
+      viewport.append("use")
         .attr("class", "fill")
-        .attr("xlink:href", "#sphere");
+        .attr("xlink:href", "#reconstructSphere");
+
+      zoomBehavior = d3.behavior.zoom()
+        .scaleExtent([1, 8])
+        .on("zoom", function() {
+          zoomTranslate = d3.event.translate;
+          zoomScale = d3.event.scale;
+          applyViewportTransform();
+        });
+
+      svgRoot.call(zoomBehavior);
 
       $("#mapSwitch").on("click", function(event) {
         event.preventDefault();
@@ -49,7 +127,7 @@ var reconstructMap = (function() {
 
       d3.json("build/js/plates/Holocene.json", function(er, topoPlates) {
         // Add the rotated plates to the map
-        var group = d3.select("#reconstructGroup")
+        var group = d3.select("#reconstructViewport")
           .append("g")
           .attr("id", "reconstructContent");
 
@@ -121,6 +199,7 @@ var reconstructMap = (function() {
       
       reconstructing = true;
       reconstructMap.reset();
+      reconstructMap.resetZoom();
       
       paleo_nav.showLoading();
 
@@ -148,7 +227,7 @@ var reconstructMap = (function() {
         .select("button")
           .style("display", "none");
           
-      var svg = d3.select("#reconstructGroup")
+      var svg = d3.select("#reconstructViewport")
           .append("g")
           .attr("id", "reconstructContent");
       
@@ -430,55 +509,19 @@ var reconstructMap = (function() {
     },
 
     "resize": function() {
-      var width = parseInt(d3.select("#graphics").style("width"));
+      var size = getReconstructContainerSize();
 
-      var g = d3.select("#reconstructMap").select("svg");
-
-      d3.select("#reconstructGroup")
-        .attr("transform", function() {
-          /* Firefox hack via https://github.com/wout/svg.js/commit/ce1eb91fac1edc923b317caa83a3a4ab10e7c020 */
-          var box;
-          try {
-            box = g.node().getBBox()
-          } catch(err) {
-            box = {
-              x: g.node().clientLeft,
-              y: g.node().clientTop,
-              width: g.node().clientWidth,
-              height: g.node().clientHeight
-            }
-          }
-          var height = ((window.innerHeight * 0.70) - 70);
-
-          if (width > (box.width + 50)) {
-            return "scale(" + window.innerHeight/800 + ")translate(" + ((width - box.width)/2) + ",0)";
-          } else {
-            var svgHeight = ((window.innerHeight * 0.70) - 70),
-                mapHeight = (width/970 ) * 500,
-                translate = (((svgHeight - mapHeight)/2) > 0) ? (svgHeight - mapHeight)/2 : 0;
-
-            return "scale(" + width/970 + ")translate(0," + translate + ")";
-          }
-        });
+      fitProjectionToContainer(size.width, size.height);
+      redrawReconstructLayers();
 
       d3.select("#reconstructMap").select("svg")
-        .style("height", function(d) {
-          if (d3.select(".timeScale").style("visibility") === "hidden") {
-            return (window.innerHeight - 70) + "px";
-          } else {
-            var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-            return (window.innerHeight - timeHeight - 70) + "px";
-          }
-        })
-        .style("width", function(d) {
-          return width - 15 + "px";
-        });
+        .style("height", size.height + "px")
+        .style("width", size.width + "px");
 
       d3.select("#reconstructMapRefContainer")
         .style("height", function() {
           return d3.select("#svgMap").style("height");
         });
-
     },
 
     "reset": function() {
@@ -486,6 +529,23 @@ var reconstructMap = (function() {
       d3.select("#reconstructContent").remove();
       d3.select("#interval").html("");
       d3.select("#age").html("");
+    },
+
+    "resetZoom": function() {
+      zoomScale = 1;
+      zoomTranslate = [0, 0];
+      if (zoomBehavior) {
+        zoomBehavior.scale(1).translate([0, 0]);
+      }
+      applyViewportTransform();
+    },
+
+    "zoomIn": function() {
+      zoomBy(1.5);
+    },
+
+    "zoomOut": function() {
+      zoomBy(1 / 1.5);
     },
 
     "currentReconstruction": currentReconstruction,
