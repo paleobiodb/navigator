@@ -47,17 +47,51 @@ var navMap = (function () {
     }
   };
 
-  // Variables used thoughout
-  var width = 960,
-    height = 500,
-    baseProjectionScale = 165,
+  // Layout measurements in pixels — offsets for navbar, timescale, and panel chrome.
+  var LAYOUT = {
+    mapBaseWidth: 960,
+    mapBaseHeight: 500,
+    projectionScale: 165,
+    graphicsWidthPadding: 15,
+    topChromeHeight: 60,
+    bottomChromeHeight: 60,
+    timescaleMinHeight: 15,
+    timescaleHeightRatio: 5.6,
+    leafletMapTopChrome: 70,
+    leafletMapBottomOffset: 56,
+    infoPanelGutter: 15,
+    mobileInfoBottom: 91,
+    mobileBreakpointWidth: 468,
+    filtersWideLayoutMinHeight: 600,
+    filtersSidebarWidth: 49,
+    filtersBottomGutter: 4,
+    prevalencePanelChrome: 121,
+    helpModalLabelOffset: 78,
+    typeaheadDropdownPadding: 21
+  };
+
+  var ZOOM = {
+    minScale: 1,
+    maxScale: 8,
+    buttonStepFactor: 1.5,
+    dataRefreshDebounceMs: 300,
+    detailGlobalMax: 2.5,
+    detailRegionalMax: 4,
+    detailBinMax: 6.5,
+    leafletCompatBase: 2,
+    leafletCompatScalePerLevel: 0.85
+  };
+
+  var width = LAYOUT.mapBaseWidth,
+    height = LAYOUT.mapBaseHeight,
+    baseProjectionScale = LAYOUT.projectionScale,
     svgZoomBehavior,
-    svgZoomScale = 1,
+    svgZoomScale = ZOOM.minScale,
     svgZoomTranslate = [0, 0],
     svgRefreshTimer;
 
   var projection = d3.geo.naturalEarth()
-    .scale(165)
+    .scale(baseProjectionScale)
     .translate([width / 2, height / 2])
     .precision(.1);
 
@@ -75,16 +109,22 @@ var navMap = (function () {
       .attr("transform", "translate(" + svgZoomTranslate + ")scale(" + svgZoomScale + ")");
   }
 
-  function getSvgContainerSize() {
-    var containerWidth = parseInt(d3.select("#graphics").style("width"), 10) - 15,
-      containerHeight;
-
+  function getTimeScaleHeight() {
     if (d3.select(".timeScale").style("visibility") === "hidden") {
-      containerHeight = window.innerHeight - 60;
-    } else {
-      var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-      containerHeight = window.innerHeight - timeHeight - 60;
+      return 0;
     }
+    var measured = $("#time").height();
+    return measured > LAYOUT.timescaleMinHeight
+      ? measured
+      : window.innerHeight / LAYOUT.timescaleHeightRatio;
+  }
+
+  function getSvgContainerSize() {
+    var containerWidth = parseInt(d3.select("#graphics").style("width"), 10) - LAYOUT.graphicsWidthPadding,
+      timeHeight = getTimeScaleHeight(),
+      containerHeight = timeHeight === 0
+        ? window.innerHeight - LAYOUT.topChromeHeight
+        : window.innerHeight - timeHeight - LAYOUT.bottomChromeHeight;
 
     return {
       width: containerWidth,
@@ -120,7 +160,7 @@ var navMap = (function () {
 
   function svgZoomBy(factor) {
     var center = svgZoomCenter(),
-      newScale = Math.max(1, Math.min(8, svgZoomScale * factor)),
+      newScale = Math.max(ZOOM.minScale, Math.min(ZOOM.maxScale, svgZoomScale * factor)),
       newTranslate = [
         center[0] - (center[0] - svgZoomTranslate[0]) * (newScale / svgZoomScale),
         center[1] - (center[1] - svgZoomTranslate[1]) * (newScale / svgZoomScale)
@@ -140,7 +180,7 @@ var navMap = (function () {
     svgRefreshTimer = setTimeout(function () {
       navMap.refresh("reset");
       paleo_nav.getPrevalence();
-    }, 300);
+    }, ZOOM.dataRefreshDebounceMs);
   }
 
   function screenToLngLat(sx, sy) {
@@ -192,23 +232,23 @@ var navMap = (function () {
   }
 
   function getSvgDetailLevel() {
-    if (svgZoomScale < 2.5) {
+    if (svgZoomScale < ZOOM.detailGlobalMax) {
       return 1;
     }
-    if (svgZoomScale < 4) {
+    if (svgZoomScale < ZOOM.detailRegionalMax) {
       return 2;
     }
-    if (svgZoomScale < 6.5) {
+    if (svgZoomScale < ZOOM.detailBinMax) {
       return 3;
     }
     return 4;
   }
 
   function leafletZoomToSvgScale(z) {
-    if (z <= 2) {
-      return 1;
+    if (z <= ZOOM.leafletCompatBase) {
+      return ZOOM.minScale;
     }
-    return Math.min(8, 1 + (z - 2) * 0.85);
+    return Math.min(ZOOM.maxScale, ZOOM.minScale + (z - ZOOM.leafletCompatBase) * ZOOM.leafletCompatScalePerLevel);
   }
 
   // Load the partials once
@@ -317,7 +357,7 @@ var navMap = (function () {
       d3.select("#map").style("height", 0);
 
       svgZoomBehavior = d3.behavior.zoom()
-        .scaleExtent([1, 8])
+        .scaleExtent([ZOOM.minScale, ZOOM.maxScale])
         .on("zoom", function () {
           svgZoomTranslate = d3.event.translate;
           svgZoomScale = d3.event.scale;
@@ -381,7 +421,7 @@ var navMap = (function () {
 
     "zoomIn": function () {
       if (isSvgMapActive()) {
-        svgZoomBy(1.5);
+        svgZoomBy(ZOOM.buttonStepFactor);
       } else if (map) {
         map.zoomIn();
       }
@@ -389,17 +429,17 @@ var navMap = (function () {
 
     "zoomOut": function () {
       if (isSvgMapActive()) {
-        svgZoomBy(1 / 1.5);
+        svgZoomBy(1 / ZOOM.buttonStepFactor);
       } else if (map) {
         map.zoomOut();
       }
     },
 
     "resetSvgZoom": function () {
-      svgZoomScale = 1;
+      svgZoomScale = ZOOM.minScale;
       svgZoomTranslate = [0, 0];
       if (svgZoomBehavior) {
-        svgZoomBehavior.scale(1).translate([0, 0]);
+        svgZoomBehavior.scale(ZOOM.minScale).translate([0, 0]);
       }
       applySvgViewportTransform();
     },
@@ -426,11 +466,11 @@ var navMap = (function () {
     "changeMaps": function (mouse) {
       paleo_nav.getPrevalence();
 
-      var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6,
-        translate = [window.innerWidth / 2, (window.innerHeight - timeHeight - 70) / 2];
+      var timeHeight = getTimeScaleHeight(),
+        translate = [window.innerWidth / 2, (window.innerHeight - timeHeight - LAYOUT.leafletMapTopChrome) / 2];
 
       var mercator = d3.geo.mercator()
-        .scale(165)
+        .scale(baseProjectionScale)
         .precision(.1)
         .translate(translate);
 
@@ -440,10 +480,9 @@ var navMap = (function () {
       d3.select("#svgMap").style("display", "none");
       d3.select("#map").style("height", function () {
         if (d3.select(".timeScale").style("visibility") === "hidden") {
-          return (window.innerHeight - 70) + "px";
+          return (window.innerHeight - LAYOUT.leafletMapTopChrome) + "px";
         } else {
-          var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-          return (window.innerHeight - timeHeight - 56) + "px";
+          return (window.innerHeight - getTimeScaleHeight() - LAYOUT.leafletMapBottomOffset) + "px";
         }
       });
 
@@ -1789,32 +1828,32 @@ var navMap = (function () {
 
     d3.select("#infoContainer")
       .style("bottom", function () {
-        if (window.innerWidth < 468) {
-          return "91px";
+        if (window.innerWidth < LAYOUT.mobileBreakpointWidth) {
+          return LAYOUT.mobileInfoBottom + "px";
         } else {
           var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 15) + "px";
+          return (height + LAYOUT.infoPanelGutter) + "px";
         }
       });
 
     d3.select(".prevalence-summary, .prevalence-row")
       .style("height", function () {
-        var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height")) - 121;
+        var height = window.innerHeight - parseInt(d3.select("#time").select("svg").style("height")) - LAYOUT.prevalencePanelChrome;
         return (height) + "px";
 
       });
 
-    if (window.innerHeight > 600) {
+    if (window.innerHeight > LAYOUT.filtersWideLayoutMinHeight) {
       d3.select(".filters")
         .style("left", 0)
         .style("top", "inherit")
         .style("bottom", function () {
           var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 4) + "px";
+          return (height + LAYOUT.filtersBottomGutter) + "px";
         });
     } else {
       d3.select(".filters")
-        .style("left", "49px")
+        .style("left", LAYOUT.filtersSidebarWidth + "px")
         .style("top", 0)
         .style("bottom", "inherit")
     }
@@ -1822,11 +1861,11 @@ var navMap = (function () {
 
     d3.selectAll(".helpModalTimescaleLabel")
       .style("top", function () {
-        var timeHeight = ($("#time").height() > 15) ? $("#time").height() : window.innerHeight / 5.6;
-        return (window.innerHeight - timeHeight - 78) + "px";
+        var timeHeight = getTimeScaleHeight();
+        return (window.innerHeight - timeHeight - LAYOUT.helpModalLabelOffset) + "px";
       });
 
-    $(".universalSearchForm > div > .twitter-typeahead > .tt-dropdown-menu").width($(".universalSearchForm > div > .twitter-typeahead").width() - 21);
+    $(".universalSearchForm > div > .twitter-typeahead > .tt-dropdown-menu").width($(".universalSearchForm > div > .twitter-typeahead").width() - LAYOUT.typeaheadDropdownPadding);
   },
 
   "refreshFilterHandlers": function() {
@@ -1961,17 +2000,17 @@ var navMap = (function () {
         break;
     }
 
-    if (window.innerHeight > 600) {
+    if (window.innerHeight > LAYOUT.filtersWideLayoutMinHeight) {
       d3.select(".filters")
         .style("left", 0)
         .style("top", "inherit")
         .style("bottom", function () {
           var height = parseInt(d3.select("#time").select("svg").style("height"));
-          return (height + 4) + "px";
+          return (height + LAYOUT.filtersBottomGutter) + "px";
         });
     } else {
       d3.select(".filters")
-        .style("left", "49px")
+        .style("left", LAYOUT.filtersSidebarWidth + "px")
         .style("top", 0)
         .style("bottom", "inherit")
     }
